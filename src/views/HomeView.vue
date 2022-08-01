@@ -1,11 +1,16 @@
 <template>
   <div class="home">
-    <Navi></Navi>
+    <el-row>
+      <el-col :span="2"><div class="Left">
+        <Navi></Navi>
+        </div></el-col>
+      <el-col :span="22"><div class="Right">
+        Abc</div></el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
 import Navi from '@/components/NavigationBar.vue'
 
 export default {
@@ -15,3 +20,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.Right{
+  background-color: red;
+}
+</style>

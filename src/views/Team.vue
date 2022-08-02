@@ -23,6 +23,35 @@
             </div></el-col>
         </el-row>
         <el-row>
+            <el-col :span="24"><div class="projectTitle">
+                <i class="el-icon-s-order"></i>
+                <span class="membersTitle">项目</span>
+                 <el-button class="addButton" icon="el-icon-plus" circle @click="dialogVisible = true"></el-button>
+                 <el-dialog title="创建项目" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
+                 <el-form :model="form" label-width="auto">
+                    <el-form-item label="项目名称">
+                        <el-input v-model="form.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="项目简介">
+                      <el-input type="textarea" :autosize="{ minRows: 2 }" v-model="form.desc" autocomplete="off" resize="none"></el-input>
+                    </el-form-item>
+                 </el-form>
+                 <span slot="footer" class="dialog-footer">
+                    <el-button @click="cancelChanges">取消</el-button>
+                    <el-button type="primary" @click="createProject">确定</el-button>
+                    </span>
+                </el-dialog>
+                </div></el-col>
+        </el-row>
+        <el-row v-if="haveProject">
+            <el-col :span="24"><div class="projects">
+            暂无项目！
+            </div></el-col>
+        </el-row>
+        <el-row v-else>
+            <el-button class="projectButton" v-for="item in projectList" :key="item.id">{{ item.name }}</el-button>
+        </el-row>
+        <el-row>
             <el-col :span="24"><div class="members">
                 <i class="el-icon-user-solid"></i>
                 <span class="membersTitle">成员列表</span>
@@ -76,6 +105,33 @@ export default {
   },
   data() {
     return {
+        dialogVisible: false,
+        form: {
+            name:'',
+            desc:'',
+        },
+        haveProject: false,
+        projectList:[{
+            id:1,
+            name:'皮卡丘项目',
+        },
+        {
+            id:2,
+            name:'皮卡茶项目',
+        },
+        {
+            id:3,
+            name:'皮卡卡项目',
+        },
+        {
+            id:4,
+            name:'黄乐乐搞大事',
+        },
+        {
+            id:5,
+            name:'黄丽丽搞小事',
+        },
+        ],
         membersList:[{
             id:1,
             username:'Lele',
@@ -134,6 +190,21 @@ export default {
         },
         ]
     }
+  },
+  methods: {
+    cancelChanges() {
+        this.dialogVisible = false;
+        this.form.name = '';
+        this.form.desc = '';
+    },
+    handleClose() {
+        this.dialogVisible = false;
+        this.form.name = '';
+        this.form.desc = '';
+    },
+    createProject() {
+        this.dialogVisible = false;
+    },
   }
 }
 </script>
@@ -151,7 +222,13 @@ export default {
 .teamInfo2{
     font-size: 20px;
 }
-.members{
+.projects{
+    margin-left: 30px;
+    margin-top: 5px;
+    /* border: 1px solid black; */
+}
+.members, .projectTitle{
+    /* border: 1px solid black; */
     margin: 30px 0 0 10px;
 }
 .membersTitle{
@@ -170,7 +247,7 @@ export default {
 }
 .membersRow{
     /* border: 1px solid black; */
-    height: 550px;
+    height: 470px;
     overflow: hidden;
     overflow-y: scroll;
 }
@@ -178,18 +255,14 @@ export default {
     position: absolute;
     margin-top: 12px;
 }
-/* .kickButton{
-    position: absolute;
-    margin: 0 0 0 130px;
-    top: 40%;
-    float: right;
-} */
-/* .promoteButton{
-    position: absolute;
-    margin: 0;
-    top: 40%;
-} */
-.el-icon-user-solid{
+.addButton{
+    margin-left: 10px;
+}
+.projectButton{
+    margin-left: 20px;
+    margin-top: 10px;
+}
+.el-icon-user-solid, .el-icon-s-order{
     font-size: 22px;
 }
 </style>

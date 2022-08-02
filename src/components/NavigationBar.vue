@@ -2,37 +2,40 @@
 <el-row class="Nav">
   <el-col :span="24">
     <el-menu
-      class="el-menu-vertical-demo"
+      class="nav-menu"
       @open="handleOpen"
       @close="handleClose"
+      :router="true"
       background-color="#545c64"
       text-color="#fff"
       active-text-color="#ffd04b">
-      <el-menu-item>
+      <el-menu-item index="/">
+        <!-- logo -->
         <i class="el-icon-s-cooperation"></i>
       </el-menu-item>
-      <el-submenu index="1">
+      <el-submenu index="4">
         <template slot="title">
-          <i class="el-icon-location"></i>
+          <i class="el-icon-office-building"></i>
           <span>团队</span>
         </template>
         <el-menu-item-group>
           <template slot="title">已加入团队</template>
-          <el-menu-item index="1-1">团队1</el-menu-item>
-          <el-menu-item index="1-2">团队2</el-menu-item>
+          <el-menu-item index="/team">团队1</el-menu-item>
+          <el-menu-item index="/team">团队2</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-menu-item index="2">
-        <i class="el-icon-menu"></i>
-        <span slot="title">导航二</span>
-      </el-menu-item>
-      <el-menu-item index="3">
         <i class="el-icon-document"></i>
-        <span slot="title">导航三</span>
+        <span slot="title">文档</span>
       </el-menu-item>
-      <el-menu-item index="4">
-        <i class="el-icon-setting"></i>
-        <span slot="title">导航四</span>
+      <el-menu-item index="1">
+        <i class="el-icon-brush"></i>
+        <span slot="title">设计</span>
+      </el-menu-item>
+      <el-menu-item index="/login">
+        <i class="el-icon-user-solid"></i>
+        <span slot="title">登录
+        </span>
       </el-menu-item>
     </el-menu>
   </el-col>
@@ -59,6 +62,7 @@
 .Nav{
     background-color: #545c64;
     height: 100vh;
+    width: 130px;
 }
 .el-icon-s-cooperation{
     margin-left: 30px;

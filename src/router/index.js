@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import user from "@/store/user";
 
 Vue.use(VueRouter)
 
@@ -39,6 +40,24 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  // 通过 Vuex 获取用户登录信息
+  const userInfo = user.getters.getUser(user.state());
+
+  if (to.path === '/login') {
+    localStorage.setItem("preRoute", router.currentRoute.fullPath);
+  }
+
+  // 若用户未登录且访问的页面需要登录，则跳转至登录页面
+  if (!userInfo && to.meta.requireAuth) {
+    next({
+      name: 'Login',
+    })
+  }
+
+  next()
 })
 
 export default router

@@ -30,13 +30,13 @@
             <el-row  justify="center" type="flex">
                 <el-col :span="18"><div class="insertBox">
                     <el-col :span="5"><div class="insertTitle"><span>密码</span></div></el-col>
-                    <el-col :span="14"><el-input v-model="password1" placeholder="请输入密码"></el-input></el-col>
+                    <el-col :span="14"><el-input v-model="password1" placeholder="请输入密码" show-password></el-input></el-col>
                 </div></el-col>
             </el-row>
             <el-row  justify="center" type="flex">
                 <el-col :span="18"><div class="insertBox">
                     <el-col :span="5"><div class="insertTitle"><span>重复密码</span></div></el-col>
-                    <el-col :span="14"><el-input v-model="password2" placeholder="请重新输入密码"></el-input></el-col>
+                    <el-col :span="14"><el-input v-model="password2" placeholder="请重新输入密码" show-password></el-input></el-col>
                 </div></el-col>
             </el-row>
             <el-row>
@@ -73,7 +73,51 @@ export default {
         this.$router.push("/login");
     },
     Register() {
+        if(this.username == "" || this.realname == "" || this.email == "" || this.password1 == "" || this.password2 == "") {
+            this.$message.warning("请填写所有空格!");
+            return;
+        }
 
+        const formData = new FormData();
+        formData.append("username", this.username);
+        formData.append("realname", this.realname);
+        formData.append("email", this.email);
+        formData.append("password", this.password1);
+        formData.append("password2", this.password2);
+
+        this.$axios({
+        method: "post",
+        url: "/api/v1/auth/register/",
+        data: formData,
+        })
+        .then((res) => {
+            console.log(res);
+            switch (res.status) {
+            case 201:
+              this.$message.success("注册成功");
+              this.$router.push("/login");
+              break;
+          }
+        })
+        .catch((err) => {
+            console.log(err.response.data.code);
+            switch(err.response.data.code) {
+                case 1001:
+                    this.$message.warning("邮箱已被使用");
+                    break;
+                case 1002:
+                    this.$message.warning("用户名已被使用");
+                    break;
+                case 1003:
+                    this.$message.warning("密码与重复密码不匹配");
+                    break;
+                case 1004:
+                    this.$message.warning("密码需包含字母、数字及符号且字符数>=8");
+                    break;
+                default:
+                    this.$message.warning("填写信息错误");
+            }
+        })
     }
   }
     
@@ -82,8 +126,11 @@ export default {
 
 <style scoped>
 .Right{
-    margin-top: 200px;
+    margin-top: 155px;
     /* border: 1px solid black; */
+    background-color: rgb(255, 168, 47);
+    padding: 10px 0 10px 0;
+    border-radius: 20px;
 }
 .Title{
     text-align: center;
@@ -93,7 +140,7 @@ export default {
 .insertTitle{
     /* border: 1px solid black; */
     float: right;
-    margin-right: 5px;
+    margin-right: 10px;
     margin-top: 10px;
 }
 .insertBox{

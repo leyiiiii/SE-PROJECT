@@ -5,7 +5,7 @@
         <Navi></Navi>
         </div></el-col>
       <el-col :span="22"><div class="Right">
-        Abc</div></el-col>
+        I am home PAGE!</div></el-col>
     </el-row>
   </div>
 </template>
@@ -24,5 +24,7 @@ export default {
 <style scoped>
 .Right{
   background-color: red;
+  text-align: center;
+  font-size: 64px;
 }
 </style>

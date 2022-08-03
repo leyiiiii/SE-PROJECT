@@ -32,7 +32,7 @@
         <i class="el-icon-brush"></i>
         <span slot="title">设计</span>
       </el-menu-item>
-      <el-menu-item index="/invite">
+      <el-menu-item index="/invitation">
         <i class="el-icon-postcard"></i>
         <span slot="title">邀请</span>
       </el-menu-item>

@@ -7,7 +7,7 @@
         <el-row>
             <el-col :span="12">
                 <div class="info">
-                    <span class="teamInfo1">取啥名字好团队</span>
+                    <span class="teamInfo1">{{ form.name }}</span>
             </div></el-col>
             <el-col :span="8">
                 <div class="inviteButton">
@@ -30,12 +30,18 @@
             <el-col :span="12">
                 <div class="info">
                     <span class="teamInfo2">团队创建日期&nbsp;:&nbsp;</span>
-                    <span class="teamInfo2">1/8/2022</span>
+                    <span class="teamInfo2">{{ form.date }}</span>
             </div></el-col>
             <el-col :span="12">
                 <div class="info">
                     <span class="teamInfo2">团队人数&nbsp;:&nbsp;</span>
-                    <span class="teamInfo2">50</span>
+                    <span class="teamInfo2">{{ form.count }}</span>
+            </div></el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="22"><div class="infoDesc">
+                <span class="teamInfo2">团队简介&nbsp;:&nbsp;</span>
+                <span>{{ form.desc }}</span>
             </div></el-col>
         </el-row>
         <el-row>
@@ -44,12 +50,12 @@
                 <span class="membersTitle">项目</span>
                  <el-button class="addButton" icon="el-icon-plus" circle @click="dialogVisible = true"></el-button>
                  <el-dialog title="创建项目" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
-                 <el-form :model="form" label-width="auto">
+                 <el-form :model="project" label-width="auto">
                     <el-form-item label="项目名称">
-                        <el-input v-model="form.name"></el-input>
+                        <el-input v-model="project.name"></el-input>
                     </el-form-item>
                     <el-form-item label="项目简介">
-                      <el-input type="textarea" :autosize="{ minRows: 2 }" v-model="form.desc" autocomplete="off" resize="none"></el-input>
+                      <el-input type="textarea" :autosize="{ minRows: 2 }" v-model="project.desc" autocomplete="off" resize="none"></el-input>
                     </el-form-item>
                  </el-form>
                  <span slot="footer" class="dialog-footer">
@@ -59,13 +65,13 @@
                 </el-dialog>
                 </div></el-col>
         </el-row>
-        <el-row v-if="haveProject">
+        <el-row v-if="!haveProject">
             <el-col :span="24"><div class="projects">
             暂无项目！
             </div></el-col>
         </el-row>
         <el-row v-else>
-            <el-button class="projectButton" v-for="item in projectList" :key="item.id" @click="enterProject">{{ item.name }}</el-button>
+            <el-button class="projectButton" v-for="item in projectList" :key="item.id" @click="enterProject(item.id)">{{ item.title }}</el-button>
         </el-row>
         <el-row>
             <el-col :span="24"><div class="members">
@@ -126,30 +132,16 @@ export default {
         form: {
             name:'',
             desc:'',
+            date:'',
+            count:'',
+        },
+        project: {
+            name:'',
+            desc:'',
         },
         inviteName:'',
         haveProject: false,
-        projectList:[{
-            id:1,
-            name:'皮卡丘项目',
-        },
-        {
-            id:2,
-            name:'皮卡茶项目',
-        },
-        {
-            id:3,
-            name:'皮卡卡项目',
-        },
-        {
-            id:4,
-            name:'黄乐乐搞大事',
-        },
-        {
-            id:5,
-            name:'黄丽丽搞小事',
-        },
-        ],
+        projectList:[],
         membersList:[{
             id:1,
             username:'Lele',
@@ -209,16 +201,20 @@ export default {
         ]
     }
   },
+  mounted() {
+    this.getTeamInfo();
+    this.getProjectDetail();
+  },
   methods: {
     cancelChanges() {
         this.dialogVisible = false;
-        this.form.name = '';
-        this.form.desc = '';
+        this.project.name = '';
+        this.project.desc = '';
     },
     handleClose() {
         this.dialogVisible = false;
-        this.form.name = '';
-        this.form.desc = '';
+        this.project.name = '';
+        this.project.desc = '';
     },
     cancelChanges2() {
         this.dialogVisible2 = false;
@@ -229,25 +225,124 @@ export default {
         this.inviteName = '';
     },
     createProject() {
+        if(this.project.name == "") {
+                this.$message.warning("项目名不可为空！");
+                return;
+        }
+            
+        if(this.project.desc == "") {
+            this.$message.warning("项目简介不可为空！");
+            return;
+        }
+
+        const formData = new FormData();
+            formData.append("title", this.project.name);
+            formData.append("description", this.project.desc);
+
+        var header = {};
+        if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+
+        this.$axios({
+            method:"post",
+            url:"/api/v1/project/create/" + this.$route.params.id,
+            data: formData,
+            headers: header,
+        })
+          .then((res) => {
+            console.log(res);
+            this.$message.success("创建项目成功");
+            setTimeout(function () {
+                location.reload(true);
+            }, 500);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.$message.warning("创建项目失败")
+          });
+
         this.dialogVisible = false;
     },
     enterProject(projectID) {
-        this.$router.push("/project");
+        this.$router.push("/project/" + projectID);
     },
     inviteMember() {
 
     },
     leaveTeam() {
+        var header = {};
+        if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
 
+        this.$axios({
+            method:"delete",
+            url:"/api/v1/team/leave/" + this.$route.params.id,
+            headers: header,
+        })
+          .then((res) => {
+            console.log(res);
+            this.$message.success("离开团队成功");
+            setTimeout(function () {
+                this.$router.push("/");
+            }, 500);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.$message.warning("您是主管理员，无法离开！")
+          });
+    },
+    async getTeamInfo() {
+        await this.$axios.all([
+            this.getTeamDetail(),
+        ])
+        .then(this.$axios.spread((tDetail) => {
+            console.log(tDetail);
+            this.form.name = tDetail.data.teamName;
+            this.form.desc = tDetail.data.description;
+            this.form.count = tDetail.data.members;
+            this.form.date = tDetail.data.createdAt.slice(0, 10);
+        }))
+    },
+    getTeamMembers() {
+        return this.$axios({
+        method: "get",
+        url: "/api/v1/team/member/list/" + this.$route.params.id,
+      });
+    },
+    getTeamDetail() {
+        return this.$axios({
+        method: "get",
+        url: "/api/v1/team/" + this.$route.params.id,
+      });
+    },
+    getProjectDetail() {
+        var header = {};
+        if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+        this.$axios({
+        method: "get",
+        url: "/api/v1/project/list?belongTo" + this.$route.params.id,
+        headers: header,
+        })
+          .then((res) =>{
+            console.log(res);
+            this.projectList = res.data.results;
+            
+            if(this.projectList.length > 0) {
+                this.haveProject = true;
+            }
+          })
+          .catch((err) =>{
+            console.log(err);
+          })
     }
   }
 }
 </script>
 
 <style scoped>
-.Right{
-  /* background-color: yellow; */
-}
 .inviteButton{
     /* border: 1px solid black; */
     margin-top: 20px;
@@ -257,6 +352,10 @@ export default {
 }
 .info{
     margin: 10px;
+    /* border: 1px solid black; */
+}
+.infoDesc{
+    margin-left: 10px;
     /* border: 1px solid black; */
 }
 .teamInfo1{

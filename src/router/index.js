@@ -20,7 +20,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
   },
   {
-    path: '/team',
+    path: '/team/:id',
     name: 'team',
     component: () => import('../views/Team.vue'),
   },
@@ -35,9 +35,14 @@ const routes = [
     component: () => import('../views/Register.vue'),
   },
   {
-    path: '/project',
+    path: '/project/:id',
     name: 'project',
     component: () => import('../views/Project.vue'),
+  },
+  {
+    path: '/invitation',
+    name: 'invitation',
+    component: () => import('../views/Invitation.vue'),
   },
 ]
 

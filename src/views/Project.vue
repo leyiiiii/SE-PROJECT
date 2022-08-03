@@ -79,6 +79,9 @@ export default {
             }
         }
     },
+    mounted() {
+        this.getProjectInfo();
+    },
     methods: {
         cancelChanges() {
             this.dialogVisible = false;
@@ -99,8 +102,27 @@ export default {
 
         },
         toDraw() {
-            window.location.href = "https://app.diagrams.net/"
+            window.open(
+            "https://app.diagrams.net/", "_blank");
         },
+        getProjectInfo() {
+        //     this.$axios({
+        //     method:"delete",
+        //     url:"/api/v1/team/leave/" + this.$route.params.id,
+        //     headers: header,
+        // })
+        //   .then((res) => {
+        //     console.log(res);
+        //     this.$message.success("离开团队成功");
+        //     setTimeout(function () {
+        //         this.$router.push("/");
+        //     }, 500);
+        //   })
+        //   .catch((err) => {
+        //     console.log(err);
+        //     this.$message.warning("您是主管理员，无法离开！")
+        //   });
+        }
     },
 }
 </script>

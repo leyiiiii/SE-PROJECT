@@ -16,7 +16,7 @@
             </el-row>
             <el-row  justify="center" type="flex">
                 <el-col :span="14"><div class="insertBox">
-                    <el-input v-model="inputPwd" placeholder="请输入密码" show-password></el-input>
+                    <el-input @keyup.enter.native="Login" v-model="inputPwd" placeholder="请输入密码" show-password></el-input>
                     <el-button class="registerButton" type="text" @click="gotoRegister">注册</el-button>
                 </div></el-col>
             </el-row>

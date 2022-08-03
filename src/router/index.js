@@ -27,6 +27,11 @@ const routes = [
     component: () => import('../views/Team.vue'),
   },
   {
+    path: '/project',
+    name: 'project',
+    component: () => import('../views/Project.vue'),
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('../views/Login.vue'),
@@ -50,7 +55,8 @@ const routes = [
     path: '/design3',
     name: 'design3',
     component: () => import('../views/Design3.vue'),
-  }
+  },
+  {
     path: '/writer',
     name:'writer',
     component: Writer

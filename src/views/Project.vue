@@ -62,7 +62,6 @@
 
 <script>
 import Navi from '@/components/NavigationBar.vue'
-
 export default {
     name: 'Project',
     components: {
@@ -99,7 +98,6 @@ export default {
             this.form.desc = this.form.descTemp;
         },
         confirmDelete() {
-
         },
         toDraw() {
             window.open(
@@ -163,4 +161,4 @@ export default {
 .el-icon-data-line{
     font-size: 26px;
 }
-</style>
+</style> 

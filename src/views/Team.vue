@@ -116,10 +116,8 @@
         </div></el-col>
     </el-row>
 </template>
-
 <script>
 import Navi from '@/components/NavigationBar.vue'
-
 export default {
   name: 'Team',
   components: {
@@ -268,7 +266,6 @@ export default {
         this.$router.push("/project/" + projectID);
     },
     inviteMember() {
-
     },
     leaveTeam() {
         var header = {};
@@ -341,7 +338,6 @@ export default {
   }
 }
 </script>
-
 <style scoped>
 .inviteButton{
     /* border: 1px solid black; */

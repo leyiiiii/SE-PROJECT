@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import user from "@/store/user";
+import Writer from "@/views/Writer";
+import Paper from "@/views/Paper";
 
 Vue.use(VueRouter)
 
@@ -25,6 +27,11 @@ const routes = [
     component: () => import('../views/Team.vue'),
   },
   {
+    path: '/project',
+    name: 'project',
+    component: () => import('../views/Project.vue'),
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('../views/Login.vue'),
@@ -38,6 +45,31 @@ const routes = [
     path: '/project/:id',
     name: 'project',
     component: () => import('../views/Project.vue'),
+  },
+  {
+    path: '/design',
+    name: 'design',
+    component: () => import('../views/Design.vue'),
+  },
+  {
+    path: '/design2',
+    name: 'design2',
+    component: () => import('../views/Design2.vue'),
+  },
+  {
+    path: '/design3',
+    name: 'design3',
+    component: () => import('../views/Design3.vue'),
+  },
+  {
+    path: '/writer',
+    name:'writer',
+    component: Writer
+  },
+  {
+    path:'/paper',
+    name:'paper',
+    component: Paper
   },
   {
     path: '/invitation',

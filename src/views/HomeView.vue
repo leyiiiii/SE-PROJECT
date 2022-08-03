@@ -41,10 +41,8 @@
     </el-row>
   </div>
 </template>
-
 <script>
 import Navi from '@/components/NavigationBar.vue'
-
 export default {
   name: 'HomeView',
   components: {

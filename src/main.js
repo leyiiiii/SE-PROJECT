@@ -3,9 +3,17 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import axios from 'axios'
+import '@/custom-component' // 注册自定义组件
+
+import '@/assets/iconfont/iconfont.css'
+import '@/styles/animate.scss'
+import 'element-ui/lib/theme-chalk/index.css'
+import '@/styles/reset.css'
+import '@/styles/global.scss'
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+
 Vue.use(ElementUI);
 Vue.prototype.$axios = axios
 

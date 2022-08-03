@@ -35,10 +35,20 @@ const routes = [
     component: () => import('../views/Register.vue'),
   },
   {
-    path: '/project',
-    name: 'project',
-    component: () => import('../views/Project.vue'),
+    path: '/design',
+    name: 'design',
+    component: () => import('../views/Design.vue'),
   },
+  {
+    path: '/design2',
+    name: 'design2',
+    component: () => import('../views/Design2.vue'),
+  },
+  {
+    path: '/design3',
+    name: 'design3',
+    component: () => import('../views/Design3.vue'),
+  }
 ]
 
 const router = new VueRouter({

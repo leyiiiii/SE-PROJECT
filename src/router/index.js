@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import user from "@/store/user";
+import Writer from "@/views/Writer";
+import Paper from "@/views/Paper";
 
 Vue.use(VueRouter)
 
@@ -49,6 +51,15 @@ const routes = [
     name: 'design3',
     component: () => import('../views/Design3.vue'),
   }
+    path: '/writer',
+    name:'writer',
+    component: Writer
+  },
+  {
+    path:'/paper',
+    name:'paper',
+    component: Paper
+  },
 ]
 
 const router = new VueRouter({

@@ -9,6 +9,22 @@
                 <div class="info">
                     <span class="teamInfo1">取啥名字好团队</span>
             </div></el-col>
+            <el-col :span="8">
+                <div class="inviteButton">
+                    <el-button type="info" round @click="dialogVisible2 = true">邀请成员</el-button>
+                    <el-dialog title="邀请成员" :visible.sync="dialogVisible2" width="30%" :before-close="handleClose2">
+                        <el-form :model="inviteName" label-width="auto">
+                            <el-form-item label="用户名字">
+                                <el-input v-model="inviteName"></el-input>
+                            </el-form-item>
+                    </el-form>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="cancelChanges2">取消</el-button>
+                        <el-button type="primary" @click="inviteMember">发送邀请</el-button>
+                    </span>
+                 </el-dialog>
+                    <el-button type="danger" round @click="leaveTeam">离开团队</el-button>
+            </div></el-col>
         </el-row>
         <el-row>
             <el-col :span="12">
@@ -49,7 +65,7 @@
             </div></el-col>
         </el-row>
         <el-row v-else>
-            <el-button class="projectButton" v-for="item in projectList" :key="item.id">{{ item.name }}</el-button>
+            <el-button class="projectButton" v-for="item in projectList" :key="item.id" @click="enterProject">{{ item.name }}</el-button>
         </el-row>
         <el-row>
             <el-col :span="24"><div class="members">
@@ -99,17 +115,19 @@
 import Navi from '@/components/NavigationBar.vue'
 
 export default {
-  name: 'HomeView',
+  name: 'Team',
   components: {
     Navi,
   },
   data() {
     return {
         dialogVisible: false,
+        dialogVisible2: false,
         form: {
             name:'',
             desc:'',
         },
+        inviteName:'',
         haveProject: false,
         projectList:[{
             id:1,
@@ -202,9 +220,26 @@ export default {
         this.form.name = '';
         this.form.desc = '';
     },
+    cancelChanges2() {
+        this.dialogVisible2 = false;
+        this.inviteName = '';
+    },
+    handleClose2() {
+        this.dialogVisible2 = false;
+        this.inviteName = '';
+    },
     createProject() {
         this.dialogVisible = false;
     },
+    enterProject(projectID) {
+        this.$router.push("/project");
+    },
+    inviteMember() {
+
+    },
+    leaveTeam() {
+
+    }
   }
 }
 </script>
@@ -213,8 +248,16 @@ export default {
 .Right{
   /* background-color: yellow; */
 }
+.inviteButton{
+    /* border: 1px solid black; */
+    margin-top: 20px;
+}
+.inviteButton button{
+    margin-right: 10px;
+}
 .info{
     margin: 10px;
+    /* border: 1px solid black; */
 }
 .teamInfo1{
     font-size: 40px;

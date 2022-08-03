@@ -32,6 +32,10 @@
         <i class="el-icon-brush"></i>
         <span slot="title">设计</span>
       </el-menu-item>
+      <el-menu-item index="/invite">
+        <i class="el-icon-postcard"></i>
+        <span slot="title">邀请</span>
+      </el-menu-item>
       <el-menu-item index="/login">
         <i class="el-icon-user-solid"></i>
         <span slot="title">登录

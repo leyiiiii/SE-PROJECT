@@ -5,6 +5,7 @@
         <Navi></Navi>
         </div></el-col>
       <el-col :span="22"><div class="Right">
+        <img id="bg" src="@/assets/Workhard3.jpg"/>
         <el-row justify="center" type="flex">
           <el-col :span="12"><div class="bigIcon">
             <i class="el-icon-office-building"></i>
@@ -15,7 +16,7 @@
             <span>没有团队？创一个？加入一个？</span>  
           </div></el-col>
         </el-row>
-        <el-row>
+        <el-row v-if="isLogin">
           <el-col :span="24"><div class="Button">
             <el-button-group>
               <el-button type="primary" icon="el-icon-s-flag" @click="dialogVisible = true">创建团队</el-button>
@@ -37,6 +38,13 @@
             </el-button-group>
           </div></el-col>
         </el-row>
+        <el-row v-else type="flex" align="middle">
+          <el-col :span="24"><div class="goLogin">
+            <span>马上登录吧</span>
+            <i class="el-icon-right"></i>
+            <el-button type="primary" @click="toLogin">登录</el-button>
+          </div></el-col>
+        </el-row>
       </div></el-col>
     </el-row>
   </div>
@@ -44,6 +52,8 @@
 
 <script>
 import Navi from '@/components/NavigationBar.vue'
+import user from "@/store/user";
+
 export default {
   name: 'HomeView',
   components: {
@@ -55,7 +65,16 @@ export default {
       team: {
         name:'',
         desc:'',
-      }
+      },
+      isLogin: false,
+    }
+  },
+  created() {
+    var userInfo;
+    userInfo = user.getters.getUser(user.state());
+    if(userInfo) {
+      this.userId = userInfo.user.id;
+      this.isLogin = true;
     }
   },
   methods: {
@@ -107,6 +126,9 @@ export default {
     },
     checkInvitation() {
       this.$router.push("/invitation");
+    },
+    toLogin() {
+      this.$router.push("/login");
     }
   }
 }
@@ -116,6 +138,7 @@ export default {
 .Title{
   text-align: center;
   font-size: 64px;
+  font-family: STKaiti;
 }
 .bigIcon{
   /* border: 1px solid black; */
@@ -126,5 +149,24 @@ export default {
 .Button{
   text-align: center;
   margin-top: 20px;
+}
+.goLogin{
+  /* border: 1px solid black; */
+  text-align: center;
+  font-size: 36px;
+}
+.goLogin button{
+  width: 120px;
+  font-size: 30px;
+  margin-top: 10px;
+  background-color: rgba(154, 85, 85, 0.664);
+  border-color: rgb(140, 83, 83);
+}
+#bg {
+  width: 100%;
+  position: absolute;
+  z-index: -1;
+  object-fit: cover;
+  opacity: 0.8;
 }
 </style>

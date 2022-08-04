@@ -500,9 +500,11 @@ export default {
 }
 .teamInfo1{
     font-size: 40px;
+    font-family: fantasy;
 }
 .teamInfo2{
     font-size: 20px;
+    font-family: cursive;
 }
 .projects{
     margin-left: 30px;

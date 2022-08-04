@@ -8,7 +8,7 @@
           :router="true">
         <el-menu-item index="/">
           <!-- logo -->
-          <i class="el-icon-s-cooperation"></i>
+          <i class="el-icon-collection"></i>
         </el-menu-item>
         <el-submenu index="4">
           <template slot="title">
@@ -132,7 +132,7 @@ export default {
   width: 130px;
 }
 
-.el-icon-s-cooperation {
+.el-icon-collection {
   margin-left: 30px;
 }
 .nav-menu {

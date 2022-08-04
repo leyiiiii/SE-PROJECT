@@ -1,5 +1,6 @@
 <template>
     <el-row justify="center" type="flex">
+        <img id="bg" src="@/assets/Teamwork3.jpg"/>
         <!-- <el-col :span="2"><div class="Left">
             <Navi></Navi>
         </div></el-col> -->
@@ -128,13 +129,14 @@ export default {
 .Right{
     margin-top: 155px;
     /* border: 1px solid black; */
-    background-color: rgb(255, 168, 47);
+    /* background-color: rgb(255, 168, 47, 0.4); */
+    background-color: rgba(209, 209, 209, 0.5);
     padding: 10px 0 10px 0;
     border-radius: 20px;
 }
 .Title{
     text-align: center;
-    font-size: 48px;
+    font-size: 66px;
     margin-bottom: 10px;
 }
 .insertTitle{
@@ -149,8 +151,17 @@ export default {
 .toLogin{
     float: right;
     margin-right: 20px;
+    font-size: 16px;
+    color: black;
 }
 .Register{
     margin-top: 10px;
+}
+#bg {
+  width: 100%;
+  position: absolute;
+  z-index: -1;
+  object-fit: cover;
+  opacity: 0.5;
 }
 </style>

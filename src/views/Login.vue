@@ -1,5 +1,6 @@
 <template>
     <el-row justify="center" type="flex">
+        <img id="bg" src="@/assets/Teamwork3.jpg"/>
         <!-- <el-col :span="2"><div class="Left">
             <Navi></Navi>
         </div></el-col> -->
@@ -39,7 +40,11 @@ export default {
         return {
             inputName:'',
             inputPwd:'',
+            bgHeight:'',
         }
+    },
+    mounted() {
+        this.bgHeight =  document.documentElement.clientHeight - $("#header").outerHeight(true) - 1;
     },
     methods: {
         gotoRegister() {
@@ -104,11 +109,11 @@ export default {
     /* border: 1px solid black; */
     padding: 10px 0 10px 0;
     border-radius: 20px;
-    background-color: rgb(255, 168, 47);
+    background-color: rgba(209, 209, 209, 0.5);
 }
 .Title{
     text-align: center;
-    font-size: 48px;
+    font-size: 66px;
     margin-bottom: 10px;
 }
 .insertBox{
@@ -121,8 +126,17 @@ export default {
 }
 .registerButton{
     float: right;
+    font-size: 16px;
+    color: black;
 }
 .Login{
     margin-top: 10px;
+}
+#bg {
+  width: 100%;
+  position: absolute;
+  z-index: -1;
+  object-fit: cover;
+  opacity: 0.5;
 }
 </style>

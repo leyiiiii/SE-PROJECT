@@ -36,8 +36,8 @@
                 </div></el-col>
             </el-row>
             <el-row>
-                <el-col :span="3"><div class="Title2">
-                    <span>项目简介:</span>
+                <el-col :span="2.5"><div class="Title2">
+                    <span>项目简介&nbsp;:&nbsp;</span>
                 </div></el-col>
                 <el-col :span="20" v-if="hasChinese()"><div class="Desc">
                     <span>{{ form.desc }}</span>
@@ -79,6 +79,7 @@ export default {
                 desc:'',
                 nameTemp:'',
                 descTemp:'',
+                belongTo:'',
             }
         }
     },
@@ -112,9 +113,30 @@ export default {
             this.form.descTemp = this.form.desc;
         },
         saveEdit() {
-            this.dialogVisible = false;
-            this.form.name = this.form.nameTemp;
-            this.form.desc = this.form.descTemp;
+            const formData = new FormData();
+            formData.append("title", this.form.nameTemp);
+            formData.append("description", this.form.descTemp);
+
+            var header = {};
+            if (localStorage.getItem("token"))
+                header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+            this.$axios({
+                method:"put",
+                url:"/api/v1/project/"  + this.$route.params.id,
+                data: formData,
+                headers: header,
+            })
+                .then((res) =>{
+                    console.log(res);
+                    this.$message.success("编辑成功");
+                    this.dialogVisible = false;
+                    this.form.name = this.form.nameTemp;
+                    this.form.desc = this.form.descTemp;
+                })
+                .catch((err) =>{
+                    console.log(err);
+                })
         },
         hasChinese() {
             const REGEX_CHINESE = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f]/;
@@ -129,6 +151,24 @@ export default {
             }
         },
         confirmDelete() {
+            var header = {};
+            if (localStorage.getItem("token"))
+                header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+            this.$axios({
+                method:"delete",
+                url:"/api/v1/project/" + this.$route.params.id,
+                headers: header,
+            })
+            .then((res) => {
+                console.log(res);
+                this.$message.success("删除成功");
+                this.$router.push("/team/" + this.form.belongTo);
+            })
+            .catch((err) => {
+                console.log(err);
+                this.$message.warning("删除失败")
+            });
         },
         toDoc() {            
             if(this.activeTab != 1) this.$router.replace("/project/" + this.projectId);
@@ -167,6 +207,7 @@ export default {
             this.form.desc = res.data.description;
             this.form.nameTemp = this.form.name;
             this.form.descTemp = this.form.desc;
+            this.form.belongTo = res.data.belongTo;
           })
           .catch((err) => {
             console.log(err);
@@ -179,6 +220,7 @@ export default {
 <style scoped>
 .Title{
     font-size: 36px;
+    font-family: fantasy;
     margin: 10px 50px;
 }
 .Buttons{
@@ -193,10 +235,6 @@ export default {
     margin-top: 5px;
     /* border: 1px solid black; */
 }
-.Title3{
-    margin: 5px 0 0 0px;
-    font-size: 20px;
-}
 .Desc{
     font-size: 20px;
     margin-top: 5px;
@@ -208,11 +246,12 @@ export default {
 }
 .Desc2{
     font-size: 20px;
-    margin-top: 8px;
+    margin-top: 5px;
     overflow-wrap: break-word;
     word-wrap: break-word;
     hyphens: auto;
     white-space: normal;
+    font-family: cursive;
     /* border: 1px solid black; */
 }
 .function{

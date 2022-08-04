@@ -41,6 +41,7 @@
     </el-row>
   </div>
 </template>
+
 <script>
 import Navi from '@/components/NavigationBar.vue'
 export default {
@@ -105,7 +106,7 @@ export default {
         })
     },
     checkInvitation() {
-      this.$router.push("/invite");
+      this.$router.push("/invitation");
     }
   }
 }

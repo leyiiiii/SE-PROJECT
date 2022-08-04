@@ -2,8 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import user from "@/store/user";
-import Writer from "@/views/Writer";
-import Paper from "@/views/Paper";
 
 Vue.use(VueRouter)
 
@@ -25,11 +23,6 @@ const routes = [
     path: '/team/:id',
     name: 'team',
     component: () => import('../views/Team.vue'),
-  },
-  {
-    path: '/project',
-    name: 'project',
-    component: () => import('../views/Project.vue'),
   },
   {
     path: '/login',
@@ -64,12 +57,12 @@ const routes = [
   {
     path: '/writer',
     name:'writer',
-    component: Writer
+    component: () => import('../views/Writer.vue'),
   },
   {
-    path:'/paper',
-    name:'paper',
-    component: Paper
+    path:'/document/:id',
+    name:'document',
+    component: () => import('../views/Document.vue'),
   },
   {
     path: '/invitation',

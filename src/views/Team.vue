@@ -11,9 +11,9 @@
             </div></el-col>
             <el-col :span="8">
                 <div class="inviteButton">
-                    <el-button type="info" round @click="dialogVisible2 = true">邀请成员</el-button>
+                    <el-button v-if="isMainAdmin || isAdmin" type="info" round @click="dialogVisible2 = true">邀请成员</el-button>
                     <el-dialog title="邀请成员" :visible.sync="dialogVisible2" width="30%" :before-close="handleClose2">
-                        <el-form :model="inviteName" label-width="auto">
+                        <el-form label-width="auto">
                             <el-form-item label="用户名字">
                                 <el-input v-model="inviteName"></el-input>
                             </el-form-item>
@@ -39,9 +39,14 @@
             </div></el-col>
         </el-row>
         <el-row>
-            <el-col :span="22"><div class="infoDesc">
-                <span class="teamInfo2">团队简介&nbsp;:&nbsp;</span>
-                <span>{{ form.desc }}</span>
+            <el-col :span="2"><div class="infoDesc">
+                <span class="teamInfo2">团队简介&nbsp;:</span>
+            </div></el-col>
+            <el-col :span="20" v-if="hasChinese()"><div class="infoDesc2">
+                <span class="teamInfo2">{{ form.desc }}</span>
+            </div></el-col>
+            <el-col :span="20" v-else><div class="infoDesc3">
+                <span class="teamInfo2">{{ form.desc }}</span>
             </div></el-col>
         </el-row>
         <el-row>
@@ -94,8 +99,8 @@
                         <span>{{ item.realname }}</span>
                 </div></el-col>
                 <el-col :span="4"><div class="buttonArea">
-                <el-button class="promoteButton" type="success" round>升为管理员</el-button>
-                <el-button class="kickButton" type="danger" round>移除</el-button>
+                <el-button class="promoteButton" type="success" round v-if="checkPosition(item.position)" @click="promoteMember">升为管理员</el-button>
+                <el-button class="kickButton" type="danger" round v-if="checkPosition2(item.position)" @click="kickMember">移除</el-button>
                 </div></el-col>
             </el-row>
             <el-row>
@@ -107,7 +112,7 @@
                 <el-col :span="10">
                     <div class="membersInfo">
                         <span>身份:&nbsp;</span>
-                        <span>{{ item.pos }}</span>
+                        <span>{{ item.position }}</span>
                 </div></el-col>
             </el-row>
             </div></el-col>
@@ -118,15 +123,28 @@
 </template>
 <script>
 import Navi from '@/components/NavigationBar.vue'
+import user from "@/store/user";
+
 export default {
   name: 'Team',
   components: {
     Navi,
   },
+  created() {
+    var userInfo;
+    userInfo = user.getters.getUser(user.state());
+    if(userInfo) {
+      this.userId = userInfo.user.id;
+    }
+  },
   data() {
     return {
         dialogVisible: false,
         dialogVisible2: false,
+        isMainAdmin: false,
+        isAdmin: false,
+        isMember: false,
+        userId:'',
         form: {
             name:'',
             desc:'',
@@ -140,63 +158,7 @@ export default {
         inviteName:'',
         haveProject: false,
         projectList:[],
-        membersList:[{
-            id:1,
-            username:'Lele',
-            realname:'HuangLele',
-            pos:'Owner',
-            email:'abc@gmail.com',
-        },
-        {
-            id:2,
-            username:'Lolo',
-            realname:'HuangLolo',
-            pos:'Admin',
-            email:'efg@gmail.com',
-        },
-        {
-            id:3,
-            username:'Lili',
-            realname:'HuangLili',
-            pos:'Member',
-            email:'hij@gmail.com',
-        },
-                {
-            id:4,
-            username:'Lili',
-            realname:'HuangLili',
-            pos:'Member',
-            email:'hij@gmail.com',
-        },
-        {
-            id:5,
-            username:'Lili',
-            realname:'HuangLili',
-            pos:'Member',
-            email:'hij@gmail.com',
-        },
-        {
-            id:6,
-            username:'Lili',
-            realname:'HuangLili',
-            pos:'Member',
-            email:'hij@gmail.com',
-        },
-        {
-            id:7,
-            username:'Lili',
-            realname:'HuangLili',
-            pos:'Member',
-            email:'hij@gmail.com',
-        },
-        {
-            id:8,
-            username:'Lili',
-            realname:'HuangLili',
-            pos:'Member',
-            email:'hij@gmail.com',
-        },
-        ]
+        membersList:[]
     }
   },
   mounted() {
@@ -266,6 +228,29 @@ export default {
         this.$router.push("/project/" + projectID);
     },
     inviteMember() {
+        const formData = new FormData();
+        formData.append("user", this.inviteName);
+        formData.append("teamId", this.$route.params.id);
+
+        var header = {};
+        if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+        this.$axios({
+            method:"post",
+            url:"/api/v1/team/invite",
+            data: formData,
+            headers: header,
+        })
+          .then((res) => {
+            console.log(res);
+            this.$message.success("邀请成功");
+            this.dialogVisible2 = false;
+          })
+          .catch((err) => {
+            console.log(err);
+            this.$message.warning("抱歉，邀请失败！")
+          });
     },
     leaveTeam() {
         var header = {};
@@ -292,19 +277,63 @@ export default {
     async getTeamInfo() {
         await this.$axios.all([
             this.getTeamDetail(),
+            this.getTeamMembers(),
         ])
-        .then(this.$axios.spread((tDetail) => {
+        .then(this.$axios.spread((tDetail, tMembers) => {
             console.log(tDetail);
+            console.log(tMembers);
             this.form.name = tDetail.data.teamName;
             this.form.desc = tDetail.data.description;
             this.form.count = tDetail.data.members;
             this.form.date = tDetail.data.createdAt.slice(0, 10);
+            this.membersList = tMembers.data.results;
+
+            for(let i = 0; i < this.membersList.length; i++) {
+                if(this.membersList[i].id === this.userId) {
+                    if(this.membersList[i].position == 0) {
+                        this.isMainAdmin = true;
+                        console.log("MAIN");
+                        break;
+                    }
+                    if(this.membersList[i].position == 1) {
+                        this.isAdmin = true;
+                        console.log("ADMIN");
+                        break;
+                    }
+                    if(this.membersList[i].position == 2) {
+                        this.isMember = true;
+                        console.log("NORMAL");
+                        break;
+                    }
+                }
+            }
+
+            for(let i = 0; i < this.membersList.length; i++) {
+                if(this.membersList[i].position == 0) {
+                    this.membersList[i].position = 'Main Admin';
+                }
+                if(this.membersList[i].position == 1) {
+                    this.membersList[i].position = 'Admin';
+                }
+                if(this.membersList[i].position == 2) {
+                    this.membersList[i].position = 'Member';
+                }
+            }
         }))
+        .catch((err) =>{
+            console.log(err);
+            this.$router.push({path: '/'});
+        })
     },
     getTeamMembers() {
+        var header = {};
+        if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
         return this.$axios({
         method: "get",
         url: "/api/v1/team/member/list/" + this.$route.params.id,
+        headers: header,
       });
     },
     getTeamDetail() {
@@ -320,7 +349,7 @@ export default {
 
         this.$axios({
         method: "get",
-        url: "/api/v1/project/list?belongTo" + this.$route.params.id,
+        url: "/api/v1/project/list?belongTo=" + this.$route.params.id,
         headers: header,
         })
           .then((res) =>{
@@ -334,6 +363,33 @@ export default {
           .catch((err) =>{
             console.log(err);
           })
+    },
+    hasChinese() {
+        const REGEX_CHINESE = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f]/;
+        const hasChinese = this.form.desc.match(REGEX_CHINESE);
+        if(hasChinese) {
+            console.log("true");
+            return true;
+        }
+        else {
+            console.log("false");
+            return false;
+        }
+    },
+    checkPosition(userPos) {
+        if(userPos === "Member" && (this.isMainAdmin || this.isAdmin)) {
+            return true;
+        }
+        else return false;
+    },
+    checkPosition2(userPos) {
+        if(userPos === "Member" && (this.isMainAdmin || this.isAdmin)) {
+            return true;
+        }
+        if(userPos === "Admin" && this.isMainAdmin) {
+            return true;
+        }
+        else return false;
     }
   }
 }
@@ -353,6 +409,21 @@ export default {
 .infoDesc{
     margin-left: 10px;
     /* border: 1px solid black; */
+}
+.infoDesc2{
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+    white-space: normal;
+    /* border: 1px solid black; */
+}
+.infoDesc3{
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+    white-space: normal;
+    /* border: 1px solid black; */
+    margin-top: 3px;
 }
 .teamInfo1{
     font-size: 40px;

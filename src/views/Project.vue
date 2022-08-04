@@ -39,7 +39,10 @@
                 <el-col :span="2"><div class="Title2">
                     <span>项目简介:</span>
                 </div></el-col>
-                <el-col :span="20"><div class="Desc">
+                <el-col :span="20" v-if="hasChinese()"><div class="Desc">
+                    <span>{{ form.desc }}</span>
+                </div></el-col>
+                <el-col :span="20" v-else><div class="Desc2">
                     <span>{{ form.desc }}</span>
                 </div></el-col>
             </el-row>
@@ -62,6 +65,7 @@
 
 <script>
 import Navi from '@/components/NavigationBar.vue'
+
 export default {
     name: 'Project',
     components: {
@@ -71,10 +75,10 @@ export default {
         return {
             dialogVisible: false,
             form: {
-                name:'皮卡丘项目',
-                desc:'你好你好你好你好我是一个项目',
-                nameTemp:'皮卡丘项目',
-                descTemp:'你好你好你好你好我是一个项目',
+                name:'',
+                desc:'',
+                nameTemp:'',
+                descTemp:'',
             }
         }
     },
@@ -97,6 +101,18 @@ export default {
             this.form.name = this.form.nameTemp;
             this.form.desc = this.form.descTemp;
         },
+        hasChinese() {
+            const REGEX_CHINESE = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f]/;
+            const hasChinese = this.form.desc.match(REGEX_CHINESE);
+            if(hasChinese) {
+                console.log("true");
+                return true;
+            }
+            else {
+                console.log("false");
+                return false;
+            }
+        },
         confirmDelete() {
         },
         toDraw() {
@@ -104,22 +120,26 @@ export default {
             "https://app.diagrams.net/", "_blank");
         },
         getProjectInfo() {
-        //     this.$axios({
-        //     method:"delete",
-        //     url:"/api/v1/team/leave/" + this.$route.params.id,
-        //     headers: header,
-        // })
-        //   .then((res) => {
-        //     console.log(res);
-        //     this.$message.success("离开团队成功");
-        //     setTimeout(function () {
-        //         this.$router.push("/");
-        //     }, 500);
-        //   })
-        //   .catch((err) => {
-        //     console.log(err);
-        //     this.$message.warning("您是主管理员，无法离开！")
-        //   });
+        var header = {};
+        if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+        this.$axios({
+            method:"get",
+            url:"/api/v1/project/" + this.$route.params.id,
+            headers: header,
+        })
+          .then((res) => {
+            console.log(res);
+            console.log("YES")
+            this.form.name = res.data.title;
+            this.form.desc = res.data.description;
+            this.form.nameTemp = this.form.name;
+            this.form.descTemp = this.form.desc;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
         }
     },
 }
@@ -140,6 +160,7 @@ export default {
     font-size: 24px;
     margin-left: 10px;
     margin-top: 5px;
+    /* border: 1px solid black; */
 }
 .Title3{
     margin: 50px 0 0 10px;
@@ -148,6 +169,20 @@ export default {
 .Desc{
     font-size: 24px;
     margin-top: 5px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+    white-space: normal;
+    /* border: 1px solid black; */
+}
+.Desc2{
+    font-size: 24px;
+    margin-top: 10px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+    white-space: normal;
+    /* border: 1px solid black; */
 }
 .function{
     /* border: 1px solid black; */

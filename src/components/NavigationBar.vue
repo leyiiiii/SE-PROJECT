@@ -42,13 +42,18 @@
           </el-menu-item-group>
         </el-submenu>
 
-        <el-menu-item index="/invite">
+        <el-menu-item index="/invitation">
           <i class="el-icon-postcard"></i>
           <span slot="title">邀请</span>
         </el-menu-item>
-        <el-menu-item index="/login">
+        <el-menu-item v-if="!isLogin" index="/login">
           <i class="el-icon-user-solid"></i>
           <span slot="title">登录
+        </span>
+        </el-menu-item>
+        <el-menu-item v-else @click="Logout">
+          <i class="el-icon-finished"></i>
+          <span slot="title">登出
         </span>
         </el-menu-item>
       </el-menu>
@@ -57,13 +62,36 @@
 </template>
 
 <script>
+import user from "@/store/user";
+
 export default {
+  data() {
+    return {
+      isLogin: false,
+    }
+  },
+  created() {
+    var userInfo;
+    userInfo = user.getters.getUser(user.state());
+    if(userInfo) {
+      this.isLogin = true;
+    }
+  },
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
+    },
+    Logout() {
+      localStorage.removeItem("token");
+      this.$store.dispatch("clear");
+      this.$message.success("登出成功");
+      setTimeout(() => {
+        this.$router.push({ path:'/'});
+        location.reload();
+      }, 500);
     }
   }
 }

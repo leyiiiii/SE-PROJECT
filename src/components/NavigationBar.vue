@@ -5,10 +5,7 @@
           class="nav-menu"
           @open="handleOpen"
           @close="handleClose"
-          :router="true"
-          background-color="#545c64"
-          text-color="#fff"
-          active-text-color="#ffd04b">
+          :router="true">
         <el-menu-item index="/">
           <!-- logo -->
           <i class="el-icon-s-cooperation"></i>
@@ -138,8 +135,17 @@ export default {
 .el-icon-s-cooperation {
   margin-left: 30px;
 }
+.nav-menu {
+  background-color: #545c64;
+}
+.nav-menu span {
+  color: #fff;
+}
 
 .el-menu {
   border-right: none;
+}
+.nav-menu:active span {
+  color: #ffd04b;
 }
 </style>

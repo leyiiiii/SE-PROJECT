@@ -339,7 +339,7 @@ export default {
         var header = {};
         if (localStorage.getItem("token"))
             header = { Authorization: "Bearer " + localStorage.getItem("token") };
-
+            
         return this.$axios({
         method: "get",
         url: "/api/v1/team/" + this.$route.params.id,

@@ -91,34 +91,20 @@ export default Vue.extend({
           console.log(err);
         });
     },
-    handleSpecialCharacters(jsonStr) {
-      let obj = {};
-      if (jsonStr && Object.prototype.toString.call(jsonStr) == "[object String]" && jsonStr != 'null') {
-        jsonStr = jsonStr.replace(/\r/g, "\\r");
-        jsonStr = jsonStr.replace(/\n/g, "\\n");
-        jsonStr = jsonStr.replace(/\t/g, "\\t");
-        jsonStr = jsonStr.replace(/\\/g, "\\\\");
-        jsonStr = jsonStr.replace(/\'/g, "&#39;");
-        jsonStr = jsonStr.replace(/ /g, "&nbsp;");
-        jsonStr = jsonStr.replace(/</g, "$lt;");
-        jsonStr = jsonStr.replace(/>/g, "$gt;");
-        obj = JSON.parse(jsonStr)
-      }
-      return obj;
-    }
   },
   mounted() {
     var arr = this.$route.params.id.split("&");
     this.documentId = arr[2];
     this.getDocDetail();
     window.setInterval(() => {
-      setTimeout(this.saveDoc(), 0)
+      // setTimeout(this.saveDoc(), 0)
     }, 1000);
   },
   beforeDestroy() {
     const editor = this.editor;
     if (editor == null) return;
     editor.destroy(); // 组件销毁时，及时销毁编辑器
+    clearInterval(this.timer);
   },
 });
 </script>

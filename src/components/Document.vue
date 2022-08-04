@@ -2,7 +2,6 @@
   <el-row>
     <el-col :span="3">
       <div class="content">
-        <div class="project-name">{{ projectName }}</div>
         <div class="content-title">
           <i class="el-icon-s-unfold"></i>
           文档
@@ -22,7 +21,6 @@
 </template>
 
 <script>
-// import {mapActions, mapGetters} from "vuex";
 import Editor from "@/components/Editor";
 export default {
   name: "test",
@@ -54,14 +52,13 @@ export default {
   created() {
     var arr = this.$route.params.id.split("&");
     this.projectId = arr[0];
-    if(arr.length > 1) {
+    this.getAll();
+    if(arr.length > 2) {
       this.isOpenADoc = true;
       this.documentId = arr[2];
       this.getDocDetail();
     }
     else this.isOpenADoc = false;
-    this.getProject();
-    this.getDocument();
   },
   methods: {
     openDoc(id) {
@@ -124,6 +121,10 @@ export default {
       }).then(() => {
         this.tableData.splice(index, 1);
       });
+    },
+    getAll() {
+      this.getProject();
+      this.getDocument();
     },
     async getDocDetail() {
       var header = {};
@@ -223,7 +224,8 @@ export default {
 }
 .content {
   padding: 10px 20px;
-  background-color: beige;
+  /* background-color: beige; */
+  border-right: 2px lightgray solid;
   height: 100vh;
 }
 .project-name {

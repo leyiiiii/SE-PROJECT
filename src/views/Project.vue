@@ -46,20 +46,13 @@
                     <span>{{ form.desc }}</span>
                 </div></el-col>
             </el-row>
-            <el-row>
-                <el-col :span="24"><div class="function">
-                    <el-tabs v-model="activeTab">
-                        <el-tab-pane label="文档" name="first">
-                            <Doc></Doc>
-                        </el-tab-pane>
-                        <el-tab-pane label="设计原型" name="second">设计原型</el-tab-pane>
-                        <el-tab-pane label="UML绘制图" name="third" @click="toDraw">UML绘制图</el-tab-pane>
-                    </el-tabs>
-                <!-- <el-button type="primary" plain>设计原型</el-button>
-                <el-button type="success" plain>文档</el-button>
-                <el-button type="warning" plain @click="toDraw">绘制图</el-button> -->
-                </div></el-col>
+            <el-row class="tab-row">
+                <div class="tab" id="tab1" @click="toDoc">文档</div>
+                <div class="tab" id="tab2" @click="toDesign">设计原型</div>
+                <div class="tab" id="tab3" @click="toDraw">UML绘制图</div>
             </el-row>
+            <Doc v-if="activeTab == 1"></Doc>
+            <Design v-if="activeTab == 2"></Design>
         </div></el-col>
     </el-row>
 </template>
@@ -67,17 +60,20 @@
 <script>
 import Navi from '@/components/NavigationBar.vue'
 import Doc from '@/components/Document.vue'
+import Design from '@/views/Design.vue'
+import { timingSafeEqual } from 'crypto'
 
 export default {
     name: 'Project',
     components: {
-        Navi,
-        Doc,
-    },
+    Navi,
+    Doc,
+    Design,
+},
     data() {
         return {
             dialogVisible: false,
-            activeTab: "first",
+            activeTab: 1,
             form: {
                 name:'',
                 desc:'',
@@ -91,12 +87,18 @@ export default {
         this.projectId = arr[0];
         this.getProjectInfo();
         if(arr.length > 1) {
-            if(arr[1] == "doc") console.log("!!!");
+            if(arr[1] == "doc"){
+                this.activeTab = 1;
+                this.toDoc();
+            }
+            else {
+                this.activeTab = 2;
+                this.toDesign();
+            }
             this.isOpenADoc = true;
             this.documentId = arr[2];
-            // this.getDocDetail();
         }
-        else this.isOpenADoc = false;
+        else this.toDoc();
     },
     methods: {
         cancelChanges() {
@@ -127,6 +129,22 @@ export default {
             }
         },
         confirmDelete() {
+        },
+        toDoc() {            
+            if(this.activeTab != 1) this.$router.replace("/project/" + this.projectId);
+            this.activeTab = 1;
+            document.getElementById("tab2").style.color = "black";
+            document.getElementById("tab2").style.borderBottom = "none";
+            document.getElementById("tab1").style.color = "darkolivegreen";
+            document.getElementById("tab1").style.borderBottom = "2px solid darkolivegreen";
+        },
+        toDesign() {
+            if(this.activeTab != 2) this.$router.replace("/project/" + this.projectId);
+            this.activeTab = 2;
+            document.getElementById("tab1").style.color = "black";
+            document.getElementById("tab1").style.borderBottom = "none";
+            document.getElementById("tab2").style.color = "darkolivegreen";
+            document.getElementById("tab2").style.borderBottom = "2px solid darkolivegreen";
         },
         toDraw() {
             window.open(
@@ -209,5 +227,24 @@ export default {
 }
 .el-icon-data-line{
     font-size: 26px;
+}
+.tab:hover {
+    color:darkolivegreen;
+    cursor: pointer;
+}
+.tab {
+    display: inline-block;
+    width: 120px;
+    height: 35px;
+    /* outline: 2px black solid; */
+    text-align: center;
+}
+.tab-row {
+    padding: 5px 20px 0;
+    margin: 10px 0;
+    font-size: 20px;
+    /* background-color: bisque; */
+    margin-left: 3px;
+    border-bottom: 2px lightgray solid;
 }
 </style> 

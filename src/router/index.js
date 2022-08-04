@@ -62,7 +62,7 @@ const routes = [
   {
     path:'/document/:id',
     name:'document',
-    component: () => import('../views/Document.vue'),
+    component: () => import('../components/Document.vue'),
   },
   {
     path: '/invitation',

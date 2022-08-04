@@ -33,7 +33,7 @@ export default Vue.extend({
       belongTo: "",
       updatedAt: "",
       editor: null,
-      html: "<p>hello</p>",
+      html: "",
       toolbarConfig: {},
       editorConfig: { placeholder: "请输入内容..." },
       mode: "default", // or 'simple'
@@ -47,7 +47,7 @@ export default Vue.extend({
       let formData = new FormData();
       formData.append("title", this.title);
       formData.append("description", this.description);
-      formData.append("content", this.editor.txt.html);
+      formData.append("content", JSON.stringify(this.html));
       formData.append("documentId", this.documentId);
 
       var header = {};
@@ -68,9 +68,13 @@ export default Vue.extend({
         });
     },
     getDocDetail() {
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = { Authorization: "Bearer " + localStorage.getItem("token") };
       this.$axios({
         method: "get",
         url: "/api/v1/document/" + this.documentId,
+        headers: header,
       })
         .then((res) => {
           console.log("aaa", res.data);
@@ -87,16 +91,29 @@ export default Vue.extend({
           console.log(err);
         });
     },
+    handleSpecialCharacters(jsonStr) {
+      let obj = {};
+      if (jsonStr && Object.prototype.toString.call(jsonStr) == "[object String]" && jsonStr != 'null') {
+        jsonStr = jsonStr.replace(/\r/g, "\\r");
+        jsonStr = jsonStr.replace(/\n/g, "\\n");
+        jsonStr = jsonStr.replace(/\t/g, "\\t");
+        jsonStr = jsonStr.replace(/\\/g, "\\\\");
+        jsonStr = jsonStr.replace(/\'/g, "&#39;");
+        jsonStr = jsonStr.replace(/ /g, "&nbsp;");
+        jsonStr = jsonStr.replace(/</g, "$lt;");
+        jsonStr = jsonStr.replace(/>/g, "$gt;");
+        obj = JSON.parse(jsonStr)
+      }
+      return obj;
+    }
   },
   mounted() {
     var arr = this.$route.params.id.split("&");
-    this.documentId = arr[1];
+    this.documentId = arr[2];
     this.getDocDetail();
-    // this.init();
-    // this.saveDoc();
     window.setInterval(() => {
-      // setTimeout(this.saveDoc(), 0)
-    }, 10000);
+      setTimeout(this.saveDoc(), 0)
+    }, 1000);
   },
   beforeDestroy() {
     const editor = this.editor;

@@ -36,7 +36,7 @@
                 </div></el-col>
             </el-row>
             <el-row>
-                <el-col :span="2"><div class="Title2">
+                <el-col :span="3"><div class="Title2">
                     <span>项目简介:</span>
                 </div></el-col>
                 <el-col :span="20" v-if="hasChinese()"><div class="Desc">
@@ -47,16 +47,17 @@
                 </div></el-col>
             </el-row>
             <el-row>
-                <el-col :span="12"><div class="Title3">
-                    <i class="el-icon-data-line"></i>
-                    <span>项目操作</span>
-                </div></el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="22"><div class="function">
-                <el-button type="primary" plain>设计原型</el-button>
+                <el-col :span="24"><div class="function">
+                    <el-tabs v-model="activeTab">
+                        <el-tab-pane label="文档" name="first">
+                            <Doc></Doc>
+                        </el-tab-pane>
+                        <el-tab-pane label="设计原型" name="second">设计原型</el-tab-pane>
+                        <el-tab-pane label="UML绘制图" name="third" @click="toDraw">UML绘制图</el-tab-pane>
+                    </el-tabs>
+                <!-- <el-button type="primary" plain>设计原型</el-button>
                 <el-button type="success" plain>文档</el-button>
-                <el-button type="warning" plain @click="toDraw">绘制图</el-button>
+                <el-button type="warning" plain @click="toDraw">绘制图</el-button> -->
                 </div></el-col>
             </el-row>
         </div></el-col>
@@ -65,15 +66,18 @@
 
 <script>
 import Navi from '@/components/NavigationBar.vue'
+import Doc from '@/components/Document.vue'
 
 export default {
     name: 'Project',
     components: {
         Navi,
+        Doc,
     },
     data() {
         return {
             dialogVisible: false,
+            activeTab: "first",
             form: {
                 name:'',
                 desc:'',
@@ -83,7 +87,16 @@ export default {
         }
     },
     mounted() {
+        var arr = this.$route.params.id.split("&");
+        this.projectId = arr[0];
         this.getProjectInfo();
+        if(arr.length > 1) {
+            if(arr[1] == "doc") console.log("!!!");
+            this.isOpenADoc = true;
+            this.documentId = arr[2];
+            // this.getDocDetail();
+        }
+        else this.isOpenADoc = false;
     },
     methods: {
         cancelChanges() {
@@ -126,7 +139,7 @@ export default {
 
         this.$axios({
             method:"get",
-            url:"/api/v1/project/" + this.$route.params.id,
+            url:"/api/v1/project/" + this.projectId,
             headers: header,
         })
           .then((res) => {
@@ -147,8 +160,8 @@ export default {
 
 <style scoped>
 .Title{
-    font-size: 40px;
-    margin: 10px;
+    font-size: 36px;
+    margin: 10px 50px;
 }
 .Buttons{
     margin-top: 20px;
@@ -157,17 +170,17 @@ export default {
     margin-right: 10px;
 }
 .Title2{
-    font-size: 24px;
-    margin-left: 10px;
+    font-size: 20px;
+    margin-left: 50px;
     margin-top: 5px;
     /* border: 1px solid black; */
 }
 .Title3{
-    margin: 50px 0 0 10px;
-    font-size: 28px;
+    margin: 5px 0 0 0px;
+    font-size: 20px;
 }
 .Desc{
-    font-size: 24px;
+    font-size: 20px;
     margin-top: 5px;
     overflow-wrap: break-word;
     word-wrap: break-word;
@@ -176,8 +189,8 @@ export default {
     /* border: 1px solid black; */
 }
 .Desc2{
-    font-size: 24px;
-    margin-top: 10px;
+    font-size: 20px;
+    margin-top: 8px;
     overflow-wrap: break-word;
     word-wrap: break-word;
     hyphens: auto;
@@ -186,8 +199,9 @@ export default {
 }
 .function{
     /* border: 1px solid black; */
-    margin-left: 20px;
+    /* margin-left: 20px; */
     margin-top: 10px;
+    margin-left: 3px;
 }
 .function button{
     width: 220px;

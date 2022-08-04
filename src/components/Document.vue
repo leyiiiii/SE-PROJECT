@@ -1,11 +1,6 @@
 <template>
   <el-row>
-    <el-col :span="2">
-      <div class="Left">
-        <Navi></Navi>
-      </div>
-    </el-col>
-    <el-col :span="2">
+    <el-col :span="3">
       <div class="content">
         <div class="project-name">{{ projectName }}</div>
         <div class="content-title">
@@ -19,24 +14,25 @@
         </li>
       </div></el-col>
     <el-col :span="18" :offset="1">
+      <div class="doc-title" v-if="status">{{ title }}</div>
+      <div class="doc-desc" v-if="status">{{ description }}</div>
       <Editor v-if="isOpenADoc"></Editor>
     </el-col>
   </el-row>
 </template>
 
 <script>
-import {mapActions, mapGetters} from "vuex";
-import Navi from '@/components/NavigationBar.vue';
+// import {mapActions, mapGetters} from "vuex";
 import Editor from "@/components/Editor";
 export default {
   name: "test",
   components: {
-    Navi,
     Editor
 },
   data() {
     return {
       isOpenADoc: true,
+      status:false,
       iconFormVisible: false,
       userInfo: {},
       dialogTitle: '增加',
@@ -60,7 +56,7 @@ export default {
     this.projectId = arr[0];
     if(arr.length > 1) {
       this.isOpenADoc = true;
-      this.documentId = arr[1];
+      this.documentId = arr[2];
       this.getDocDetail();
     }
     else this.isOpenADoc = false;
@@ -69,14 +65,38 @@ export default {
   },
   methods: {
     openDoc(id) {
-      this.$router.replace("/document/" + this.projectId + "&" + id);
+      this.$router.replace("/project/" + this.projectId + "&doc&" + id);
       window.location.reload();
     },
-    ...mapActions([
-    ]),
+    // ...mapActions([
+    // ]),
     // 增加
     add() {
-      this.isOpenADoc = true;
+      let formData = new FormData();
+      formData.append("title", "Unknown Document");
+      formData.append("description", "文档描述");
+      formData.append("content", JSON.stringify("<p>this is a document</p>"));
+      formData.append("projectId", this.projectId);
+
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+      this.$axios({
+        method: "post",
+        url: "/api/v1/document/create/" + this.projectId,
+        data: formData,
+        headers: header,
+      })
+      .then((res) => {
+        console.log(res.data);
+        this.openDoc(res.data.id);
+      })
+      .catch((err) =>{
+        console.log(err);
+      });
+
+
     },
     // 编辑
     handleEdit(index, row) {
@@ -105,10 +125,15 @@ export default {
         this.tableData.splice(index, 1);
       });
     },
-    getDocDetail() {
-      this.$axios({
+    async getDocDetail() {
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+      await this.$axios({
         method: "get",
         url: "/api/v1/document/" + this.documentId,
+        headers: header,
       })
       .then((res) => {
         console.log(res.data);
@@ -120,15 +145,21 @@ export default {
         this.createdBy = r.createdBy;
         this.title = r.title;
         this.description = r.description;
+        this.status = true;
       })
       .catch((err) =>{
         console.log(err);
       });
     },
     getDocument() {
-        this.$axios({
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+      this.$axios({
         method: "get",
         url: "/api/v1/document/list?belongTo=" + this.projectId,
+        headers: header,
       })
       .then((res) => {
         console.log(res.data.results);
@@ -142,9 +173,13 @@ export default {
       });
     },
     getProject() {
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = { Authorization: "Bearer " + localStorage.getItem("token") };
       this.$axios({
         method: "get",
         url: "/api/v1/project/" + this.projectId,
+        headers: header,
       })
       .then((res) => {
         this.projectId = this.projectId;
@@ -155,15 +190,23 @@ export default {
       });
     }
   },
-  computed: {
-    ...mapGetters({
-    }),
-  },
+  // computed: {
+  //   ...mapGetters({
+  //   }),
+  // },
 };
 
 </script>
 
 <style scoped>
+.doc-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+.doc-desc {
+  color: gray;
+  margin-bottom: 5px;
+}
 .add-icon:hover, .content li:hover {
   cursor: pointer;
 }

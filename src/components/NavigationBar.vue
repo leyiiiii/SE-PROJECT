@@ -20,8 +20,7 @@
           </template>
           <el-menu-item-group>
             <template slot="title">已加入团队</template>
-            <el-menu-item index="/team">团队1</el-menu-item>
-            <el-menu-item index="/team">团队2</el-menu-item>
+            <el-menu-item v-for="item in joinedTeam" :key="item.index" @click=toTeam(item.id)>{{ item.teamName }}</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
         <el-menu-item index="2">
@@ -68,6 +67,7 @@ export default {
   data() {
     return {
       isLogin: false,
+      joinedTeam:[],
     }
   },
   created() {
@@ -76,6 +76,9 @@ export default {
     if(userInfo) {
       this.isLogin = true;
     }
+  },
+  mounted() {
+    this.getJoinedTeam();
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -90,6 +93,30 @@ export default {
       this.$message.success("登出成功");
       setTimeout(() => {
         this.$router.push({ path:'/'});
+        location.reload();
+      }, 500);
+    },
+    async getJoinedTeam() {
+      var header = {};
+      if (localStorage.getItem("token"))
+          header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+      await this.$axios({
+          method:"get",
+          url:"/api/v1/team/list",
+          headers: header,
+      })
+      .then((res) => {
+          console.log(res);
+          this.joinedTeam = res.data.results;
+      })
+      .catch((err) => {
+          console.log(err);
+      });
+    },
+    toTeam(teamId) {
+      this.$router.push("/team/" + teamId);
+      setTimeout(() => {
         location.reload();
       }, 500);
     }

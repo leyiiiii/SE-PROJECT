@@ -99,8 +99,9 @@
                         <span>{{ item.realname }}</span>
                 </div></el-col>
                 <el-col :span="4"><div class="buttonArea">
-                <el-button class="promoteButton" type="success" round v-if="checkPosition(item.position)" @click="promoteMember">升为管理员</el-button>
-                <el-button class="kickButton" type="danger" round v-if="checkPosition2(item.position)" @click="kickMember">移除</el-button>
+                <el-button class="promoteButton" type="success" round v-if="checkPosition(item.position)" @click="promoteMember(item.id)">升为管理员</el-button>
+                <el-button class="promoteButton" type="danger" round v-if="checkPosition3(item.position)" @click="demoteMember(item.id)">降为成员</el-button>
+                <el-button class="kickButton" type="danger" round v-if="checkPosition2(item.position)" @click="kickMember(item.id)">移除</el-button>
                 </div></el-col>
             </el-row>
             <el-row>
@@ -265,9 +266,7 @@ export default {
           .then((res) => {
             console.log(res);
             this.$message.success("离开团队成功");
-            setTimeout(function () {
-                this.$router.push("/");
-            }, 500);
+            this.$router.push({path: '/'});
           })
           .catch((err) => {
             console.log(err);
@@ -337,9 +336,14 @@ export default {
       });
     },
     getTeamDetail() {
+        var header = {};
+        if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
         return this.$axios({
         method: "get",
         url: "/api/v1/team/" + this.$route.params.id,
+        headers: header,
       });
     },
     getProjectDetail() {
@@ -390,6 +394,75 @@ export default {
             return true;
         }
         else return false;
+    },
+    checkPosition3(userPos) {
+        if(this.isMainAdmin && userPos === "Admin") {
+            return true;
+        }
+        else return false;
+    },
+    promoteMember(memberId) {
+        var header = {};
+        if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+        this.$axios({
+        method: "put",
+        url: "/api/v1/team/admin/set/" + this.$route.params.id + "/" + memberId,
+        headers: header,
+        })
+          .then((res) =>{
+            console.log(res);
+            this.$message.success("设置成功！");
+            setTimeout(function () {
+                location.reload(true);
+            }, 500);
+          })
+          .catch((err) =>{
+            console.log(err);
+          })
+    },
+    demoteMember(memberId) {
+        var header = {};
+        if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+        this.$axios({
+        method: "put",
+        url: "/api/v1/team/admin/remove/" + this.$route.params.id + "/" + memberId,
+        headers: header,
+        })
+          .then((res) =>{
+            console.log(res);
+            this.$message.success("设置成功！");
+            setTimeout(function () {
+                location.reload(true);
+            }, 500);
+          })
+          .catch((err) =>{
+            console.log(err);
+          })
+    },
+    kickMember(memberId) {
+        var header = {};
+        if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+        this.$axios({
+        method: "delete",
+        url: "/api/v1/team/member/remove/" + this.$route.params.id + "/" + memberId,
+        headers: header,
+        })
+          .then((res) =>{
+            console.log(res);
+            this.$message.success("移除成功！");
+            setTimeout(function () {
+                location.reload(true);
+            }, 500);
+          })
+          .catch((err) =>{
+            console.log(err);
+          })
     }
   }
 }
@@ -456,7 +529,7 @@ export default {
 }
 .membersRow{
     /* border: 1px solid black; */
-    height: 470px;
+    height: 420px;
     overflow: hidden;
     overflow-y: scroll;
 }

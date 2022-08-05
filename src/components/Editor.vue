@@ -7,7 +7,7 @@
       :mode="mode"
     />
     <Editor
-      style="height: 500px; overflow-y: hidden"
+      style="height: 450px; overflow-y: hidden"
       v-model="html"
       :defaultConfig="editorConfig"
       :mode="mode"
@@ -46,7 +46,6 @@ export default Vue.extend({
     saveDoc() {
       let formData = new FormData();
       formData.append("title", this.title);
-      formData.append("description", this.description);
       formData.append("content", JSON.stringify(this.html));
       formData.append("documentId", this.documentId);
 
@@ -96,9 +95,16 @@ export default Vue.extend({
     var arr = this.$route.params.id.split("&");
     this.documentId = arr[2];
     this.getDocDetail();
-    window.setInterval(() => {
-      // setTimeout(this.saveDoc(), 0)
-    }, 1000);
+    if(arr[1] == "doc")
+      window.setInterval(() => {
+        setTimeout(this.saveDoc(), 0)
+      }, 1000);
+  },
+  beforeRouteUpdate(to, from, next) {
+    if(this.timer) {
+      clearInterval(this.timer)
+    }
+    next()
   },
   beforeDestroy() {
     const editor = this.editor;

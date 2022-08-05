@@ -60,7 +60,7 @@
 <script>
 import Navi from '@/components/NavigationBar.vue'
 import Doc from '@/components/Document.vue'
-import Design from '@/views/Design.vue'
+import Design from '@/components/Design.vue'
 import { timingSafeEqual } from 'crypto'
 
 export default {

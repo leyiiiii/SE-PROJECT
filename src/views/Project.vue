@@ -36,8 +36,8 @@
                 </div></el-col>
             </el-row>
             <el-row>
-                <el-col :span="3"><div class="Title2">
-                    <span>项目简介:</span>
+                <el-col :span="2.5"><div class="Title2">
+                    <span>项目简介&nbsp;:&nbsp;</span>
                 </div></el-col>
                 <el-col :span="20" v-if="hasChinese()"><div class="Desc">
                     <span>{{ form.desc }}</span>
@@ -46,20 +46,13 @@
                     <span>{{ form.desc }}</span>
                 </div></el-col>
             </el-row>
-            <el-row>
-                <el-col :span="24"><div class="function">
-                    <el-tabs v-model="activeTab">
-                        <el-tab-pane label="文档" name="first">
-                            <Doc></Doc>
-                        </el-tab-pane>
-                        <el-tab-pane label="设计原型" name="second">设计原型</el-tab-pane>
-                        <el-tab-pane label="UML绘制图" name="third" @click="toDraw">UML绘制图</el-tab-pane>
-                    </el-tabs>
-                <!-- <el-button type="primary" plain>设计原型</el-button>
-                <el-button type="success" plain>文档</el-button>
-                <el-button type="warning" plain @click="toDraw">绘制图</el-button> -->
-                </div></el-col>
+            <el-row class="tab-row">
+                <div class="tab" id="tab1" @click="toDoc">文档</div>
+                <div class="tab" id="tab2" @click="toDesign">设计原型</div>
+                <div class="tab" id="tab3" @click="toDraw">UML绘制图</div>
             </el-row>
+            <Doc v-if="activeTab == 1"></Doc>
+            <Design v-if="activeTab == 2"></Design>
         </div></el-col>
     </el-row>
 </template>
@@ -67,22 +60,26 @@
 <script>
 import Navi from '@/components/NavigationBar.vue'
 import Doc from '@/components/Document.vue'
+import Design from '@/views/Design.vue'
+import { timingSafeEqual } from 'crypto'
 
 export default {
     name: 'Project',
     components: {
-        Navi,
-        Doc,
-    },
+    Navi,
+    Doc,
+    Design,
+},
     data() {
         return {
             dialogVisible: false,
-            activeTab: "first",
+            activeTab: 1,
             form: {
                 name:'',
                 desc:'',
                 nameTemp:'',
                 descTemp:'',
+                belongTo:'',
             }
         }
     },
@@ -91,12 +88,18 @@ export default {
         this.projectId = arr[0];
         this.getProjectInfo();
         if(arr.length > 1) {
-            if(arr[1] == "doc") console.log("!!!");
+            if(arr[1] == "doc"){
+                this.activeTab = 1;
+                this.toDoc();
+            }
+            else {
+                this.activeTab = 2;
+                this.toDesign();
+            }
             this.isOpenADoc = true;
             this.documentId = arr[2];
-            // this.getDocDetail();
         }
-        else this.isOpenADoc = false;
+        else this.toDoc();
     },
     methods: {
         cancelChanges() {
@@ -110,9 +113,30 @@ export default {
             this.form.descTemp = this.form.desc;
         },
         saveEdit() {
-            this.dialogVisible = false;
-            this.form.name = this.form.nameTemp;
-            this.form.desc = this.form.descTemp;
+            const formData = new FormData();
+            formData.append("title", this.form.nameTemp);
+            formData.append("description", this.form.descTemp);
+
+            var header = {};
+            if (localStorage.getItem("token"))
+                header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+            this.$axios({
+                method:"put",
+                url:"/api/v1/project/"  + this.$route.params.id,
+                data: formData,
+                headers: header,
+            })
+                .then((res) =>{
+                    console.log(res);
+                    this.$message.success("编辑成功");
+                    this.dialogVisible = false;
+                    this.form.name = this.form.nameTemp;
+                    this.form.desc = this.form.descTemp;
+                })
+                .catch((err) =>{
+                    console.log(err);
+                })
         },
         hasChinese() {
             const REGEX_CHINESE = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f]/;
@@ -127,6 +151,40 @@ export default {
             }
         },
         confirmDelete() {
+            var header = {};
+            if (localStorage.getItem("token"))
+                header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+            this.$axios({
+                method:"delete",
+                url:"/api/v1/project/" + this.$route.params.id,
+                headers: header,
+            })
+            .then((res) => {
+                console.log(res);
+                this.$message.success("删除成功");
+                this.$router.push("/team/" + this.form.belongTo);
+            })
+            .catch((err) => {
+                console.log(err);
+                this.$message.warning("删除失败")
+            });
+        },
+        toDoc() {            
+            if(this.activeTab != 1) this.$router.replace("/project/" + this.projectId);
+            this.activeTab = 1;
+            document.getElementById("tab2").style.color = "black";
+            document.getElementById("tab2").style.borderBottom = "none";
+            document.getElementById("tab1").style.color = "darkolivegreen";
+            document.getElementById("tab1").style.borderBottom = "2px solid darkolivegreen";
+        },
+        toDesign() {
+            if(this.activeTab != 2) this.$router.replace("/project/" + this.projectId);
+            this.activeTab = 2;
+            document.getElementById("tab1").style.color = "black";
+            document.getElementById("tab1").style.borderBottom = "none";
+            document.getElementById("tab2").style.color = "darkolivegreen";
+            document.getElementById("tab2").style.borderBottom = "2px solid darkolivegreen";
         },
         toDraw() {
             window.open(
@@ -149,6 +207,7 @@ export default {
             this.form.desc = res.data.description;
             this.form.nameTemp = this.form.name;
             this.form.descTemp = this.form.desc;
+            this.form.belongTo = res.data.belongTo;
           })
           .catch((err) => {
             console.log(err);
@@ -161,6 +220,7 @@ export default {
 <style scoped>
 .Title{
     font-size: 36px;
+    font-family: fantasy;
     margin: 10px 50px;
 }
 .Buttons{
@@ -175,10 +235,6 @@ export default {
     margin-top: 5px;
     /* border: 1px solid black; */
 }
-.Title3{
-    margin: 5px 0 0 0px;
-    font-size: 20px;
-}
 .Desc{
     font-size: 20px;
     margin-top: 5px;
@@ -190,11 +246,12 @@ export default {
 }
 .Desc2{
     font-size: 20px;
-    margin-top: 8px;
+    margin-top: 5px;
     overflow-wrap: break-word;
     word-wrap: break-word;
     hyphens: auto;
     white-space: normal;
+    font-family: cursive;
     /* border: 1px solid black; */
 }
 .function{
@@ -209,5 +266,24 @@ export default {
 }
 .el-icon-data-line{
     font-size: 26px;
+}
+.tab:hover {
+    color:darkolivegreen;
+    cursor: pointer;
+}
+.tab {
+    display: inline-block;
+    width: 120px;
+    height: 35px;
+    /* outline: 2px black solid; */
+    text-align: center;
+}
+.tab-row {
+    padding: 5px 20px 0;
+    margin: 10px 0;
+    font-size: 20px;
+    /* background-color: bisque; */
+    margin-left: 3px;
+    border-bottom: 2px lightgray solid;
 }
 </style> 

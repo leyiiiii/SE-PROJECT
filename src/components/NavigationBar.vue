@@ -8,7 +8,8 @@
           :router="true">
         <el-menu-item index="/">
           <!-- logo -->
-          <i class="el-icon-s-cooperation"></i>
+          <i class="el-icon-collection"></i>
+          <span class="mainTitle">墨</span>
         </el-menu-item>
         <el-submenu index="4">
           <template slot="title">
@@ -17,8 +18,7 @@
           </template>
           <el-menu-item-group>
             <template slot="title">已加入团队</template>
-            <el-menu-item index="/team">团队1</el-menu-item>
-            <el-menu-item index="/team">团队2</el-menu-item>
+            <el-menu-item v-for="item in joinedTeam" :key="item.index" @click=toTeam(item.id)>{{ item.teamName }}</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
         <el-menu-item index="2">
@@ -39,7 +39,7 @@
           </el-menu-item-group>
         </el-submenu>
 
-        <el-menu-item index="/invitation">
+        <el-menu-item @click="toInvitation">
           <i class="el-icon-postcard"></i>
           <span slot="title">邀请</span>
         </el-menu-item>
@@ -65,6 +65,7 @@ export default {
   data() {
     return {
       isLogin: false,
+      joinedTeam:[],
     }
   },
   created() {
@@ -73,6 +74,9 @@ export default {
     if(userInfo) {
       this.isLogin = true;
     }
+  },
+  mounted() {
+    this.getJoinedTeam();
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -89,6 +93,46 @@ export default {
         this.$router.push({ path:'/'});
         location.reload();
       }, 500);
+    },
+    async getJoinedTeam() {
+      if(!this.isLogin) {
+        return;
+      }
+      
+      var header = {};
+      if (localStorage.getItem("token"))
+          header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+      await this.$axios({
+          method:"get",
+          url:"/api/v1/team/list",
+          headers: header,
+      })
+      .then((res) => {
+          console.log(res);
+          this.joinedTeam = res.data.results;
+      })
+      .catch((err) => {
+          console.log(err);
+      });
+    },
+    toTeam(teamId) {
+      this.$router.push("/team/" + teamId);
+      setTimeout(() => {
+        location.reload();
+      }, 500);
+    },
+    toInvitation() {
+      if(this.isLogin) {
+        this.$router.push("/invitation");
+      }
+      else {
+        this.$notify({
+            title: '注意！',
+            message: '请先进行登录',
+            type: 'warning'
+         });
+      }
     }
   }
 }
@@ -104,9 +148,11 @@ export default {
   height: 100vh;
   width: 130px;
 }
-
-.el-icon-s-cooperation {
-  margin-left: 30px;
+.mainTitle{
+  font-size: 24px;
+}
+.el-icon-collection {
+  margin-left: 10px;
 }
 .nav-menu {
   background-color: #545c64;

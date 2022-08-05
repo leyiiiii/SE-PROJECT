@@ -41,6 +41,7 @@ export default Vue.extend({
           "todo",
           "group-image",
           "group-video",
+          "emotion",
         ],
       },
       editorConfig: { placeholder: "请输入内容..." },

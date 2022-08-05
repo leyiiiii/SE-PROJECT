@@ -21,12 +21,18 @@
                 </el-row>
                 <el-divider></el-divider>
             </el-row>
+            <el-row v-if="invitationList.length == 0">
+                <el-col :span="24"><div class="noInvitation">
+                    <span>- 暂无邀请 -</span>
+                </div></el-col>
+            </el-row>
         </div></el-col>
     </el-row>
 </template>
 
 <script>
 import Navi from '@/components/NavigationBar.vue'
+import user from "@/store/user";
 
 export default {
     name: 'Invitation',
@@ -36,8 +42,18 @@ export default {
     data() {
         return {
             invitationList:[],
+            isLogin: false,
+            userId:'',
         }
     },
+    created() {
+        var userInfo;
+        userInfo = user.getters.getUser(user.state());
+        if(userInfo) {
+            this.userId = userInfo.user.id;
+            this.isLogin = true;
+        }
+  },
     mounted() {
         this.getInvitation();
     },
@@ -122,5 +138,12 @@ export default {
     font-size: 24px;
     margin-left: 20px;
     color:darkgoldenrod;
+}
+.noInvitation{
+    /* border: 1px solid black; */
+    text-align: center;
+    font-size: 48px;
+    color: rgba(128, 128, 128, 0.67);
+    margin-top: 30px;
 }
 </style>

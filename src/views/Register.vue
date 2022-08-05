@@ -138,6 +138,7 @@ export default {
     text-align: center;
     font-size: 66px;
     margin-bottom: 10px;
+    font-family: StKaiti;
 }
 .insertTitle{
     /* border: 1px solid black; */

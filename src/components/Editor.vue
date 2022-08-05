@@ -34,7 +34,15 @@ export default Vue.extend({
       updatedAt: "",
       editor: null,
       html: "",
-      toolbarConfig: {},
+      toolbarConfig: {
+        excludeKeys: [
+          "bulletedList",
+          "numberedList",
+          "todo",
+          "group-image",
+          "group-video",
+        ],
+      },
       editorConfig: { placeholder: "请输入内容..." },
       mode: "default", // or 'simple'
     };
@@ -52,7 +60,7 @@ export default Vue.extend({
       var header = {};
       if (localStorage.getItem("token"))
         header = { Authorization: "Bearer " + localStorage.getItem("token") };
-      
+
       this.$axios({
         method: "put",
         url: "/api/v1/document/" + this.documentId,
@@ -95,16 +103,16 @@ export default Vue.extend({
     var arr = this.$route.params.id.split("&");
     this.documentId = arr[2];
     this.getDocDetail();
-    if(arr[1] == "doc")
+    if (arr[1] == "doc")
       window.setInterval(() => {
-        setTimeout(this.saveDoc(), 0)
+        setTimeout(this.saveDoc(), 0);
       }, 1000);
   },
   beforeRouteUpdate(to, from, next) {
-    if(this.timer) {
-      clearInterval(this.timer)
+    if (this.timer) {
+      clearInterval(this.timer);
     }
-    next()
+    next();
   },
   beforeDestroy() {
     const editor = this.editor;

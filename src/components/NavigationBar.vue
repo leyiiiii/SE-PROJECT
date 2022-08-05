@@ -20,23 +20,6 @@
             <el-menu-item v-for="item in joinedTeam" :key="item.index" @click=toTeam(item.id)>{{ item.teamName }}</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
-        <el-menu-item index="2">
-          <i class="el-icon-document"></i>
-          <span slot="title">文档</span>
-        </el-menu-item>
-
-        <el-submenu index="/design">
-          <template slot="title">
-            <i class="el-icon-brush"></i>
-            <span>原型设计</span>
-          </template>
-          <el-menu-item-group>
-            <template slot="title">原型设计页面</template>
-            <el-menu-item index="/design">页面1</el-menu-item>
-            <el-menu-item index="/design2">页面2</el-menu-item>
-            <el-menu-item index="/design3">页面3</el-menu-item>
-          </el-menu-item-group>
-        </el-submenu>
 
         <el-menu-item index="/invitation">
           <i class="el-icon-postcard"></i>

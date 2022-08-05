@@ -9,6 +9,7 @@
         <el-menu-item index="/">
           <!-- logo -->
           <i class="el-icon-collection"></i>
+          <span class="mainTitle">墨</span>
         </el-menu-item>
         <el-submenu index="4">
           <template slot="title">
@@ -21,7 +22,7 @@
           </el-menu-item-group>
         </el-submenu>
 
-        <el-menu-item index="/invitation">
+        <el-menu-item @click="toInvitation">
           <i class="el-icon-postcard"></i>
           <span slot="title">邀请</span>
         </el-menu-item>
@@ -77,6 +78,10 @@ export default {
       }, 500);
     },
     async getJoinedTeam() {
+      if(!this.isLogin) {
+        return;
+      }
+      
       var header = {};
       if (localStorage.getItem("token"))
           header = { Authorization: "Bearer " + localStorage.getItem("token") };
@@ -99,6 +104,18 @@ export default {
       setTimeout(() => {
         location.reload();
       }, 500);
+    },
+    toInvitation() {
+      if(this.isLogin) {
+        this.$router.push("/invitation");
+      }
+      else {
+        this.$notify({
+            title: '注意！',
+            message: '请先进行登录',
+            type: 'warning'
+         });
+      }
     }
   }
 }
@@ -114,9 +131,11 @@ export default {
   height: 100vh;
   width: 130px;
 }
-
+.mainTitle{
+  font-size: 24px;
+}
 .el-icon-collection {
-  margin-left: 30px;
+  margin-left: 10px;
 }
 .nav-menu {
   background-color: #545c64;

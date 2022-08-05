@@ -115,6 +115,7 @@ export default {
     text-align: center;
     font-size: 66px;
     margin-bottom: 10px;
+    font-family: StKaiti;
 }
 .insertBox{
     margin-top: 10px;

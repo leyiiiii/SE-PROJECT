@@ -30,7 +30,7 @@
                     </el-form-item>
                  </el-form>
                  <span slot="footer" class="dialog-footer">
-                    <el-button @click="cancelChanges">取消</el-button>
+                    <el-button @click="cancelChanges" id="cancel">取消</el-button>
                     <el-button type="primary" @click="createTeam">确定</el-button>
                     </span>
                 </el-dialog>
@@ -150,6 +150,10 @@ export default {
   text-align: center;
   margin-top: 20px;
 }
+.Button button{
+  background-color: rgba(154, 85, 85, 0.664);
+  border-color: rgb(140, 83, 83);
+}
 .goLogin{
   /* border: 1px solid black; */
   text-align: center;
@@ -168,5 +172,8 @@ export default {
   z-index: -1;
   object-fit: cover;
   opacity: 0.8;
+}
+#cancel{
+  color: white;
 }
 </style>

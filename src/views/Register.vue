@@ -1,55 +1,92 @@
 <template>
-    <el-row justify="center" type="flex">
-        <img id="bg" src="@/assets/Teamwork3.jpg"/>
-        <!-- <el-col :span="2"><div class="Left">
-            <Navi></Navi>
-        </div></el-col> -->
-        <el-col :span="12"><div class="Right">
-            <el-row  justify="center" type="flex">
-                <el-col :span="24"><div class="Title">
-                    墨书注册
-                </div></el-col>
-            </el-row>
-            <el-row  justify="center" type="flex">
-                <el-col :span="18"><div class="insertBox">
-                    <el-col :span="5"><div class="insertTitle"><span>昵称</span></div></el-col>
-                    <el-col :span="14"><el-input v-model="username" placeholder="请输入昵称"></el-input></el-col>
-                </div></el-col>
-            </el-row>
-            <el-row  justify="center" type="flex">
-                <el-col :span="18"><div class="insertBox">
-                    <el-col :span="5"><div class="insertTitle"><span>真实姓名</span></div></el-col>
-                    <el-col :span="14"><el-input v-model="realname" placeholder="请输入真实姓名"></el-input></el-col>
-                </div></el-col>
-            </el-row>
-            <el-row  justify="center" type="flex">
-                <el-col :span="18"><div class="insertBox">
-                    <el-col :span="5"><div class="insertTitle"><span>邮箱</span></div></el-col>
-                    <el-col :span="14"><el-input v-model="email" placeholder="请输入邮箱"></el-input></el-col>
-                </div></el-col>
-            </el-row>
-            <el-row  justify="center" type="flex">
-                <el-col :span="18"><div class="insertBox">
-                    <el-col :span="5"><div class="insertTitle"><span>密码</span></div></el-col>
-                    <el-col :span="14"><el-input v-model="password1" placeholder="请输入密码" show-password></el-input></el-col>
-                </div></el-col>
-            </el-row>
-            <el-row  justify="center" type="flex">
-                <el-col :span="18"><div class="insertBox">
-                    <el-col :span="5"><div class="insertTitle"><span>重复密码</span></div></el-col>
-                    <el-col :span="14"><el-input v-model="password2" placeholder="请重新输入密码" show-password></el-input></el-col>
-                </div></el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="4" :offset="14"><div class="backToLogin">
-                    <el-button class="toLogin" type="text" @click="gotoLogin">返回登录</el-button>    
-                </div></el-col>
-            </el-row>
-            <el-row  justify="center" type="flex">
-                <el-button class="Register" type="primary" @click="Register">注册</el-button>
-            </el-row>
-        </div></el-col>
-    </el-row>
+<el-row class="main" type="flex" justify="center">
+    <el-col :span="20">
+      <div class="wrapper">
+        <div class="pic-wrapper">
+          <img id="bg" src="@/assets/RegistBg.png" />
+        </div>
+        <div class="login-wrapper">
+          <el-row justify="center" type="flex">
+            <img id="logo" src="@/assets/FullLogo.png" alt="logo" />
+          </el-row>
+          <el-row justify="center" type="flex">
+            <input
+              class="input-name"
+              type="text"
+              v-model="username"
+              placeholder="用户名"
+            />
+            <i class="el-icon-view hidden"></i>
+          </el-row>
+          <el-row justify="center" type="flex">
+            <input
+              class="input-name"
+              type="text"
+              v-model="realname"
+              placeholder="真实姓名"
+            />
+            <i class="el-icon-view hidden"></i>
+          </el-row>
+          <el-row justify="center" type="flex">
+            <input
+              class="input-name"
+              type="text"
+              v-model="email"
+              placeholder="邮箱"
+            />
+            <i class="el-icon-view hidden"></i>
+          </el-row>
+          <el-row justify="center" type="flex">
+            <input
+              class="input-pwd"
+              type="text"
+              v-if="canSee1"
+              v-model="password1"
+              placeholder="密码"
+            />
+            <input
+              class="input-pwd"
+              type="password"
+              v-else
+              v-model="password1"
+              placeholder="密码"
+            />
+            <i class="el-icon-view" @click="changeSee1"></i>
+          </el-row>
+          <el-row justify="center" type="flex">
+            <input
+              class="input-pwd"
+              type="text"
+              v-if="canSee2"
+              v-model="password2"
+              placeholder="重复密码"
+              @keyup.enter="Register"
+            />
+            <input
+              class="input-pwd"
+              type="password"
+              v-else
+              v-model="password2"
+              placeholder="重复密码"
+              @keyup.enter="Register"
+            />
+            <i class="el-icon-view" @click="changeSee2"></i>
+          </el-row>
+          <el-row justify="center" type="flex">
+            <div style="width: 350px; text-align: end">
+              <span>已有帐号，</span>
+              <button class="login-button" @click="gotoLogin">
+                立即登录
+              </button>
+            </div>
+          </el-row>
+          <el-row justify="center" type="flex">
+            <button class="regist-button" @click="Register">注册</button>
+          </el-row>
+        </div>
+      </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -67,9 +104,17 @@ export default {
         email:'',
         password1:'',
         password2:'',
+        canSee1: false,
+        canSee2: false,
     }
   },
   methods: {
+    changeSee1() {
+      this.canSee1 = !this.canSee1;
+    },
+    changeSee2() {
+      this.canSee2 = !this.canSee2;
+    },
     gotoLogin() {
         this.$router.push("/login");
     },
@@ -126,43 +171,99 @@ export default {
 </script>
 
 <style scoped>
-.Right{
-    margin-top: 155px;
-    /* border: 1px solid black; */
-    /* background-color: rgb(255, 168, 47, 0.4); */
-    background-color: rgba(209, 209, 209, 0.5);
-    padding: 10px 0 10px 0;
-    border-radius: 20px;
+.login-button:hover {
+  color: #dfa297;
+  cursor: pointer;
 }
-.Title{
-    text-align: center;
-    font-size: 66px;
-    margin-bottom: 10px;
-    font-family: StKaiti;
+.login-button,
+span {
+  background: none;
+  border: none;
+  font-size: 14px;
 }
-.insertTitle{
-    /* border: 1px solid black; */
-    float: right;
-    margin-right: 10px;
-    margin-top: 10px;
+.regist-button:hover {
+  cursor: pointer;
 }
-.insertBox{
-    margin-top: 10px;
+.regist-button {
+  width: 350px;
+  height: 50px;
+  margin-top: 30px;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  background-color: #3d477722;
+  font-size: 20px;
+  font-weight: 100;
+  letter-spacing: 2em;
+  text-indent: 2em;
 }
-.toLogin{
-    float: right;
-    margin-right: 20px;
-    font-size: 16px;
-    color: black;
+.hidden {
+  display: none;
 }
-.Register{
-    margin-top: 10px;
+.el-icon-view:hover {
+  cursor: pointer;
+  color: darkgray;
+}
+.el-icon-view {
+  position: relative;
+  right: 15px;
+  line-height: 50px;
+  font-size: 20px;
+  color: gray;
+}
+.input-pwd {
+  position: relative;
+  left: 10px;
+}
+.input-name:focus,
+.input-pwd:focus {
+  outline: none;
+}
+.input-name::placeholder,
+.input-pwd::placeholder {
+  color: lightgrey;
+}
+.input-name,
+.input-pwd {
+  width: 350px;
+  margin: 10px 0;
+  padding: 5px;
+  border: none;
+  border-bottom: 1px black solid;
+  color: gray;
+  font-size: 18px;
+  letter-spacing: 0.3em;
+}
+#logo {
+  display: block;
+  width: 400px;
+  margin: 10px 0 -10px;
 }
 #bg {
   width: 100%;
-  position: absolute;
-  z-index: -1;
+  height: 100%;
+  border-radius: 20px 0 0 20px;
   object-fit: cover;
-  opacity: 0.5;
+}
+.login-wrapper {
+  display: inline-block;
+  width: 40%;
+  height: 100%;
+}
+.pic-wrapper {
+  float: left;
+  width: 60%;
+  height: 100%;
+}
+.wrapper {
+  margin-top: 75px;
+  height: 600px;
+  border-radius: 20px;
+  background-color: white;
+  box-shadow: #00000084 0px 0px 50px;
+}
+.main {
+  height: 100vh;
+  background-color: #f4e3e069;
 }
 </style>

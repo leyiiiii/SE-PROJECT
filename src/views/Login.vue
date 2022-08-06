@@ -25,7 +25,7 @@
               v-if="canSee"
               v-model="inputPwd"
               placeholder="密码"
-               @keyup.enter.native="Login"
+              @keyup.enter="Login"
             />
             <input
               class="input-pwd"
@@ -33,46 +33,36 @@
               v-else
               v-model="inputPwd"
               placeholder="密码"
-               @keyup.enter.native="Login"
+              @keyup.enter="Login"
             />
             <i class="el-icon-view" @click="changeSee"></i>
           </el-row>
           <el-row justify="center" type="flex">
-            <div style="width: 350px; text-align: end;">
+            <div style="width: 350px; text-align: end">
               <span>没有账号？</span>
-              <button class="regist-button" @click="gotoRegister">立即注册</button>
+              <button class="regist-button" @click="gotoRegister">
+                立即注册
+              </button>
             </div>
           </el-row>
           <el-row justify="center" type="flex">
             <button class="login-button" @click="Login">登录</button>
           </el-row>
         </div>
-      </div></el-col
-    >
+      </div>
+    </el-col>
   </el-row>
 </template>
 
 <script>
-import Navi from "@/components/NavigationBar.vue";
-
 export default {
   name: "Login",
-  components: {
-    Navi,
-  },
   data() {
     return {
       inputName: "",
       inputPwd: "",
       canSee: false,
-      bgHeight: "",
     };
-  },
-  mounted() {
-    this.bgHeight =
-      document.documentElement.clientHeight -
-      $("#header").outerHeight(true) -
-      1;
   },
   methods: {
     changeSee() {
@@ -113,13 +103,8 @@ export default {
             },
           });
 
-          const history_pth = localStorage.getItem("preRoute");
           setTimeout(() => {
-            if (history_pth == null || history_pth === "/register") {
-              this.$router.push("/");
-            } else {
-              this.$router.push({ path: history_pth });
-            }
+            this.$router.push('/team');
           }, 500);
         })
         .catch((err) => {
@@ -133,13 +118,14 @@ export default {
 
 <style scoped>
 .regist-button:hover {
-    color: #dfa297;
-    cursor: pointer;
+  color: #dfa297;
+  cursor: pointer;
 }
-.regist-button, span {
-    background: none;
-    border: none;
-    font-size: 14px;
+.regist-button,
+span {
+  background: none;
+  border: none;
+  font-size: 14px;
 }
 .login-button:hover {
   cursor: pointer;
@@ -197,7 +183,7 @@ export default {
 #logo {
   display: block;
   width: 400px;
-  margin: 30px 0;
+  margin: 10px 0 70px;
 }
 #bg {
   width: 100%;

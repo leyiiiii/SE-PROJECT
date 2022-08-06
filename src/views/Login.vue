@@ -104,7 +104,7 @@ export default {
           });
 
           setTimeout(() => {
-            this.$router.push('/team');
+            this.$router.push('/team/&');
           }, 500);
         })
         .catch((err) => {

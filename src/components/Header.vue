@@ -23,7 +23,7 @@ export default {
     userInfo = user.getters.getUser(user.state());
     if (userInfo) {
       this.isLogin = true;
-      this.$router.push('/team');
+      this.$router.push('/team/?');
     }
   },
 }
@@ -59,6 +59,6 @@ img {
 }
 .header {
     height: 100px;
-    padding: 0 700px 0 100px;
+    padding: 0 800px 0 100px;
 }
 </style>

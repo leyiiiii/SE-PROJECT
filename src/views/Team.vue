@@ -1,9 +1,12 @@
 <template>
     <el-row>
-      <el-col :span="2"><div class="Left">
-        <Navi></Navi>
-        </div></el-col>
-      <el-col :span="22"><div class="Right">
+        <img v-if="!haveTeam" id="bg" src="@/assets/TeamBg.png" alt="">
+        <h1 v-if="!haveTeam" class="slogan">您并未加入任何团队</h1>
+        <h3 v-if="!haveTeam" class="createTeam">创建团队<i class="el-icon-right"></i></h3>
+        <el-col :span="2">
+            <Navi></Navi>
+        </el-col>
+      <el-col v-if="haveTeam" :span="22"><div class="Right">
         <el-row>
             <el-col :span="12">
                 <div class="info">
@@ -126,6 +129,7 @@
 <script>
 import Navi from '@/components/NavigationBar.vue'
 import user from "@/store/user";
+import anime from "animejs/lib/anime.js";
 
 export default {
   name: 'Team',
@@ -141,6 +145,7 @@ export default {
   },
   data() {
     return {
+        haveTeam: false,
         dialogVisible: false,
         dialogVisible2: false,
         isMainAdmin: false,
@@ -163,9 +168,30 @@ export default {
         membersList:[]
     }
   },
+  created() {
+    if(this.$route.params.id == '&'){
+        this.goTeam();
+    }
+    else{
+        this.haveTeam = true;
+        this.getTeamInfo();
+        this.getProjectDetail();
+    }
+  },
   mounted() {
-    this.getTeamInfo();
-    this.getProjectDetail();
+    var textWrapper = document.querySelector('.slogan');
+    textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+
+    anime.timeline({loop: false})
+    .add({
+        targets: '.slogan .letter',
+        translateX: [40,0],
+        translateZ: 0,
+        opacity: [0,1],
+        easing: "easeOutExpo",
+        duration: 5000,
+        delay: (el, i) => 500 + 30 * i
+    });
   },
   methods: {
     cancelChanges() {
@@ -267,12 +293,30 @@ export default {
           .then((res) => {
             console.log(res);
             this.$message.success("离开团队成功");
-            this.$router.push({path: '/'});
+            this.$router.push({path: '/team/&'});
           })
           .catch((err) => {
             console.log(err);
             this.$message.warning("您是主管理员，无法离开！")
           });
+    },
+    async goTeam() {
+        var header = {};
+        if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+        await this.$axios({
+            method: "get",
+            url: "/api/v1/team/list",
+            headers: header,
+        }).then((res) => {
+            if(res.data.results.length != 0) {
+                this.$router.push("/team/" + res.data.results[0].id);
+                window.location.reload();
+            }
+        }).catch((err) => {
+            console.log(err);
+        });
     },
     async getTeamInfo() {
         await this.$axios.all([
@@ -472,6 +516,32 @@ export default {
 }
 </script>
 <style scoped>
+.createTeam:hover {
+    cursor: pointer;
+    color: #3D4777;
+}
+.createTeam {
+    position: absolute;
+    top: 120px;
+    left: 730px;
+    font-weight: 200;
+    font-size: 1.5em;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+}
+.slogan {
+    position: absolute;
+    top: 50px;
+    left: 600px;
+    font-weight: 200;
+    font-size: 2em;
+    text-transform: uppercase;
+    letter-spacing: 0.5em;
+}
+.slogan .letter {
+    display: inline-block;
+    line-height: 1em;
+}
 .inviteButton{
     /* border: 1px solid black; */
     margin-top: 20px;
@@ -552,5 +622,10 @@ export default {
 }
 .el-icon-user-solid, .el-icon-s-order{
     font-size: 22px;
+}
+#bg {
+    position: absolute;
+    width: 100%;
+    z-index: -1;
 }
 </style>

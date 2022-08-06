@@ -69,6 +69,11 @@ const routes = [
     name: 'invitation',
     component: () => import('../views/Invitation.vue'),
   },
+  {
+    path: '/recycle',
+    name: 'recycle',
+    component: () => import('../views/Recycle.vue'),
+  },
 ]
 
 const router = new VueRouter({

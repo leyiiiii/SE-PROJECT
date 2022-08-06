@@ -68,6 +68,7 @@
                     <el-button type="primary" @click="createProject">确定</el-button>
                     </span>
                 </el-dialog>
+                <el-button class="recycleButton" icon="el-icon-delete-solid" round @click="toRecycle">回收站</el-button>
                 </div></el-col>
         </el-row>
         <el-row v-if="!haveProject">
@@ -463,6 +464,9 @@ export default {
           .catch((err) =>{
             console.log(err);
           })
+    },
+    toRecycle() {
+        this.$router.push("/recycle/" + this.$route.params.id);
     }
   }
 }
@@ -539,7 +543,7 @@ export default {
     position: absolute;
     margin-top: 12px;
 }
-.addButton{
+.addButton, .recycleButton{
     margin-left: 10px;
 }
 .projectButton{

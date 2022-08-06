@@ -14,8 +14,6 @@ export default {
   data() {
     return {
       isLogin: false,
-      userId: "",
-      username: "",
     };
   },
   created() {

@@ -8,24 +8,6 @@
     </div>    
 </template>
 
-<script>
-import user from "@/store/user";
-export default {
-  data() {
-    return {
-      isLogin: false,
-    };
-  },
-  created() {
-    var userInfo;
-    userInfo = user.getters.getUser(user.state());
-    if (userInfo) {
-      this.isLogin = true;
-    }
-  },
-}
-</script>
-
 <style scoped>
 .nav:hover, img:hover {
     cursor: pointer;
@@ -33,20 +15,18 @@ export default {
 .nav {
     float: right;
     height: 100%;
-    padding: 38px 0;
-    margin: 0 50px;
+    padding: 34px 0;
+    margin: 0 30px;
     font-size: 22px;
     color: #3D4777;
-    font-weight: 600;
     text-decoration: none;
-    /* background-color: hotpink; */
+    font-weight: 100;
 }
 img {
     height: 100%;
 }
 .header {
     height: 100px;
-    padding: 0 100px;
-    /* background-color: aqua; */
+    padding: 0 700px 0 100px;
 }
 </style>

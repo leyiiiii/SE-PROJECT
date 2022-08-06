@@ -186,6 +186,7 @@ export default {
 .slogan2 {
   margin: 0 120px;
   color: #3D4777;
+  letter-spacing: 1em;
 }
 .slogan {
   font-weight: 700;

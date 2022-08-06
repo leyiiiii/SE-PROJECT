@@ -42,7 +42,7 @@ const routes = [
     component: () => import('../views/Invitation.vue'),
   },
   {
-    path: '/recycle',
+    path: '/recycle/:id',
     name: 'recycle',
     component: () => import('../views/Recycle.vue'),
   },

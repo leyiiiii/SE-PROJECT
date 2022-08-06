@@ -7,7 +7,7 @@
       :mode="mode"
     />
     <Editor
-      style="height: 500px; overflow-y: hidden"
+      style="height: 450px; overflow-y: hidden"
       v-model="html"
       :defaultConfig="editorConfig"
       :mode="mode"
@@ -34,7 +34,16 @@ export default Vue.extend({
       updatedAt: "",
       editor: null,
       html: "",
-      toolbarConfig: {},
+      toolbarConfig: {
+        excludeKeys: [
+          "bulletedList",
+          "numberedList",
+          "todo",
+          "group-image",
+          "group-video",
+          "emotion",
+        ],
+      },
       editorConfig: { placeholder: "请输入内容..." },
       mode: "default", // or 'simple'
     };
@@ -46,14 +55,13 @@ export default Vue.extend({
     saveDoc() {
       let formData = new FormData();
       formData.append("title", this.title);
-      formData.append("description", this.description);
       formData.append("content", JSON.stringify(this.html));
       formData.append("documentId", this.documentId);
 
       var header = {};
       if (localStorage.getItem("token"))
         header = { Authorization: "Bearer " + localStorage.getItem("token") };
-      
+
       this.$axios({
         method: "put",
         url: "/api/v1/document/" + this.documentId,
@@ -96,9 +104,16 @@ export default Vue.extend({
     var arr = this.$route.params.id.split("&");
     this.documentId = arr[2];
     this.getDocDetail();
-    window.setInterval(() => {
-      // setTimeout(this.saveDoc(), 0)
-    }, 1000);
+    if (arr[1] == "doc")
+      window.setInterval(() => {
+        setTimeout(this.saveDoc(), 0);
+      }, 1000);
+  },
+  beforeRouteUpdate(to, from, next) {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    next();
   },
   beforeDestroy() {
     const editor = this.editor;

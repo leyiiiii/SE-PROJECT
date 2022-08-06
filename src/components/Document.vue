@@ -7,14 +7,18 @@
           文档
           <div class="add-icon" @click="add">+</div>
         </div>
-        <li v-for="item in documentList" :key="item.id" @click="openDoc(item.id)">
-          <i class="el-icon-document"></i>
-          {{ item.title }}
+        <li v-for="item in documentList" :key="item.id">
+          <div class="list-box" @click="openDoc(item.id)">
+            <i class="el-icon-document"></i>
+            {{ item.title }}
+          </div>
+          <i class="el-icon-delete" @click="remove(item.id)"></i>
         </li>
       </div></el-col>
     <el-col :span="18" :offset="1">
-      <div class="doc-title" v-if="status">{{ title }}</div>
-      <div class="doc-desc" v-if="status">{{ description }}</div>
+      <div class="doc-title" v-if="status">{{ title }}
+        <i class="el-icon-edit" @click="changeTitle"></i>
+      </div>
       <Editor v-if="isOpenADoc"></Editor>
     </el-col>
   </el-row>
@@ -36,11 +40,9 @@ export default {
       dialogTitle: '增加',
       rowIndex: null,
       projectId: "",
-      projectName: "",
       haveDocument: false,
       documentId: "",
       title: "",
-      description: "",
       documentContent: "",
       createdAt: "",
       createdBy: "",
@@ -52,7 +54,7 @@ export default {
   created() {
     var arr = this.$route.params.id.split("&");
     this.projectId = arr[0];
-    this.getAll();
+    this.getDocument();
     if(arr.length > 2) {
       this.isOpenADoc = true;
       this.documentId = arr[2];
@@ -61,17 +63,49 @@ export default {
     else this.isOpenADoc = false;
   },
   methods: {
+    changeTitle() {
+      this.$prompt('更改文档名字', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(({value}) => {
+          let formData = new FormData();
+          formData.append("title", value);
+          formData.append("documentId", this.documentId);
+          var header = {};
+          if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+          this.$axios({
+            method: "put",
+            url: "/api/v1/document/" + this.documentId,
+            data: formData,
+            headers: header,
+          })
+          .then((res) => {
+            console.log(res.data)
+          })
+          .catch((err) =>{
+            console.log(err);
+          });
+          this.$message({
+            type: 'success',
+            message: '更改成功'
+          });
+          window.location.reload();
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消输入'
+          });       
+        });
+    },
     openDoc(id) {
       this.$router.replace("/project/" + this.projectId + "&doc&" + id);
       window.location.reload();
     },
-    // ...mapActions([
-    // ]),
-    // 增加
     add() {
       let formData = new FormData();
       formData.append("title", "Unknown Document");
-      formData.append("description", "文档描述");
       formData.append("content", JSON.stringify("<p>this is a document</p>"));
       formData.append("projectId", this.projectId);
 
@@ -95,36 +129,42 @@ export default {
 
 
     },
-    // 编辑
-    handleEdit(index, row) {
-      this.dialogTitle = '编辑';
-      this.userInfo = row;
-      this.iconFormVisible = true;
-      this.rowIndex = index;
-    },
-    // 弹窗确定
-    submitUser() {
-      if (this.dialogTitle === '编辑') {
-        this.tableData.splice(this.rowIndex, 1, this.userInfo);
-        this.iconFormVisible = false;
-        return;
-      }
-      this.tableData.splice(0, 0, this.userInfo);
-      this.iconFormVisible = false;
-    },
     // 删除
-    remove(index, row) {
-      this.$confirm(`确定删除${row.name}吗?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'error',
-      }).then(() => {
-        this.tableData.splice(index, 1);
-      });
-    },
-    getAll() {
-      this.getProject();
-      this.getDocument();
+    remove(id) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          var header = {};
+          if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+          this.$axios({
+            method: "delete",
+            url: "/api/v1/document/" + id,
+            headers: header,
+          })
+          .then((res) => {
+            console.log(res.data)
+          })
+          .catch((err) =>{
+            console.log(err);
+          });
+
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+
+          window.location.reload()
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
     },
     async getDocDetail() {
       var header = {};
@@ -145,7 +185,6 @@ export default {
         this.updatedAt = r.updatedAt;
         this.createdBy = r.createdBy;
         this.title = r.title;
-        this.description = r.description;
         this.status = true;
       })
       .catch((err) =>{
@@ -173,28 +212,7 @@ export default {
         console.log(err);
       });
     },
-    getProject() {
-      var header = {};
-      if (localStorage.getItem("token"))
-        header = { Authorization: "Bearer " + localStorage.getItem("token") };
-      this.$axios({
-        method: "get",
-        url: "/api/v1/project/" + this.projectId,
-        headers: header,
-      })
-      .then((res) => {
-        this.projectId = this.projectId;
-        this.projectName = res.data.title;
-      })
-      .catch((err) =>{
-        console.log(err);
-      });
-    }
   },
-  // computed: {
-  //   ...mapGetters({
-  //   }),
-  // },
 };
 
 </script>
@@ -203,10 +221,24 @@ export default {
 .doc-title {
   font-size: 20px;
   font-weight: 600;
-}
-.doc-desc {
-  color: gray;
   margin-bottom: 5px;
+}
+.el-icon-edit:hover {
+  color: gray;
+  cursor: pointer;
+}
+.el-icon-edit {
+  color: lightgray;
+}
+.el-icon-delete:hover {
+  color: crimson;
+}
+.el-icon-delete {
+  display: inline-block;
+  vertical-align: top;
+  font-size: 18px;
+  color: lightgray;
+  /* outline: 1px black solid; */
 }
 .add-icon:hover, .content li:hover {
   cursor: pointer;
@@ -216,6 +248,10 @@ export default {
   color: darkgray;
   margin-left: 20px;
 }
+.list-box {
+  display: inline-block;
+  width: 115px;
+}
 .content li {
   margin: 5px 0;
 }
@@ -224,11 +260,7 @@ export default {
 }
 .content {
   padding: 10px 20px;
-  /* background-color: beige; */
   border-right: 2px lightgray solid;
   height: 100vh;
-}
-.project-name {
-  font-weight: 600;
 }
 </style>

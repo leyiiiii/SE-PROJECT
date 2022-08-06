@@ -1,13 +1,12 @@
 <template>
   <el-row class="Nav">
-    <el-col :span="24">
+    <!-- <el-col :span="24">
       <el-menu
           class="nav-menu"
           @open="handleOpen"
           @close="handleClose"
           :router="true">
         <el-menu-item index="/">
-          <!-- logo -->
           <i class="el-icon-collection"></i>
           <span class="mainTitle">墨</span>
         </el-menu-item>
@@ -19,23 +18,6 @@
           <el-menu-item-group>
             <template slot="title">已加入团队</template>
             <el-menu-item v-for="item in joinedTeam" :key="item.index" @click=toTeam(item.id)>{{ item.teamName }}</el-menu-item>
-          </el-menu-item-group>
-        </el-submenu>
-        <el-menu-item index="2">
-          <i class="el-icon-document"></i>
-          <span slot="title">文档</span>
-        </el-menu-item>
-
-        <el-submenu index="/design">
-          <template slot="title">
-            <i class="el-icon-brush"></i>
-            <span>原型设计</span>
-          </template>
-          <el-menu-item-group>
-            <template slot="title">原型设计页面</template>
-            <el-menu-item index="/design">页面1</el-menu-item>
-            <el-menu-item index="/design2">页面2</el-menu-item>
-            <el-menu-item index="/design3">页面3</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
 
@@ -54,7 +36,56 @@
         </span>
         </el-menu-item>
       </el-menu>
-    </el-col>
+    </el-col> -->
+    <el-container>
+      <el-aside
+        width="auto"
+        @mouseenter.native="collapseOpen"
+        @mouseleave.native="collapseClose"
+      >
+        <el-menu
+          class="nav-menu"
+          @open="handleOpen"
+          @close="handleClose"
+          :router="true"
+          :collapse="isCollapse"
+        >
+          <el-menu-item index="/">
+            <i class="el-icon-collection"></i>
+            <span class="mainTitle">墨书</span>
+          </el-menu-item>
+          <el-submenu>
+            <template slot="title">
+              <i class="el-icon-office-building"></i>
+              <span> 团队 </span>
+            </template>
+            <el-menu-item-group>
+              <template slot="title">已加入团队</template>
+              <el-menu-item
+                v-for="item in joinedTeam"
+                :key="item.index"
+                @click="toTeam(item.id)"
+                >{{ item.teamName }}</el-menu-item
+              >
+            </el-menu-item-group>
+          </el-submenu>
+
+          <el-menu-item @click="toInvitation">
+            <i class="el-icon-postcard"></i>
+            <span slot="title"> 邀请 </span>
+          </el-menu-item>
+          <el-menu-item v-if="!isLogin" index="/login">
+            <i class="el-icon-user-solid"></i>
+            <span slot="title"> 登录 </span>
+          </el-menu-item>
+          <el-menu-item v-else @click="Logout">
+            <i class="el-icon-finished"></i>
+            <span slot="title"> 登出 </span>
+          </el-menu-item>
+        </el-menu>
+      </el-aside>
+      <el-main> </el-main>
+    </el-container>
   </el-row>
 </template>
 
@@ -65,13 +96,15 @@ export default {
   data() {
     return {
       isLogin: false,
-      joinedTeam:[],
-    }
+      joinedTeam: [],
+      collapseBtnClick: false,
+      isCollapse: true,
+    };
   },
   created() {
     var userInfo;
     userInfo = user.getters.getUser(user.state());
-    if(userInfo) {
+    if (userInfo) {
       this.isLogin = true;
     }
   },
@@ -79,6 +112,18 @@ export default {
     this.getJoinedTeam();
   },
   methods: {
+    collapseStatus() {
+      this.collapseBtnClick = this.isCollapse;
+      this.isCollapse = !this.isCollapse;
+    },
+    collapseOpen() {
+      if (this.collapseBtnClick) return;
+      this.isCollapse = false;
+    },
+    collapseClose() {
+      if (this.collapseBtnClick) return;
+      this.isCollapse = true;
+    },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
@@ -90,31 +135,31 @@ export default {
       this.$store.dispatch("clear");
       this.$message.success("登出成功");
       setTimeout(() => {
-        this.$router.push({ path:'/'});
+        this.$router.push({ path: "/" });
         location.reload();
       }, 500);
     },
     async getJoinedTeam() {
-      if(!this.isLogin) {
+      if (!this.isLogin) {
         return;
       }
-      
+
       var header = {};
       if (localStorage.getItem("token"))
-          header = { Authorization: "Bearer " + localStorage.getItem("token") };
+        header = { Authorization: "Bearer " + localStorage.getItem("token") };
 
       await this.$axios({
-          method:"get",
-          url:"/api/v1/team/list",
-          headers: header,
+        method: "get",
+        url: "/api/v1/team/list",
+        headers: header,
       })
-      .then((res) => {
+        .then((res) => {
           console.log(res);
           this.joinedTeam = res.data.results;
-      })
-      .catch((err) => {
+        })
+        .catch((err) => {
           console.log(err);
-      });
+        });
     },
     toTeam(teamId) {
       this.$router.push("/team/" + teamId);
@@ -123,48 +168,36 @@ export default {
       }, 500);
     },
     toInvitation() {
-      if(this.isLogin) {
+      if (this.isLogin) {
         this.$router.push("/invitation");
-      }
-      else {
+      } else {
         this.$notify({
-            title: '注意！',
-            message: '请先进行登录',
-            type: 'warning'
-         });
+          title: "注意！",
+          message: "请先进行登录",
+          type: "warning",
+        });
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
-.el-submenu .el-menu-item {
-  min-width: auto;
+.el-menu-item {
+  min-width: 150px;
 }
-
-.Nav {
-  background-color: #545c64;
-  height: 100vh;
-  width: 130px;
+.el-menu-item:hover, .el-submenu:hover {
+  background-color: #ffd4f7 !important;
 }
-.mainTitle{
-  font-size: 24px;
-}
-.el-icon-collection {
-  margin-left: 10px;
+.el-menu:active span{
+  color: #7d0066;
 }
 .nav-menu {
-  background-color: #545c64;
+  height: 100vh;
+  background-color: #ffe9fb;
 }
-.nav-menu span {
-  color: #fff;
-}
-
 .el-menu {
   border-right: none;
 }
-.nav-menu:active span {
-  color: #ffd04b;
-}
+
 </style>

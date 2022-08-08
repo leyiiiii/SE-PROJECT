@@ -46,6 +46,16 @@ const routes = [
     name: 'recycle',
     component: () => import('../views/Recycle.vue'),
   },
+  {
+    path: '/about',
+    name: 'about',
+    component: () => import('../views/About.vue'),
+  },
+  {
+    path: '/preview/:id',
+    name: 'preview',
+    component: () => import('../components/Editor/Preview')
+  }
 ]
 
 const router = new VueRouter({

@@ -2,7 +2,7 @@
   <el-row>
     <el-col :span="3">
       <div class="design-content">
-        <div class="project-name">{{ projectName }}</div>
+<!--        <div class="project-name">{{ "还没制作好" }}</div>-->
         <div class="content-title">
           <i class="el-icon-s-unfold"></i>
           设计原型
@@ -281,7 +281,7 @@ export default {
         headers: header,
       })
         .then((res) => {
-          console.log("123456", res.data);
+          // console.log("123456", res.data);
           var r = res.data;
           this.title = r.title;
           // console.log("canvasStyle", JSON.parse(r.canvasStyleData))

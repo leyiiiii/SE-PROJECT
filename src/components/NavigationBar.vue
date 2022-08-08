@@ -79,7 +79,7 @@
             <i class="el-icon-postcard"></i>
             <span slot="title"> 查看邀请 </span>
           </el-menu-item>
-          <el-menu-item index="/">
+          <el-menu-item index="/about">
             <i class="el-icon-collection"></i>
             <span class="mainTitle"> 关于墨书 </span>
           </el-menu-item>

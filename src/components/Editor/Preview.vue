@@ -1,7 +1,8 @@
 <template>
   <div ref="container" class="bg">
-    <el-button v-if="!isScreenshot" class="close" @click="close">关闭</el-button>
-    <el-button v-else class="close" @click="htmlToImage">确定</el-button>
+<!--    <el-button v-if="!isScreenshot" class="close" @click="close">关闭</el-button>-->
+    <el-button class="back" @click="back">返回</el-button>
+    <el-button class="getAddress" @click="getAddress">生成预览链接</el-button>
     <div class="canvas-container">
       <div
           class="canvas"
@@ -28,7 +29,6 @@ import ComponentWrapper from './ComponentWrapper'
 import {changeStyleWithScale} from '@/utils/translate'
 import {deepCopy} from '@/utils/utils'
 import * as htmlToImage from 'html-to-image';
-import {toPng, toJpeg, toBlob, toPixelData, toSvg} from 'html-to-image';
 import html2canvas from "html2canvas";
 import domtoimage from 'dom-to-image';
 
@@ -50,7 +50,27 @@ export default {
     'canvasStyleData',
   ]),
   created() {
-    this.$set(this, 'copyData', deepCopy(this.componentData))
+    var header = {};
+    if (localStorage.getItem("token"))
+      header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+    this.$axios({
+      method: "get",
+      url: "/api/v1/diagram/" + this.$route.params.id.split("&")[2],
+      headers: header,
+    })
+        .then((res) => {
+          // console.log("123456", res.data);
+          var r = res.data;
+          this.title = r.title;
+          // console.log("canvasStyle", JSON.parse(r.canvasStyleData))
+          this.$store.commit("setCanvasStyle", JSON.parse(r.canvasStyleData));
+          this.$store.commit("setComponentData", JSON.parse(r.componentData));
+          this.$set(this, 'copyData', deepCopy(JSON.parse(r.componentData)))
+        })
+        .catch((err) => {
+          console.log(err);
+        });
   },
   methods: {
     getStyle,
@@ -61,36 +81,13 @@ export default {
       this.$emit('close')
     },
 
-    htmlToImage() {
-
-      if (this.$store.state.isJPG === false) {
-        toPng(this.$refs.container.querySelector('.canvas'),)
-            .then(dataUrl => {
-              const a = document.createElement('a')
-              a.setAttribute('download', 'screenshot')
-              a.href = dataUrl
-              a.click()
-            })
-            .catch(error => {
-              console.error('oops, something went wrong!', error)
-            })
-            .finally(this.close);
-      } else {
-        toJpeg(this.$refs.container.querySelector('.canvas'),)
-            .then(dataUrl => {
-              var link = document.createElement('a');
-              link.download = 'my-image-name.jpeg';
-              link.href = dataUrl;
-              link.click();
-              this.$store.state.isJPG = false
-            })
-            .catch(error => {
-              console.error('oops, something went wrong!', error)
-            })
-            .finally(this.close);
-      }
-
+    back(){
+      this.$router.back();
     },
+
+    getAddress() {
+      this.$message(window.location.href);
+    }
   },
 }
 </script>
@@ -125,6 +122,18 @@ export default {
   .close {
     position: absolute;
     right: 20px;
+    top: 20px;
+  }
+
+  .back {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+  }
+
+  .getAddress {
+    position: absolute;
+    left: 120px;
     top: 20px;
   }
 }

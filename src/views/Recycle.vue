@@ -9,7 +9,7 @@
                     <span>回收站</span>
                 </div></el-col>
                 <el-col :span="12"><div class="deleteAll">
-                    <el-button class="deleteAllButton" type="warning" round icon="el-icon-delete" @click="dialogVisible = true">清空回收站</el-button>
+                    <el-button class="deleteAllButton" type="danger" round icon="el-icon-delete" @click="dialogVisible = true">清空回收站</el-button>
                     <el-dialog
                         title="清空回收站"
                         :visible.sync="dialogVisible"
@@ -21,16 +21,34 @@
                             <el-button type="primary" @click="deleteAll">确定</el-button>
                         </span>
                     </el-dialog>
-                    <el-button class="returnButton" type="warning" icon="el-icon-back" plain @click="toTeam">返回团队</el-button>
+                    <el-button class="returnButton" type="info" icon="el-icon-back" plain @click="toTeam">返回团队</el-button>
                 </div></el-col>
             </el-row>
-            <el-row>
+            <!-- <el-row>
                 <el-col :span="7" v-for="item in recoveryList" :key="item.id"><div class="Project">
                     <span class="recoveryListTitle">{{ item.type }}</span>
                     <span>{{ item.title }}</span>
                     <el-button type="success" round @click="Recover(item.id)">恢复</el-button>
                     <el-button type="danger" round @click="Delete(item.id)">删除</el-button>
                 </div></el-col>
+            </el-row> -->
+
+            <el-row>
+                <el-col :span="7" v-for="item in recoveryList" :key="item.id">
+                    <div class="recoveryCard">
+                    <el-card :body-style="{ padding: '0px' }" shadow="hover">
+                    <img src="@/assets/Project.jpg" class="image">
+                    <div style="padding: 14px;">
+                        <span>{{ item.title }}</span>
+                        <div class="bottom clearfix">
+                        <time class="type">{{ item.type }}</time>
+                        <el-button type="text" class="button1" @click="Recover(item.id)">删除</el-button>
+                        <el-button type="text" class="button2" @click="Delete(item.id)">恢复</el-button>
+                        </div>
+                    </div>
+                    </el-card>
+                    </div>
+                </el-col>
             </el-row>
         </div></el-col>
     </el-row>
@@ -190,7 +208,46 @@ export default {
 .recoveryListTitle{
     font-size: 22px;
 }
+.recoveryCard{
+    margin: 10px 20px 0 20px;
+}
 .returnButton{
     margin-left: 10px;
+}
+.type {
+    font-size: 13px;
+    color: #999;
+}
+.bottom {
+    margin-top: 13px;
+    line-height: 12px;
+}
+.button1 {
+    padding: 0;
+    margin-right: 10px;
+    float: right;
+    color: red;
+}
+.button2 {
+    padding: 0;
+    margin-right: 10px;
+    float: right;
+    color: green;
+}
+.image {
+    width: 100%;
+    height: 150px;
+    display: block;
+}
+.clearfix:before,
+.clearfix:after {
+    display: table;
+    content: "";
+}
+.clearfix:after {
+    clear: both;
+}
+.el-card:hover{
+    transform: scale(1.05);
 }
 </style>

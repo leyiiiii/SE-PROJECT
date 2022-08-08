@@ -276,7 +276,6 @@ export default {
       var designId = arr[2];
       var path = "/preview/" + projectId + "&design&" + designId;
       this.$router.push({path: path})
-
     },
 
     downloadAsJPG() {
@@ -311,9 +310,9 @@ export default {
       localStorage.setItem("canvasData", JSON.stringify(this.componentData));
       localStorage.setItem("canvasStyle", JSON.stringify(this.canvasStyleData));
       // console.log("component data:", this.componentData);
-      console.log(JSON.stringify(this.componentData));
+      //console.log(JSON.stringify(this.componentData));
       // console.log("canvas style:", this.canvasStyleData);
-      console.log(JSON.stringify(this.canvasStyleData));
+      //console.log(JSON.stringify(this.canvasStyleData));
 
       let formData = new FormData();
       formData.append("title", this.title);

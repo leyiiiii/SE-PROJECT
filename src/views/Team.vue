@@ -6,7 +6,7 @@
         <el-col :span="2">
             <Navi></Navi>
         </el-col>
-      <el-col v-if="haveTeam" :span="22"><div class="Right">
+      <el-col v-if="haveTeam" :span="21"><div class="Right">
         <el-row>
             <el-col :span="12">
                 <div class="info">
@@ -29,30 +29,41 @@
                     <el-button type="danger" round @click="leaveTeam">离开团队</el-button>
             </div></el-col>
         </el-row>
-        <el-row>
+
+        <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect"
+        background-color="#ffcccc" active-text-color="#ff6699" text-color="#ffffff">
+            <el-menu-item index="1">详情</el-menu-item>
+            <el-menu-item index="2">项目</el-menu-item>
+            <el-menu-item index="3">成员列表</el-menu-item>
+        </el-menu>
+
+        <el-row v-if="activePage == 1">
             <el-col :span="12">
                 <div class="info">
+                    <i class="el-icon-caret-right"></i>
                     <span class="teamInfo2">团队创建日期&nbsp;:&nbsp;</span>
                     <span class="teamInfo2">{{ form.date }}</span>
             </div></el-col>
             <el-col :span="12">
                 <div class="info">
+                    <i class="el-icon-caret-right"></i>
                     <span class="teamInfo2">团队人数&nbsp;:&nbsp;</span>
                     <span class="teamInfo2">{{ form.count }}</span>
             </div></el-col>
         </el-row>
-        <el-row>
+        <el-row  v-if="activePage == 1">
             <el-col :span="2"><div class="infoDesc">
-                <span class="teamInfo2">团队简介&nbsp;:</span>
+                <i class="el-icon-caret-right"></i>
+                <span class="teamInfo2">团队简介:</span>
             </div></el-col>
             <el-col :span="20" v-if="hasChinese()"><div class="infoDesc2">
                 <span class="teamInfo2">{{ form.desc }}</span>
             </div></el-col>
             <el-col :span="20" v-else><div class="infoDesc3">
-                <span class="teamInfo2">{{ form.desc }}</span>
+                <span class="teamInfo2">&nbsp;{{ form.desc }}</span>
             </div></el-col>
         </el-row>
-        <el-row>
+        <el-row  v-if="activePage == 2">
             <el-col :span="24"><div class="projectTitle">
                 <i class="el-icon-s-order"></i>
                 <span class="membersTitle">项目</span>
@@ -72,23 +83,59 @@
                     </span>
                 </el-dialog>
                 <el-button class="recycleButton" icon="el-icon-delete-solid" round @click="toRecycle">回收站</el-button>
+                <el-table
+                    v-if="haveProject && activePage == 2"
+                    :data="projectList.filter(data => !search || data.title.toLowerCase().includes(search.toLowerCase())|| data.creatorName.toLowerCase().includes(search.toLowerCase()))"
+                    style="width: 100%"
+                     @cell-click="toProject"
+                     :cell-class-name="getCellIndex">
+                    <el-table-column
+                    label="项目名字"
+                    prop="title"
+                    sortable>
+                    </el-table-column>
+                    <el-table-column
+                    label="创建日期"
+                    prop="createdAt"
+                    sortable>
+                    </el-table-column>
+                    <el-table-column
+                    label="创建者"
+                    prop="creatorName">
+                    </el-table-column>
+                    <el-table-column
+                    align="right">
+                    <template slot="header" slot-scope="scope">
+                        <el-input
+                        v-model="search"
+                        size="mini"
+                        placeholder="输入您的搜索"/>
+                    </template>
+                    <template slot-scope="scope">
+                        <el-button size="mini" icon="el-icon-document-copy" circle @click="duplicateProject(scope.$index, scope.row)"></el-button>
+                        <el-button size="mini" class="deleteButton" type="danger" icon="el-icon-folder-delete" circle @click="deleteProject(scope.$index, scope.row)"></el-button>
+                    </template>
+                    </el-table-column>
+                </el-table>
                 </div></el-col>
         </el-row>
-        <el-row v-if="!haveProject">
+        <el-row v-if="!haveProject && activePage == 2">
             <el-col :span="24"><div class="projects">
-            暂无项目！
+                暂无项目！
             </div></el-col>
         </el-row>
-        <el-row v-else>
+        
+        <!-- <el-row v-if="haveProject && activePage == 2">
             <el-button class="projectButton" v-for="item in projectList" :key="item.id" @click="enterProject(item.id)">{{ item.title }}</el-button>
-        </el-row>
-        <el-row>
+        </el-row> -->
+
+        <el-row  v-if="activePage == 3">
             <el-col :span="24"><div class="members">
                 <i class="el-icon-user-solid"></i>
                 <span class="membersTitle">成员列表</span>
                 </div></el-col>
         </el-row>
-        <el-row class="membersRow">
+        <el-row class="membersRow"  v-if="activePage == 3">
         <el-row v-for="item in membersList" :key="item.id" justify="center" type="flex">
             <el-col :span="23"><div class="membersList">
             <el-row>
@@ -152,6 +199,8 @@ export default {
         isAdmin: false,
         isMember: false,
         userId:'',
+        activeIndex: '1',
+        activePage: 1,
         form: {
             name:'',
             desc:'',
@@ -165,7 +214,10 @@ export default {
         inviteName:'',
         haveProject: false,
         projectList:[],
-        membersList:[]
+        membersList:[],
+        search: '',
+        rowIndex: 0,
+        cellIndex: 0,
     }
   },
   created() {
@@ -194,6 +246,56 @@ export default {
     });
   },
   methods: {
+    duplicateProject(index, row) {
+        console.log(index, row);
+
+        var header = {};
+        if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+        this.$axios({
+            method:"post",
+            url:"/api/v1/project/copy/" + row.id,
+            headers: header,
+        })
+          .then((res) => {
+            console.log(res);
+            this.$message.success("项目复制成功！");
+            setTimeout(function () {
+                location.reload(true);
+            }, 500);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.$message.warning("项目复制失败！")
+          });
+
+    },
+    deleteProject(index, row) {
+        console.log(index, row);
+
+        var header = {};
+        if (localStorage.getItem("token"))
+            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+        this.$axios({
+            method:"delete",
+            url:"/api/v1/project/" + row.id,
+            headers: header,
+        })
+          .then((res) => {
+            console.log(res);
+            this.$message.success("项目删除成功！");
+            this.projectList.splice(row.id, 1);
+            // setTimeout(function () {
+            //     location.reload(true);
+            // }, 500);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.$message.warning("项目删除失败！")
+          });
+    },
     cancelChanges() {
         this.dialogVisible = false;
         this.project.name = '';
@@ -211,6 +313,19 @@ export default {
     handleClose2() {
         this.dialogVisible2 = false;
         this.inviteName = '';
+    },
+    handleSelect(key, keyPath) {
+        if(key == '1') {
+            this.activePage = 1;
+        }
+
+        if(key == '2') {
+            this.activePage = 2;
+        }
+
+        if(key == '3') {
+            this.activePage = 3;
+        }
     },
     createProject() {
         if(this.project.name == "") {
@@ -254,6 +369,18 @@ export default {
     },
     enterProject(projectID) {
         this.$router.push("/project/" + projectID);
+    },
+    getCellIndex({row, column, rowIndex, columnIndex}) {
+        row.index = rowIndex;
+        column.index = columnIndex;
+    },
+    toProject(row, column, cell, event) {
+        this.rowIndex = row.index;
+        this.columnIndex = column.index;
+
+        if(this.columnIndex != 3) {
+            this.$router.push("/project/" + row.id);
+        }
     },
     inviteMember() {
         const formData = new FormData();
@@ -404,6 +531,10 @@ export default {
           .then((res) =>{
             console.log(res);
             this.projectList = res.data.results;
+
+            for(let i = 0; i < this.projectList.length; i++) {
+                this.projectList[i].createdAt = this.projectList[i].createdAt.slice(0,10);
+            }
             
             if(this.projectList.length > 0) {
                 this.haveProject = true;
@@ -511,7 +642,7 @@ export default {
     },
     toRecycle() {
         this.$router.push("/recycle/" + this.$route.params.id);
-    }
+    },
   }
 }
 </script>
@@ -570,11 +701,10 @@ export default {
     hyphens: auto;
     white-space: normal;
     /* border: 1px solid black; */
-    margin-top: 3px;
 }
 .teamInfo1{
     font-size: 40px;
-    font-family: fantasy;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 .teamInfo2{
     font-size: 20px;
@@ -588,6 +718,9 @@ export default {
 .members, .projectTitle{
     /* border: 1px solid black; */
     margin: 30px 0 0 10px;
+    max-height: 580px;
+    overflow: hidden;
+    overflow-y: scroll;
 }
 .membersTitle{
     font-size: 24px;
@@ -596,7 +729,7 @@ export default {
     /* border: 1px solid black; */
     border-radius: 20px;
     margin-top: 10px;
-    background-color: orange;
+    background-color: rgb(244, 200, 242);
 }
 .membersInfo{
     margin: 5px 0 5px 10px;
@@ -605,7 +738,7 @@ export default {
 }
 .membersRow{
     /* border: 1px solid black; */
-    height: 420px;
+    height: 550px;
     overflow: hidden;
     overflow-y: scroll;
 }

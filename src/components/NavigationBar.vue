@@ -12,8 +12,8 @@
           @close="handleClose"
           :router="true"
           :unique-opened="true"
+          :collapse="isCollapse"
         >
-          <!-- :collapse="isCollapse" -->
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-user"></i>

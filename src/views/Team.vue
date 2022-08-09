@@ -105,13 +105,15 @@
                     </el-table-column>
                     <el-table-column
                     align="right">
-                    <template slot="header" slot-scope="scope">
+                    <!-- <template slot="header" slot-scope="scope"> -->
+                    <template slot="header">
                         <el-input
                         v-model="search"
                         size="mini"
                         placeholder="输入您的搜索"/>
                     </template>
-                    <template slot-scope="scope">
+                    <!-- <template slot-scope="scope"> -->
+                    <template slot="header">
                         <el-button size="mini" icon="el-icon-document-copy" circle @click="duplicateProject(scope.$index, scope.row)"></el-button>
                         <el-button size="mini" class="deleteButton" type="danger" icon="el-icon-folder-delete" circle @click="deleteProject(scope.$index, scope.row)"></el-button>
                     </template>

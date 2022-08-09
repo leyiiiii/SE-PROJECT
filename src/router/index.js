@@ -12,6 +12,11 @@ const routes = [
     component: HomeView
   },
   {
+    path: '/teamhome',
+    name: 'team homepage',
+    component: () => import('../views/TeamHomepage.vue'),
+  },
+  {
     path: '/team/:id',
     name: 'team',
     component: () => import('../views/Team.vue'),

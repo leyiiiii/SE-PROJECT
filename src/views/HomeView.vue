@@ -97,42 +97,6 @@ export default {
       this.team.name = "";
       this.team.desc = "";
     },
-    createTeam() {
-      if (this.team.name == "") {
-        this.$message.warning("团队名不可为空");
-        return;
-      }
-
-      if (this.team.desc == "") {
-        this.$message.warning("团队简介不可为空");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("teamName", this.team.name);
-      formData.append("description", this.team.desc);
-
-      var header = {};
-      if (localStorage.getItem("token"))
-        header = { Authorization: "Bearer " + localStorage.getItem("token") };
-
-      this.$axios({
-        method: "post",
-        url: "/api/v1/team/create",
-        data: formData,
-        headers: header,
-      })
-        .then((res) => {
-          console.log(res);
-          this.$message.success("创建成功");
-          this.dialogVisible = false;
-          this.team.name = "";
-          this.team.desc = "";
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
     checkInvitation() {
       this.$router.push("/invitation");
     },

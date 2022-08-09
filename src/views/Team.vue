@@ -3,9 +3,9 @@
         <img v-if="!haveTeam" id="bg" src="@/assets/TeamBg.png" alt="">
         <h1 v-if="!haveTeam" class="slogan">您并未加入任何团队</h1>
         <h3 v-if="!haveTeam" class="createTeam">创建团队<i class="el-icon-right"></i></h3>
-        <el-col :span="2">
+        <el-col :span="2"><div class="Nav">
             <Navi></Navi>
-        </el-col>
+        </div></el-col>
       <el-col v-if="haveTeam" :span="21"><div class="Right">
         <el-row>
             <el-col :span="12">
@@ -34,7 +34,8 @@
         background-color="#ffcccc" active-text-color="#ff6699" text-color="#ffffff">
             <el-menu-item index="1">详情</el-menu-item>
             <el-menu-item index="2">项目</el-menu-item>
-            <el-menu-item index="3">成员列表</el-menu-item>
+            <el-menu-item index="3">文档中心</el-menu-item>
+            <el-menu-item index="4">成员列表</el-menu-item>
         </el-menu>
 
         <el-row v-if="activePage == 1">
@@ -134,13 +135,17 @@
             <el-button class="projectButton" v-for="item in projectList" :key="item.id" @click="enterProject(item.id)">{{ item.title }}</el-button>
         </el-row> -->
 
-        <el-row  v-if="activePage == 3">
+        <el-row v-if="activePage == 3">
+            <Doc></Doc>
+        </el-row>
+
+        <el-row  v-if="activePage == 4">
             <el-col :span="24"><div class="members">
                 <i class="el-icon-user-solid"></i>
                 <span class="membersTitle">成员列表</span>
                 </div></el-col>
         </el-row>
-        <el-row class="membersRow"  v-if="activePage == 3">
+        <el-row class="membersRow"  v-if="activePage == 4">
         <el-row v-for="item in membersList" :key="item.id" justify="center" type="flex">
             <el-col :span="23"><div class="membersList">
             <el-row>
@@ -180,6 +185,7 @@
 </template>
 <script>
 import Navi from '@/components/NavigationBar.vue'
+import Doc from '@/components/Document.vue'
 import user from "@/store/user";
 import anime from "animejs/lib/anime.js";
 
@@ -187,6 +193,7 @@ export default {
   name: 'Team',
   components: {
     Navi,
+    Doc,
   },
   created() {
     var userInfo;
@@ -330,6 +337,10 @@ export default {
 
         if(key == '3') {
             this.activePage = 3;
+        }
+
+        if(key == '4') {
+            this.activePage = 4;
         }
     },
     createProject() {
@@ -760,6 +771,10 @@ export default {
 }
 .el-icon-user-solid, .el-icon-s-order{
     font-size: 22px;
+}
+.Nav {
+    position: relative;
+    z-index: 99;
 }
 #bg {
     position: absolute;

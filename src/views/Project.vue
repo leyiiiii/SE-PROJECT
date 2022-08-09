@@ -1,9 +1,9 @@
 <template>
     <el-row>
-        <el-col :span="2"><div class="Left">
+        <el-col :span="1"><div class="Left">
             <Navi></Navi>
         </div></el-col>
-        <el-col :span="22"><div class="Right">
+        <el-col :span="23"><div class="Right">
             <el-row>
                 <el-col :span="12"><div class="Title">
                     <span>{{ form.name }}</span>
@@ -220,8 +220,9 @@ export default {
 <style scoped>
 .Title{
     font-size: 36px;
-    font-family: fantasy;
-    margin: 10px 50px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 600;
+    margin: 5px 30px;
 }
 .Buttons{
     margin-top: 20px;
@@ -230,13 +231,13 @@ export default {
     margin-right: 10px;
 }
 .Title2{
-    font-size: 20px;
-    margin-left: 50px;
+    font-size: 16px;
+    margin-left: 30px;
     margin-top: 5px;
     /* border: 1px solid black; */
 }
 .Desc{
-    font-size: 20px;
+    font-size: 16px;
     margin-top: 5px;
     overflow-wrap: break-word;
     word-wrap: break-word;
@@ -245,13 +246,13 @@ export default {
     /* border: 1px solid black; */
 }
 .Desc2{
-    font-size: 20px;
+    font-size: 16px;
     margin-top: 5px;
     overflow-wrap: break-word;
     word-wrap: break-word;
     hyphens: auto;
     white-space: normal;
-    font-family: cursive;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     /* border: 1px solid black; */
 }
 .function{
@@ -285,5 +286,9 @@ export default {
     /* background-color: bisque; */
     margin-left: 3px;
     border-bottom: 2px lightgray solid;
+}
+.Nav {
+    position: relative;
+    z-index: 99;
 }
 </style> 

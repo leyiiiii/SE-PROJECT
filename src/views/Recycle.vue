@@ -24,6 +24,7 @@
                     <el-button class="returnButton" type="info" icon="el-icon-back" plain @click="toTeam">返回团队</el-button>
                 </div></el-col>
             </el-row>
+
             <!-- <el-row>
                 <el-col :span="7" v-for="item in recoveryList" :key="item.id"><div class="Project">
                     <span class="recoveryListTitle">{{ item.type }}</span>
@@ -33,7 +34,7 @@
                 </div></el-col>
             </el-row> -->
 
-            <el-row>
+            <el-row class="cardsRow">
                 <el-col :span="7" v-for="item in recoveryList" :key="item.id">
                     <div class="recoveryCard">
                     <el-card :body-style="{ padding: '0px' }" shadow="hover">
@@ -42,13 +43,29 @@
                         <span>{{ item.title }}</span>
                         <div class="bottom clearfix">
                         <time class="type">{{ item.type }}</time>
-                        <el-button type="text" class="button1" @click="Recover(item.id)">删除</el-button>
-                        <el-button type="text" class="button2" @click="Delete(item.id)">恢复</el-button>
+                        <el-button type="text" class="button1" @click="Delete(item.id)">删除</el-button>
+                        <el-button type="text" class="button2" @click="Recover(item.id)">恢复</el-button>
                         </div>
                     </div>
                     </el-card>
                     </div>
                 </el-col>
+                
+                <!-- <el-col :span="7">
+                    <div class="recoveryCard">
+                    <el-card :body-style="{ padding: '0px' }" shadow="hover">
+                    <img src="@/assets/Project.jpg" class="image">
+                    <div style="padding: 14px;">
+                        <span>标题</span>
+                        <div class="bottom clearfix">
+                        <time class="type">种类</time>
+                        <el-button type="text" class="button1">删除</el-button>
+                        <el-button type="text" class="button2">恢复</el-button>
+                        </div>
+                    </div>
+                    </el-card>
+                    </div>
+                </el-col> -->
             </el-row>
         </div></el-col>
     </el-row>
@@ -178,6 +195,12 @@ export default {
 </script>
 
 <style scoped>
+.cardsRow{
+    /* border: 1px solid black; */
+    max-height: 670px;
+    overflow: hidden;
+    overflow-y: scroll;
+}
 .Title{
     /* border: 1px solid black; */
     margin: 10px 0 0 10px;
@@ -209,11 +232,13 @@ export default {
     font-size: 22px;
 }
 .recoveryCard{
-    margin: 10px 20px 0 20px;
+    margin: 10px 20px 10px 20px;
+    /* border: 1px solid black; */
 }
 .returnButton{
     margin-left: 10px;
 }
+
 .type {
     font-size: 13px;
     color: #999;

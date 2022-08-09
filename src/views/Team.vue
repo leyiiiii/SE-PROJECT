@@ -31,37 +31,47 @@
         </el-row>
 
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect"
-        background-color="#ffcccc" active-text-color="#ff6699" text-color="#ffffff">
+        background-color="#F4E3E0" active-text-color="#ff6699" text-color="black">
             <el-menu-item index="1">详情</el-menu-item>
             <el-menu-item index="2">项目</el-menu-item>
             <el-menu-item index="3">成员列表</el-menu-item>
         </el-menu>
 
         <el-row v-if="activePage == 1">
-            <el-col :span="12">
-                <div class="info">
-                    <i class="el-icon-caret-right"></i>
-                    <span class="teamInfo2">团队创建日期&nbsp;:&nbsp;</span>
-                    <span class="teamInfo2">{{ form.date }}</span>
-            </div></el-col>
-            <el-col :span="12">
-                <div class="info">
-                    <i class="el-icon-caret-right"></i>
-                    <span class="teamInfo2">团队人数&nbsp;:&nbsp;</span>
-                    <span class="teamInfo2">{{ form.count }}</span>
-            </div></el-col>
-        </el-row>
-        <el-row  v-if="activePage == 1">
-            <el-col :span="2"><div class="infoDesc">
-                <i class="el-icon-caret-right"></i>
-                <span class="teamInfo2">团队简介:</span>
-            </div></el-col>
-            <el-col :span="20" v-if="hasChinese()"><div class="infoDesc2">
-                <span class="teamInfo2">{{ form.desc }}</span>
-            </div></el-col>
-            <el-col :span="20" v-else><div class="infoDesc3">
-                <span class="teamInfo2">&nbsp;{{ form.desc }}</span>
-            </div></el-col>
+            <div class="container">
+                <div class="card">
+                <div class="image">
+                    <img href="#" src="@/assets/Group1.png">
+                </div>
+                <div class="content">
+                    <h3>创建日期</h3>
+                    <p> {{form.date}}</p>
+                </div>
+                </div>    
+            </div>
+            <div class="container">
+                <div class="card">
+                <div class="image">
+                    <img href="#" src="@/assets/Group2.png">
+                </div>
+                <div class="content">
+                    <h3>人数</h3>
+                    <p> {{form.count}}</p>
+                </div>
+                </div>    
+            </div>
+            <div class="container">
+                <div class="card">
+                <div class="image">
+                    <img href="#" src="@/assets/Group3.png">
+                </div>
+                <div class="content">
+                    <h3>简介</h3>
+                    <p> {{form.desc}}</p>
+                </div>
+                </div>    
+            </div>
+            
         </el-row>
         <el-row  v-if="activePage == 2">
             <el-col :span="24"><div class="projectTitle">
@@ -128,18 +138,14 @@
                 暂无项目！
             </div></el-col>
         </el-row>
-        
-        <!-- <el-row v-if="haveProject && activePage == 2">
-            <el-button class="projectButton" v-for="item in projectList" :key="item.id" @click="enterProject(item.id)">{{ item.title }}</el-button>
-        </el-row> -->
-
         <el-row  v-if="activePage == 3">
             <el-col :span="24"><div class="members">
                 <i class="el-icon-user-solid"></i>
                 <span class="membersTitle">成员列表</span>
                 </div></el-col>
         </el-row>
-        <el-row class="membersRow"  v-if="activePage == 3">
+
+        <!-- <el-row class="membersRow"  v-if="activePage == 3">
         <el-row v-for="item in membersList" :key="item.id" justify="center" type="flex">
             <el-col :span="23"><div class="membersList">
             <el-row>
@@ -173,6 +179,30 @@
             </el-row>
             </div></el-col>
         </el-row>
+        </el-row> -->
+
+        <el-row v-if="activePage == 3">
+            <el-col :span="24"><div class="membersRow">
+        <el-descriptions  v-for="item in membersList" :key="item.id" border :column="5" class="description">
+            <el-descriptions-item label="昵称" :label-class-name="my-label" :contentStyle="contentStyle" :labelStyle="labelStyle">{{item.username}}</el-descriptions-item>
+            <el-descriptions-item label="真实姓名" v-if="item.realname == ''" :contentStyle="contentStyle" :labelStyle="labelStyle">{{item.username}}</el-descriptions-item>
+            <el-descriptions-item label="真实姓名" v-else :contentStyle="contentStyle" :labelStyle="labelStyle">{{item.realname}}</el-descriptions-item>
+            <el-descriptions-item label="邮箱" :contentStyle="contentStyle2" :labelStyle="labelStyle">{{item.email}}</el-descriptions-item>
+            <el-descriptions-item label="身份" :labelStyle="labelStyle">
+                <el-tag size="small" type="warning" v-if="item.position == 'Main Admin'">主管理员</el-tag>
+                <el-tag size="small" v-if="item.position == 'Admin'">管理员</el-tag>
+                <el-tag size="small" type="info" v-if="item.position == 'Member'">成员</el-tag>
+                <el-dropdown class="More">
+                    <i v-if="checkPosition4(item.id)" class="el-icon-more"></i>
+                     <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item v-if="checkPosition(item.position)" @click="promoteMember(item.id)">升为管理员</el-dropdown-item>
+                        <el-dropdown-item v-if="checkPosition3(item.position)" @click="demoteMember(item.id)">降为成员</el-dropdown-item>
+                        <el-dropdown-item v-if="checkPosition2(item.position)" @click="kickMember(item.id)">移除</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+            </el-descriptions-item>
+        </el-descriptions>
+                </div></el-col>
         </el-row>
         </div></el-col>
     </el-row>
@@ -186,13 +216,6 @@ export default {
   name: 'Team',
   components: {
     Navi,
-  },
-  created() {
-    var userInfo;
-    userInfo = user.getters.getUser(user.state());
-    if(userInfo) {
-      this.userId = userInfo.user.id;
-    }
   },
   data() {
     return {
@@ -222,6 +245,15 @@ export default {
         search: '',
         rowIndex: 0,
         cellIndex: 0,
+        contentStyle: {
+            'width': '200px',
+        },
+        contentStyle2: {
+            'width': '300px',
+        },
+        labelStyle: {
+            'width': '100px',
+        }
     }
   },
   created() {
@@ -232,6 +264,11 @@ export default {
         this.haveTeam = true;
         this.getTeamInfo();
         this.getProjectDetail();
+        var userInfo;
+        userInfo = user.getters.getUser(user.state());
+        if(userInfo) {
+            this.userId = userInfo.user.id;
+        }
     }
   },
   mounted() {
@@ -277,6 +314,7 @@ export default {
     },
     deleteProject(index, row) {
         console.log(index, row);
+        console.log(index);
 
         var header = {};
         if (localStorage.getItem("token"))
@@ -290,10 +328,7 @@ export default {
           .then((res) => {
             console.log(res);
             this.$message.success("项目删除成功！");
-            this.projectList.splice(row.id, 1);
-            // setTimeout(function () {
-            //     location.reload(true);
-            // }, 500);
+            this.projectList.splice(index, 1);
           })
           .catch((err) => {
             console.log(err);
@@ -562,21 +597,34 @@ export default {
     },
     checkPosition(userPos) {
         if(userPos === "Member" && (this.isMainAdmin || this.isAdmin)) {
+            console.log("CAN PROMOTE");
             return true;
         }
         else return false;
     },
     checkPosition2(userPos) {
         if(userPos === "Member" && (this.isMainAdmin || this.isAdmin)) {
+            console.log("CAN DEMOTE");
             return true;
         }
         if(userPos === "Admin" && this.isMainAdmin) {
+            console.log("CAN KICK");
             return true;
         }
         else return false;
     },
     checkPosition3(userPos) {
         if(this.isMainAdmin && userPos === "Admin") {
+            console.log("CAN DEMOTE");
+            return true;
+        }
+        else return false;
+    },
+    checkPosition4(userId) {
+        if(userId == this.userId) {
+            return false;
+        }
+        if(this.isMainAdmin || this.isAdmin) {
             return true;
         }
         else return false;
@@ -650,6 +698,13 @@ export default {
   }
 }
 </script>
+
+<style>
+.el-descriptions-item__label.is-bordered-label{
+    background: #F4E3E0;
+}
+</style>
+
 <style scoped>
 .createTeam:hover {
     cursor: pointer;
@@ -722,9 +777,6 @@ export default {
 .members, .projectTitle{
     /* border: 1px solid black; */
     margin: 30px 0 0 10px;
-    max-height: 580px;
-    overflow: hidden;
-    overflow-y: scroll;
 }
 .membersTitle{
     font-size: 24px;
@@ -742,7 +794,7 @@ export default {
 }
 .membersRow{
     /* border: 1px solid black; */
-    height: 550px;
+    max-height: 550px;
     overflow: hidden;
     overflow-y: scroll;
 }
@@ -757,12 +809,92 @@ export default {
     margin-left: 20px;
     margin-top: 10px;
 }
+.description{
+    /* border: 1px solid black; */
+    margin: 10px;
+}
 .el-icon-user-solid, .el-icon-s-order{
     font-size: 22px;
+}
+.el-icon-more{
+    transform: rotate(90deg);
+}
+.More{
+    /* border: 1px solid black; */
+    float: right;
 }
 #bg {
     position: absolute;
     width: 100%;
     z-index: -1;
+}
+
+.container {
+    /* border: 1px solid black; */
+    position : relative;
+    width : 300px;
+    display : inline-flex;
+    align-items : center;
+    justify-content : center;
+    /* flex-warp : warp; */
+    padding : 30px;
+    margin-left: 100px;
+    margin-top: 100px;
+}
+.container .card {
+    position: relative;
+    max-width : 300px;
+    height : 215px;  
+    background-color : #fff;
+    margin : 30px 10px;
+    padding : 20px 15px;
+    display : flex;
+    flex-direction : column;
+    box-shadow : 0 5px 20px rgba(0,0,0,0.5);
+    transition : 0.3s ease-in-out;
+    border-radius : 15px;
+}
+.container .card:hover {
+    height : 320px;    
+}
+.container .card .image {
+    position : relative;
+    background: rgb(254, 235, 238);
+    width : 260px;
+    height : 260px;
+    top : -40%;
+    /* left: 8px; */
+    box-shadow : 0 5px 20px rgba(0,0,0,0.2);
+    z-index : 1;
+}
+.container .card .image img {
+    max-width : 100%;
+    border-radius : 15px;
+}
+.container .card .content {
+    position : relative;
+    top : -140px;
+    padding : 10px 15px;
+    color : #111;
+    text-align : center;
+    visibility : hidden;
+    opacity : 0;
+    transition : 0.3s ease-in-out;
+    /* border: 1px solid black; */
+    overflow-wrap: break-word;
+    max-width: 260px;
+}
+.container .card:hover .content {
+    margin-top : 30px;
+    visibility : visible;
+    opacity : 1;
+    transition-delay: 0.2s;
+}
+.content h3{
+    font-size: 30px;
+    color: #F4E3E0;
+}
+.content p{
+    color: #c9bab8;
 }
 </style>

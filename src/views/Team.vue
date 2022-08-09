@@ -112,8 +112,12 @@
                         placeholder="输入您的搜索"/>
                     </template>
                     <template slot-scope="scope">
-                        <el-button size="mini" icon="el-icon-document-copy" circle @click="duplicateProject(scope.$index, scope.row)"></el-button>
-                        <el-button size="mini" class="deleteButton" type="danger" icon="el-icon-folder-delete" circle @click="deleteProject(scope.$index, scope.row)"></el-button>
+                        <el-tooltip class="item" effect="dark" content="复制" placement="top">
+                            <el-button size="mini" icon="el-icon-document-copy" circle @click="duplicateProject(scope.$index, scope.row)"></el-button>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                            <el-button size="mini" class="deleteButton" type="danger" icon="el-icon-folder-delete" circle @click="deleteProject(scope.$index, scope.row)"></el-button>
+                        </el-tooltip>
                     </template>
                     </el-table-column>
                 </el-table>

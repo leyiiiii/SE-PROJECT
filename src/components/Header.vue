@@ -21,7 +21,7 @@ export default {
     userInfo = user.getters.getUser(user.state());
     if (userInfo) {
       this.isLogin = true;
-      this.$router.push('/team/?');
+      this.$router.push('/teamhome');
     }
   },
 }

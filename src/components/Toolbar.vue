@@ -1,63 +1,56 @@
 <template>
   <div>
     <div class="toolbar">
+      <el-select class="select" v-model="value" clearable placeholder="选择模版">
+        <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+        </el-option>
+      </el-select>
+      <el-button @click="useTemplate">使用模版</el-button>
       <el-button @click="undo">撤消</el-button>
       <el-button @click="redo">重做</el-button>
       <label for="input" class="insert">插入图片</label>
-      <input id="input" type="file" hidden @change="handleFileChange" />
-      <el-button style="margin-left: 10px" @click="preview(false)"
-        >预览</el-button
-      >
+      <input id="input" type="file" hidden @change="handleFileChange"/>
+      <el-button style="margin-left: 10px" @click="preview(false)">预览</el-button>
       <el-button @click="save">保存</el-button>
       <el-button @click="clearCanvas">清空</el-button>
-      <el-button :disabled="!areaData.components.length" @click="compose"
-        >组合</el-button
-      >
+      <el-button :disabled="!areaData.components.length" @click="compose">组合</el-button>
       <el-button
-        :disabled="
+          :disabled="
           !curComponent ||
           curComponent.isLock ||
           curComponent.component != 'Group'
         "
-        @click="decompose"
-      >
-        拆分
+          @click="decompose">拆分
       </el-button>
-
-      <el-button :disabled="!curComponent || curComponent.isLock" @click="lock"
-        >锁定</el-button
-      >
+      <el-button :disabled="!curComponent || curComponent.isLock" @click="lock">锁定</el-button>
       <el-button
-        :disabled="!curComponent || !curComponent.isLock"
-        @click="unlock"
-        >解锁</el-button
-      >
-      <el-button
-        @click="
-          preview(true);
-          $store.state.isJPG = true;
-        "
-        >下载为JPG</el-button
-      >
-      <el-button @click="preview(true)">下载为PNG</el-button>
+          :disabled="!curComponent || !curComponent.isLock"
+          @click="unlock">解锁
+      </el-button>
+      <el-button @click="downloadAsJPG">下载为JPG</el-button>
+      <el-button @click="downloadAsPNG">下载为PNG</el-button>
 
       <div class="canvas-config">
         <span>画布大小</span>
-        <input v-model="canvasStyleData.width" />
+        <input v-model="canvasStyleData.width"/>
         <span>*</span>
-        <input v-model="canvasStyleData.height" />
+        <input v-model="canvasStyleData.height"/>
       </div>
       <div class="canvas-config">
         <span>画布比例</span>
-        <input v-model="scale" @input="handleScaleChange" /> %
+        <input v-model="scale" @input="handleScaleChange"/> %
       </div>
     </div>
 
     <!-- 预览 -->
     <Preview
-      v-if="isShowPreview"
-      :is-screenshot="isScreenshot"
-      @close="handlePreviewChange"
+        v-if="isShowPreview"
+        :is-screenshot="isScreenshot"
+        @close="handlePreviewChange"
     />
   </div>
 </template>
@@ -65,15 +58,16 @@
 <script>
 import generateID from "@/utils/generateID";
 import toast from "@/utils/toast";
-import { mapState } from "vuex";
+import {mapState} from "vuex";
 import Preview from "@/components/Editor/Preview";
-import { commonStyle, commonAttr } from "@/custom-component/component-list";
+import {commonStyle, commonAttr} from "@/custom-component/component-list";
 import eventBus from "@/utils/eventBus";
-import { deepCopy, $ } from "@/utils/utils";
-import { divide, multiply } from "mathjs";
+import {deepCopy, $} from "@/utils/utils";
+import {divide, multiply} from "mathjs";
+import {toJpeg, toPng} from "html-to-image";
 
 export default {
-  components: { Preview },
+  components: {Preview},
   data() {
     return {
       diagramId: "",
@@ -82,6 +76,14 @@ export default {
       scale: "100%",
       timer: null,
       isScreenshot: false,
+      options: [{
+        value: '线上商城设计模板',
+        label: '线上商城设计模板'
+      }, {
+        value: '学术成果分享平台模板',
+        label: '学术成果分享平台模板'
+      }],
+      value: ''
     };
   },
   computed: mapState([
@@ -102,6 +104,28 @@ export default {
     this.diagramId = arr[2];
   },
   methods: {
+    getFontSize(scale) {
+      if (scale >= 90) {
+        return 15;
+      } else if (scale >= 70) {
+        return 14;
+      } else if (scale >= 65) {
+        return 13;
+      } else if (scale >= 60) {
+        return 12;
+      } else if (scale >= 55) {
+        return 11;
+      } else if (scale >= 50) {
+        return 10;
+      } else if (scale >= 45) {
+        return 9;
+      } else if (scale >= 40) {
+        return 8;
+      } else if (scale >= 35) {
+        return 7;
+      } else return 6;
+    },
+
     format(value) {
       return multiply(value, divide(parseFloat(this.scale), 100));
     },
@@ -125,7 +149,7 @@ export default {
               // 根据原来的比例获取样式原来的尺寸
               // 再用原来的尺寸 * 现在的比例得出新的尺寸
               component.style[key] = this.format(
-                this.getOriginStyle(component.style[key])
+                  this.getOriginStyle(component.style[key])
               );
             }
           });
@@ -140,6 +164,7 @@ export default {
         this.$store.commit("setCanvasStyle", {
           ...this.canvasStyleData,
           scale: this.scale,
+          fontSize: this.getFontSize(this.scale)
         });
       }, 1000);
     },
@@ -182,7 +207,7 @@ export default {
         const fileResult = res.target.result;
         const img = new Image();
         img.onload = () => {
-          
+
           this.$store.commit("addComponent", {
             component: {
               ...commonAttr,
@@ -213,24 +238,24 @@ export default {
           $("#input").setAttribute("type", "text");
           $("#input").setAttribute("type", "file");
 
-        //   console.log(res.target);
-        //   let formData = new FormData();
-        //   formData.append("img", fileResult);
-        //   var header = {};
-        //   if (localStorage.getItem("token"))
-        //     header = { Authorization: "Bearer " + localStorage.getItem("token") };
-        //   this.$axios({
-        //     method: "post",
-        //     url: "/api/v1/image/",
-        //     data: formData,
-        //     headers: header,
-        //   })
-        //     .then((res) => {
-        //       console.log(res);
-        //     })
-        //     .catch((err) => {
-        //       console.log(err);
-        //     });
+          //   console.log(res.target);
+          //   let formData = new FormData();
+          //   formData.append("img", fileResult);
+          //   var header = {};
+          //   if (localStorage.getItem("token"))
+          //     header = { Authorization: "Bearer " + localStorage.getItem("token") };
+          //   this.$axios({
+          //     method: "post",
+          //     url: "/api/v1/image/",
+          //     data: formData,
+          //     headers: header,
+          //   })
+          //     .then((res) => {
+          //       console.log(res);
+          //     })
+          //     .catch((err) => {
+          //       console.log(err);
+          //     });
         };
 
         img.src = fileResult;
@@ -240,18 +265,54 @@ export default {
     },
 
     preview(isScreenshot) {
+      this.save();
       this.isScreenshot = isScreenshot;
       this.isShowPreview = true;
       this.$store.commit("setEditMode", "preview");
+
+      // note
+      var arr = this.$route.params.id.split("&");
+      var projectId = arr[0];
+      var designId = arr[2];
+      var path = "/preview/" + projectId + "&design&" + designId;
+      this.$router.push({path: path})
+    },
+
+    downloadAsJPG() {
+      toJpeg(document.getElementById("editor"),)
+          .then(dataUrl => {
+            var link = document.createElement('a');
+            link.download = 'screenshot.jpeg';
+            link.href = dataUrl;
+            link.click();
+          })
+          .catch(error => {
+            console.error('oops, something went wrong!', error)
+          })
+          .finally(this.close);
+    },
+
+    downloadAsPNG() {
+      toPng(document.getElementById("editor"),)
+          .then(dataUrl => {
+            const a = document.createElement('a')
+            a.setAttribute('download', 'screenshot')
+            a.href = dataUrl
+            a.click()
+          })
+          .catch(error => {
+            console.error('oops, something went wrong!', error)
+          })
+          .finally(this.close);
     },
 
     save() {
       localStorage.setItem("canvasData", JSON.stringify(this.componentData));
       localStorage.setItem("canvasStyle", JSON.stringify(this.canvasStyleData));
-      console.log("component data:", this.componentData);
-      console.log(JSON.stringify(this.componentData));
-      console.log("canvas style:", this.canvasStyleData);
-      console.log(JSON.stringify(this.canvasStyleData));
+      // console.log("component data:", this.componentData);
+      //console.log(JSON.stringify(this.componentData));
+      // console.log("canvas style:", this.canvasStyleData);
+      //console.log(JSON.stringify(this.canvasStyleData));
 
       let formData = new FormData();
       formData.append("title", this.title);
@@ -261,7 +322,7 @@ export default {
 
       var header = {};
       if (localStorage.getItem("token"))
-        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+        header = {Authorization: "Bearer " + localStorage.getItem("token")};
 
       this.$axios({
         method: "put",
@@ -269,17 +330,17 @@ export default {
         data: formData,
         headers: header,
       })
-        .then((res) => {
-          console.log(res);
-          this.$message.success("保存成功");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+          .then((res) => {
+            console.log(res);
+            this.$message.success("保存成功");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
     },
 
     clearCanvas() {
-      this.$store.commit("setCurComponent", { component: null, index: null });
+      this.$store.commit("setCurComponent", {component: null, index: null});
       this.$store.commit("setComponentData", []);
       this.$store.commit("recordSnapshot");
     },
@@ -288,11 +349,37 @@ export default {
       this.isShowPreview = false;
       this.$store.commit("setEditMode", "edit");
     },
+
+    useTemplate() {
+      let componentData = this.$store.state._componentData_;
+      let canvasStyleData = this.$store.state._canvasStyleData_;
+
+      let x = 0;
+      if (this.value === "线上商城设计模板") {
+        x = 1;
+      } else if (this.value === "学术成果分享平台模板") {
+        x = 2;
+      } else {
+        return;
+      }
+
+      this.$store.commit("setComponentData", componentData[x]);
+      this.$store.commit("setCanvasStyle", {
+        ...canvasStyleData[x],
+        fontSize: this.getFontSize(canvasStyleData[x].scale)
+      });
+    },
   },
+
 };
 </script>
 
 <style lang="scss" scoped>
+.select {
+  width: 120px;
+  margin-right: 10px;
+}
+
 .toolbar {
   padding: 15px 10px;
   white-space: nowrap;
@@ -335,10 +422,12 @@ export default {
     margin: 0;
     transition: 0.1s;
     font-weight: 500;
-    padding: 9px 15px;
+    padding: 15px;
     font-size: 12px;
     border-radius: 3px;
     margin-left: 10px;
+    width: 71px;
+    height: 40px;
 
     &:active {
       color: #3a8ee6;

@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkse_project"]=self["webpackChunkse_project"]||[]).push([[631],{4631:function(e,u,t){t.r(u),t.d(u,{default:function(){return f}});var n=function(){var e=this,u=e._self._c;return u("div",[e._v("about moshu")])},r=[],s={name:"About"},c=s,o=t(1001),a=(0,o.Z)(c,n,r,!1,null,"07f85a32",null),f=a.exports}}]);
+//# sourceMappingURL=631.bdaaa8f6.js.map

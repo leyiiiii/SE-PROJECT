@@ -17,11 +17,11 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(ElementUI);
 Vue.prototype.$axios = axios
-
-axios.defaults.baseURL = 'http://127.0.0.1:8000'
-// axios.defaults.baseURL = 'https://stagging-api-moshu.cheangfou.com'
 window.jQuery = $
 window.$ = $
+// axios.defaults.baseURL = 'http://127.0.0.1:8000'
+axios.defaults.baseURL = 'https://stagging-api-moshu.cheangfou.com'
+
 Vue.config.productionTip = false
 
 new Vue({

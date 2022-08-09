@@ -1,42 +1,5 @@
 <template>
-  <el-row class="Nav">
-    <!-- <el-col :span="24">
-      <el-menu
-          class="nav-menu"
-          @open="handleOpen"
-          @close="handleClose"
-          :router="true">
-        <el-menu-item index="/">
-          <i class="el-icon-collection"></i>
-          <span class="mainTitle">墨</span>
-        </el-menu-item>
-        <el-submenu index="4">
-          <template slot="title">
-            <i class="el-icon-office-building"></i>
-            <span>团队</span>
-          </template>
-          <el-menu-item-group>
-            <template slot="title">已加入团队</template>
-            <el-menu-item v-for="item in joinedTeam" :key="item.index" @click=toTeam(item.id)>{{ item.teamName }}</el-menu-item>
-          </el-menu-item-group>
-        </el-submenu>
-
-        <el-menu-item @click="toInvitation">
-          <i class="el-icon-postcard"></i>
-          <span slot="title">邀请</span>
-        </el-menu-item>
-        <el-menu-item v-if="!isLogin" index="/login">
-          <i class="el-icon-user-solid"></i>
-          <span slot="title">登录
-        </span>
-        </el-menu-item>
-        <el-menu-item v-else @click="Logout">
-          <i class="el-icon-finished"></i>
-          <span slot="title">登出
-        </span>
-        </el-menu-item>
-      </el-menu>
-    </el-col> -->
+  <el-row>
     <el-container>
       <el-aside
         width="auto"
@@ -48,24 +11,46 @@
           @open="handleOpen"
           @close="handleClose"
           :router="true"
+          :unique-opened="true"
           :collapse="isCollapse"
         >
-          <el-menu-item index="/login">
-            <i class="el-icon-user"></i>
-            <span slot="title"> {{username}} </span>
-          </el-menu-item>
-          <el-menu-item index="/" @click="Logout">
-            <i class="el-icon-switch-button"></i>
-            <span slot="title"> 退出登录 </span>
-          </el-menu-item>
+          <el-submenu index="1">
+            <template slot="title">
+              <i class="el-icon-user"></i>
+              <span> 用户管理 </span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="" style="cursor: default">
+                <el-avatar
+                  v-if="profilePic"
+                  :size="25"
+                  :src="profilePic"
+                ></el-avatar>
+                <el-avatar v-else :size="25" icon="el-icon-user"></el-avatar>
+                <span> {{ username }} </span>
+              </el-menu-item>
+              <el-menu-item index="">
+                <i class="el-icon-camera"></i>
+                <span slot="title"> 更改头像 </span>
+                <input id="imgUpload" type="file" accept="image/png,image/gif,image/jpeg" @change="uploadAvatar($event)"/>
+              </el-menu-item>
+              <el-menu-item index="" @click="dialogFormVisible=true">
+                <i class="el-icon-edit"></i>
+                <span slot="title"> 编辑资料 </span>
+              </el-menu-item>
+              <el-menu-item index="/" @click="Logout">
+                <i class="el-icon-switch-button"></i>
+                <span slot="title"> 退出登录 </span>
+              </el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
 
-          <el-submenu>
+          <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-office-building"></i>
               <span> 团队 </span>
             </template>
             <el-menu-item-group>
-              <!-- <template slot="title">已加入团队</template> -->
               <el-menu-item
                 v-for="item in joinedTeam"
                 :key="item.index"
@@ -87,6 +72,29 @@
       </el-aside>
       <el-main> </el-main>
     </el-container>
+
+    <el-dialog title="编辑个人信息" :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="昵称" :label-width="formLabelWidth">
+          <el-input v-model="form.username" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="真实姓名" :label-width="formLabelWidth">
+          <el-input v-model="form.realname" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-model="form.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="个性签名" :label-width="formLabelWidth">
+          <el-input v-model="form.about" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelEdit">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
   </el-row>
 </template>
 
@@ -100,7 +108,18 @@ export default {
       joinedTeam: [],
       collapseBtnClick: false,
       isCollapse: true,
+      userId: "",
       username: "",
+      profilePic: "",
+      form: {
+        username: "",
+        profilePic: "",
+        realname: "",
+        email: "",
+        about: "",
+      },
+      dialogFormVisible: false,
+      formLabelWidth: "120px",
     };
   },
   created() {
@@ -108,13 +127,84 @@ export default {
     userInfo = user.getters.getUser(user.state());
     if (userInfo) {
       this.isLogin = true;
+      this.userId = userInfo.user.id;
       this.username = userInfo.user.username;
+      this.form.username = userInfo.user.username;
+      this.getUser();
     }
   },
   mounted() {
     this.getJoinedTeam();
   },
   methods: {
+    getImg(event) {
+      this.form.profilePic = event.target.files[0];
+    },
+    async uploadAvatar(event) {
+      this.form.profilePic = event.target.files[0];
+      const formData = new FormData();
+      formData.append("email", this.form.email);
+      formData.append("username", this.form.username);
+      formData.append("userId", this.form.id);
+      formData.append("about", this.form.about);
+      formData.append("realname", this.form.realname);
+      formData.append("profile", this.form.profilePic);
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+      await this.$axios({
+        method: "put",
+        url: "/api/v1/auth/detail/" + this.userId,
+        data: formData,
+        headers: header,
+      })
+        .then((res) => {
+          console.log(res);
+          this.getUser();
+          setTimeout(function () {
+            location.reload(true);
+          }, 500);
+          this.$message.success("恭喜！修改成功");
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$message.warning("抱歉！上传失败");
+        });
+    },
+    async editProfile() {
+      const formData = new FormData();
+      formData.append("email", this.form.email);
+      formData.append("username", this.form.username);
+      formData.append("userId", this.form.id);
+      formData.append("about", this.form.about);
+      formData.append("realname", this.form.realname);
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+      await this.$axios({
+        method: "put",
+        url: "/api/v1/auth/detail/" + this.userId,
+        data: formData,
+        headers: header,
+      })
+        .then((res) => {
+          console.log(res);
+          this.getUser();
+          this.dialogFormVisible = false;
+          setTimeout(function () {
+            location.reload(true);
+          }, 500);
+          this.$message.success("恭喜！修改成功");
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$message.warning("抱歉！昵称已被使用");
+        });
+    },
+    cancelEdit() {
+      this.dialogFormVisible = false;
+      this.getUser();
+    },
     collapseStatus() {
       this.collapseBtnClick = this.isCollapse;
       this.isCollapse = !this.isCollapse;
@@ -142,11 +232,28 @@ export default {
         location.reload();
       }, 500);
     },
-    async getJoinedTeam() {
-      if (!this.isLogin) {
-        return;
-      }
+    async getUser() {
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = { Authorization: "Bearer " + localStorage.getItem("token") };
 
+      await this.$axios({
+        method: "get",
+        url: "/api/v1/auth/detail/" + this.userId,
+        headers: header,
+      })
+        .then((res) => {
+          console.log(res);
+          this.form.realname = res.data.realname;
+          this.form.email = res.data.email;
+          this.profilePic = res.data.thumbnail;
+          this.form.profilePic = res.data.thumbnail;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    async getJoinedTeam() {
       var header = {};
       if (localStorage.getItem("token"))
         header = { Authorization: "Bearer " + localStorage.getItem("token") };
@@ -187,38 +294,56 @@ export default {
 
 <style>
 .el-submenu__title:hover,
-.el-submenu.is-opened {
+.el-submenu.is-opened,
+.el-submenu.is-closed {
   outline: 0 !important;
   background-color: #3d47773a !important;
-  width: 130px;
+  width: 150px;
 }
-.el-submenu .el-menu-item{
+.el-submenu .el-menu-item {
   color: #3d4777;
 }
 </style>
 <style scoped>
-i, span {
+#imgUpload {
+  float: left;
+  position: absolute;
+  top: 15px;
+  left: 30px;
+  font-size: 20px;
+  opacity: 0;
+}
+.el-avatar {
+  margin-right: 5px;
+}
+i,
+span {
   color: #3d4777;
   font-weight: 100;
 }
 .el-menu-item-group {
-  background-color: #3d47774a;
+  /* background-color: #3d47774a; */
+  background-color: #d3d5e0;
 }
 .el-menu-item {
-  min-width: 130px;
+  min-width: 150px;
 }
 .el-menu-item:hover {
-  background-color: #3d47773a !important;
+  /* background-color: #3d47773a !important; */
+  background-color: #d3d5e0 !important;
 }
-.el-menu:active span{
+.el-menu:active span {
   color: #7d0066;
 }
 .nav-menu {
   height: 100vh;
-  background-color: #3d47773a;
+  max-width: 150px;
+  /* background-color: #3d47773a; */
+  background-color: #d3d5e0;
+  overflow: hidden;
 }
 .el-menu {
   border-right: none;
+  transition: all 40ms;
 }
-
 </style>

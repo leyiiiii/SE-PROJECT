@@ -15,6 +15,8 @@
       <label for="input" class="insert">插入图片</label>
       <input id="input" type="file" hidden @change="handleFileChange"/>
       <el-button style="margin-left: 10px" @click="preview(false)">预览</el-button>
+      <el-button @click="openPreview">开启预览</el-button>
+      <el-button @click="closePreview">关闭预览</el-button>
       <el-button @click="save">保存</el-button>
       <el-button @click="clearCanvas">清空</el-button>
       <el-button :disabled="!areaData.components.length" @click="compose">组合</el-button>
@@ -276,6 +278,58 @@ export default {
       var designId = arr[2];
       var path = "/preview/" + projectId + "&design&" + designId;
       this.$router.push({path: path})
+    },
+
+    openPreview() {
+      var arr = this.$route.params.id.split("&");
+      var url_ = "/api/v1/diagram/preview/" + arr[2] + "/1";
+
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = {Authorization: "Bearer " + localStorage.getItem("token")};
+
+      let formData = new FormData();
+      formData.append("allow", 1);
+      formData.append("diagramId", arr[2]);
+
+      this.$axios({
+        method: "put",
+        url: url_,
+        data: formData,
+        headers: header,
+      })
+          .then((res) => {
+            this.$message.success("此原型设计页面的预览功能已被开启");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+    },
+
+    closePreview() {
+      var arr = this.$route.params.id.split("&");
+      var url_ = "/api/v1/diagram/preview/" + arr[2] + "/0";
+
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = {Authorization: "Bearer " + localStorage.getItem("token")};
+
+      let formData = new FormData();
+      formData.append("allow", 0);
+      formData.append("diagramId", arr[2]);
+
+      this.$axios({
+        method: "put",
+        url: url_,
+        data: formData,
+        headers: header,
+      })
+          .then((res) => {
+            this.$message.success("此原型设计页面的预览功能已被关闭");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
     },
 
     downloadAsJPG() {

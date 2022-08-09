@@ -39,20 +39,20 @@
     </el-col> -->
     <el-container>
       <el-aside
-        width="auto"
-        @mouseenter.native="collapseOpen"
-        @mouseleave.native="collapseClose"
+          width="auto"
+          @mouseenter.native="collapseOpen"
+          @mouseleave.native="collapseClose"
       >
         <el-menu
-          class="nav-menu"
-          @open="handleOpen"
-          @close="handleClose"
-          :router="true"
-          :collapse="isCollapse"
+            class="nav-menu"
+            @open="handleOpen"
+            @close="handleClose"
+            :router="true"
+            :collapse="isCollapse"
         >
           <el-menu-item index="/login">
             <i class="el-icon-user"></i>
-            <span slot="title"> {{username}} </span>
+            <span slot="title"> {{ username }} </span>
           </el-menu-item>
           <el-menu-item index="/" @click="Logout">
             <i class="el-icon-switch-button"></i>
@@ -67,10 +67,11 @@
             <el-menu-item-group>
               <!-- <template slot="title">已加入团队</template> -->
               <el-menu-item
-                v-for="item in joinedTeam"
-                :key="item.index"
-                @click="toTeam(item.id)"
-                >{{ item.teamName }}</el-menu-item
+                  v-for="item in joinedTeam"
+                  :key="item.index"
+                  @click="toTeam(item.id)"
+              >{{ item.teamName }}
+              </el-menu-item
               >
             </el-menu-item-group>
           </el-submenu>
@@ -85,7 +86,7 @@
           </el-menu-item>
         </el-menu>
       </el-aside>
-      <el-main> </el-main>
+      <el-main></el-main>
     </el-container>
   </el-row>
 </template>
@@ -108,6 +109,7 @@ export default {
     userInfo = user.getters.getUser(user.state());
     if (userInfo) {
       this.isLogin = true;
+      this.$store.state._isLogin_ = true;
       this.username = userInfo.user.username;
     }
   },
@@ -138,7 +140,7 @@ export default {
       this.$store.dispatch("clear");
       this.$message.success("登出成功");
       setTimeout(() => {
-        this.$router.push({ path: "/" });
+        this.$router.push({path: "/"});
         location.reload();
       }, 500);
     },
@@ -149,20 +151,20 @@ export default {
 
       var header = {};
       if (localStorage.getItem("token"))
-        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+        header = {Authorization: "Bearer " + localStorage.getItem("token")};
 
       await this.$axios({
         method: "get",
         url: "/api/v1/team/list",
         headers: header,
       })
-        .then((res) => {
-          console.log(res);
-          this.joinedTeam = res.data.results;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+          .then((res) => {
+            console.log(res);
+            this.joinedTeam = res.data.results;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
     },
     toTeam(teamId) {
       this.$router.push("/team/" + teamId);
@@ -192,7 +194,8 @@ export default {
   background-color: #3d47773a !important;
   width: 130px;
 }
-.el-submenu .el-menu-item{
+
+.el-submenu .el-menu-item {
   color: #3d4777;
 }
 </style>
@@ -201,22 +204,28 @@ i, span {
   color: #3d4777;
   font-weight: 100;
 }
+
 .el-menu-item-group {
   background-color: #3d47774a;
 }
+
 .el-menu-item {
   min-width: 130px;
 }
+
 .el-menu-item:hover {
   background-color: #3d47773a !important;
 }
-.el-menu:active span{
+
+.el-menu:active span {
   color: #7d0066;
 }
+
 .nav-menu {
   height: 100vh;
   background-color: #3d47773a;
 }
+
 .el-menu {
   border-right: none;
 }

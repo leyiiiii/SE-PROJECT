@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkMoShu"]=self["webpackChunkMoShu"]||[]).push([[877],{866:function(t,n,u){u.r(n),u.d(n,{default:function(){return i}});var s=function(){var t=this,n=t._self._c;return n("div",{staticClass:"attr-list"},[n("CommonAttr")],1)},l=[],o=u(1616),r={components:{CommonAttr:o.Z}},e=r,c=u(1001),a=(0,c.Z)(e,s,l,!1,null,null,null),i=a.exports}}]);
+//# sourceMappingURL=877.c1666192.js.map

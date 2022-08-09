@@ -61,7 +61,8 @@ export default {
       value: "",
       status: false,
       dialogVisible: false,
-      currentWebsiteLink: window.location.href
+      currentWebsiteLink: window.location.href,
+      previewEnableList: []
     }
   },
   computed: mapState([
@@ -70,7 +71,55 @@ export default {
   ]),
 
   created() {
+    //   console.log(this.$store.state.lockPreview)
+    //   console.log(this.$store.state._isLogin_)
+    // && !this.$store.state._isLogin_
+    //   if (this.$store.state.lockPreview.includes(this.$route.params.id) ) {
+    //     alert("预览关闭");
+    //   } else {
+    //     alert("预览开启");
+    //   }
+
     var header = {};
+    if (localStorage.getItem("token"))
+      header = {Authorization: "Bearer " + localStorage.getItem("token")};
+
+    var arr = this.$route.params.id.split("&");
+    var url_ = "/api/v1/diagram/preview/list?belongTo=" + arr[0];
+
+    this.$axios({
+      method: "get",
+      url: url_,
+      headers: header,
+    })
+        .then((res) => {
+          this.previewEnableList = res.data.results;
+          var temp = false;
+          for (let i = 0; i < this.previewEnableList.length; i++) {
+            if (this.previewEnableList[i].id === arr[2]) {
+              temp = true;
+              break;
+            }
+          }
+
+          if (!temp && !this.$store.state._isLogin_) {
+            this.$alert('此原型设计页面的预览已被关闭，无法查看，点击确定后将返回上一网页', '提示', {
+              confirmButtonText: 'OK',
+              callback: action => {
+                this.$router.back();
+              }
+            });
+          }
+          // console.log(res.data.results);
+          // console.log(resultList[0].isView);
+          // console.log(resultList[1].isView);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+
+    header = {};
     if (localStorage.getItem("token"))
       header = {Authorization: "Bearer " + localStorage.getItem("token")};
 
@@ -81,8 +130,7 @@ export default {
     })
         .then((res) => {
           this.designList = res.data.results;
-
-          console.log(this.designList)
+          // console.log(this.designList)
           // console.log(this.designList[0].componentData)
         })
         .catch((err) => {
@@ -111,6 +159,7 @@ export default {
           console.log(err);
         });
   },
+
   methods: {
     getStyle,
     getCanvasStyle,
@@ -130,16 +179,34 @@ export default {
 
     select(value) {
       let x = value.split('：')[0].substring(2, value.indexOf('：'));
-      this.$store.commit("setCanvasStyle", JSON.parse(this.designList[x - 1].canvasStyleData));
-      this.$store.commit("setComponentData", JSON.parse(this.designList[x - 1].componentData));
-      this.$set(this, 'copyData', deepCopy(JSON.parse(this.designList[x - 1].componentData)))
-
       var arr = this.$route.params.id.split("&");
       var projectId = arr[0];
       var designId = this.designList[x - 1].id;
       var path = this.currentWebsiteLink.split("/preview")[0] + "/preview/" + projectId + "&design&" + designId;
-      this.currentWebsiteLink = path
+
+      var temp = false;
+      for (let i = 0; i < this.previewEnableList.length; i++) {
+        if (this.previewEnableList[i].id === designId) {
+          temp = true;
+          break;
+        }
+      }
+
+      if (!temp && !this.$store.state._isLogin_) {
+        this.$alert('此原型设计页面的预览已被关闭，无法查看', '提示', {
+          confirmButtonText: 'OK',
+          callback: action => {
+            // this.$router.back();
+          }
+        });
+      } else if (temp || this.$store.state._isLogin_) {
+        this.$store.commit("setCanvasStyle", JSON.parse(this.designList[x - 1].canvasStyleData));
+        this.$store.commit("setComponentData", JSON.parse(this.designList[x - 1].componentData));
+        this.$set(this, 'copyData', deepCopy(JSON.parse(this.designList[x - 1].componentData)))
+        this.currentWebsiteLink = path
+      }
     }
+
   },
 }
 </script>

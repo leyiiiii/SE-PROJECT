@@ -2,9 +2,9 @@
   <el-row>
     <el-container>
       <el-aside
-        width="auto"
-        @mouseenter.native="collapseOpen"
-        @mouseleave.native="collapseClose"
+          width="auto"
+          @mouseenter.native="collapseOpen"
+          @mouseleave.native="collapseClose"
       >
         <el-menu
           class="nav-menu"
@@ -52,10 +52,11 @@
             </template>
             <el-menu-item-group>
               <el-menu-item
-                v-for="item in joinedTeam"
-                :key="item.index"
-                @click="toTeam(item.id)"
-                >{{ item.teamName }}</el-menu-item
+                  v-for="item in joinedTeam"
+                  :key="item.index"
+                  @click="toTeam(item.id)"
+              >{{ item.teamName }}
+              </el-menu-item
               >
             </el-menu-item-group>
           </el-submenu>
@@ -70,7 +71,7 @@
           </el-menu-item>
         </el-menu>
       </el-aside>
-      <el-main> </el-main>
+      <el-main></el-main>
     </el-container>
 
     <el-dialog title="编辑个人信息" :visible.sync="dialogFormVisible">
@@ -127,6 +128,7 @@ export default {
     userInfo = user.getters.getUser(user.state());
     if (userInfo) {
       this.isLogin = true;
+      this.$store.state._isLogin_ = true;
       this.userId = userInfo.user.id;
       this.username = userInfo.user.username;
       this.form.username = userInfo.user.username;
@@ -228,7 +230,7 @@ export default {
       this.$store.dispatch("clear");
       this.$message.success("登出成功");
       setTimeout(() => {
-        this.$router.push({ path: "/" });
+        this.$router.push({path: "/"});
         location.reload();
       }, 500);
     },
@@ -256,20 +258,20 @@ export default {
     async getJoinedTeam() {
       var header = {};
       if (localStorage.getItem("token"))
-        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+        header = {Authorization: "Bearer " + localStorage.getItem("token")};
 
       await this.$axios({
         method: "get",
         url: "/api/v1/team/list",
         headers: header,
       })
-        .then((res) => {
-          console.log(res);
-          this.joinedTeam = res.data.results;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+          .then((res) => {
+            console.log(res);
+            this.joinedTeam = res.data.results;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
     },
     toTeam(teamId) {
       this.$router.push("/team/" + teamId);
@@ -300,6 +302,7 @@ export default {
   background-color: #3d47773a !important;
   width: 150px;
 }
+
 .el-submenu .el-menu-item {
   color: #3d4777;
 }
@@ -321,20 +324,25 @@ span {
   color: #3d4777;
   font-weight: 100;
 }
+
 .el-menu-item-group {
   /* background-color: #3d47774a; */
   background-color: #d3d5e0;
 }
+
 .el-menu-item {
   min-width: 150px;
 }
+
 .el-menu-item:hover {
   /* background-color: #3d47773a !important; */
   background-color: #d3d5e0 !important;
 }
+
 .el-menu:active span {
   color: #7d0066;
 }
+
 .nav-menu {
   height: 100vh;
   max-width: 150px;
@@ -342,6 +350,7 @@ span {
   background-color: #d3d5e0;
   overflow: hidden;
 }
+
 .el-menu {
   border-right: none;
   transition: all 40ms;

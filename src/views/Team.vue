@@ -152,43 +152,8 @@
                 <span class="membersTitle">成员列表</span>
                 </div></el-col>
         </el-row>
-        <el-row class="membersRow"  v-if="activePage == 4">
-        <el-row v-for="item in membersList" :key="item.id" justify="center" type="flex">
-            <el-col :span="23"><div class="membersList">
-            <el-row>
-                <el-col :span="10">
-                    <div class="membersInfo">
-                        <span>昵称:&nbsp;</span>
-                        <span>{{ item.username }}</span>
-                </div></el-col>
-                <el-col :span="10">
-                    <div class="membersInfo">
-                        <span>真实姓名:&nbsp;</span>
-                        <span>{{ item.realname }}</span>
-                </div></el-col>
-                <el-col :span="4"><div class="buttonArea">
-                <el-button class="promoteButton" type="success" round v-if="checkPosition(item.position)" @click="promoteMember(item.id)">升为管理员</el-button>
-                <el-button class="promoteButton" type="danger" round v-if="checkPosition3(item.position)" @click="demoteMember(item.id)">降为成员</el-button>
-                <el-button class="kickButton" type="danger" round v-if="checkPosition2(item.position)" @click="kickMember(item.id)">移除</el-button>
-                </div></el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="10">
-                    <div class="membersInfo">
-                        <span>邮箱:&nbsp;</span>
-                        <span>{{ item.email }}</span>
-                </div></el-col>
-                <el-col :span="10">
-                    <div class="membersInfo">
-                        <span>身份:&nbsp;</span>
-                        <span>{{ item.position }}</span>
-                </div></el-col>
-            </el-row>
-            </div></el-col>
-        </el-row>
-        </el-row>
 
-        <el-row v-if="activePage == 3">
+        <el-row v-if="activePage == 4">
             <el-col :span="24"><div class="membersRow">
         <el-descriptions  v-for="item in membersList" :key="item.id" border :column="5" class="description">
             <el-descriptions-item label="昵称" :label-class-name="my-label" :contentStyle="contentStyle" :labelStyle="labelStyle">{{item.username}}</el-descriptions-item>

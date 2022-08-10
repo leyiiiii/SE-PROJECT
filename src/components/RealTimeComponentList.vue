@@ -70,7 +70,7 @@ export default {
 
 <style lang="scss" scoped>
 .real-time-component-list {
-  height: 35%;
+  height: 70%;
 
   .list {
     height: 30px;

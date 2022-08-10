@@ -4,7 +4,7 @@
     <el-button class="back" @click="back">返回</el-button>
     <el-button class="getAddress" @click="dialogVisible = true">生成预览链接</el-button>
     <el-dialog
-        append-to-body="true"
+        append-to-body=true
         title="提示"
         :visible.sync="dialogVisible"
         width="30%">

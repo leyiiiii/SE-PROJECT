@@ -9,7 +9,9 @@
                     <span>回收站</span>
                 </div></el-col>
                 <el-col :span="12"><div class="deleteAll">
-                    <el-button class="deleteAllButton" type="danger" round icon="el-icon-delete" @click="dialogVisible = true">清空回收站</el-button>
+                    <el-tooltip class="item" effect="dark" content="清空回收站" placement="bottom-start">
+                    <el-button class="deleteAllButton" type="danger" round icon="el-icon-delete" @click="dialogVisible = true"></el-button>
+                    </el-tooltip>
                     <el-dialog
                         title="清空回收站"
                         :visible.sync="dialogVisible"
@@ -21,51 +23,34 @@
                             <el-button type="primary" @click="deleteAll">确定</el-button>
                         </span>
                     </el-dialog>
-                    <el-button class="returnButton" type="info" icon="el-icon-back" plain @click="toTeam">返回团队</el-button>
+                    <el-button class="returnButton" type="info" icon="el-icon-back" round plain @click="toTeam">返回团队</el-button>
                 </div></el-col>
             </el-row>
-
-            <!-- <el-row>
-                <el-col :span="7" v-for="item in recoveryList" :key="item.id"><div class="Project">
-                    <span class="recoveryListTitle">{{ item.type }}</span>
-                    <span>{{ item.title }}</span>
-                    <el-button type="success" round @click="Recover(item.id)">恢复</el-button>
-                    <el-button type="danger" round @click="Delete(item.id)">删除</el-button>
+            <el-row v-if="isEmpty">
+                <el-col :span="24"><div class="noRecycle">
+                    <img src="@/assets/Recycle5.png" class="noRecycleImg">
+                    <p>此时回收站为空，您删除的东西都会出现在这里哟~</p>
                 </div></el-col>
-            </el-row> -->
-
-            <el-row class="cardsRow">
+            </el-row>
+            <el-row class="cardsRow" v else>
                 <el-col :span="7" v-for="item in recoveryList" :key="item.id">
                     <div class="recoveryCard">
                     <el-card :body-style="{ padding: '0px' }" shadow="hover">
-                    <img src="@/assets/Project.jpg" class="image">
+                    <img v-if="item.type == '项目'" src="@/assets/Recycle1.png" class="image">
+                    <img v-if="item.type == '设计原型'" src="@/assets/Recycle2.png" class="image">
+                    <img v-if="item.type == '文件夹'" src="@/assets/Recycle3.png" class="image">
+                    <img v-if="item.type == '文档'" src="@/assets/Recycle4.png" class="image">
                     <div style="padding: 14px;">
                         <span>{{ item.title }}</span>
                         <div class="bottom clearfix">
                         <time class="type">{{ item.type }}</time>
-                        <el-button type="text" class="button1" @click="Delete(item.id)">删除</el-button>
-                        <el-button type="text" class="button2" @click="Recover(item.id)">恢复</el-button>
+                        <el-button type="danger" class="button1" @click="Delete(item.id)">永久删除</el-button>
+                        <el-button type="success" class="button2" @click="Recover(item.id)">还原</el-button>
                         </div>
                     </div>
                     </el-card>
                     </div>
                 </el-col>
-                
-                <!-- <el-col :span="7">
-                    <div class="recoveryCard">
-                    <el-card :body-style="{ padding: '0px' }" shadow="hover">
-                    <img src="@/assets/Project.jpg" class="image">
-                    <div style="padding: 14px;">
-                        <span>标题</span>
-                        <div class="bottom clearfix">
-                        <time class="type">种类</time>
-                        <el-button type="text" class="button1">删除</el-button>
-                        <el-button type="text" class="button2">恢复</el-button>
-                        </div>
-                    </div>
-                    </el-card>
-                    </div>
-                </el-col> -->
             </el-row>
         </div></el-col>
     </el-row>
@@ -86,6 +71,7 @@ export default {
         return {
             dialogVisible: false,
             recoveryList: [],
+            isEmpty: false,
         }
     },
     methods: {
@@ -102,6 +88,9 @@ export default {
             .then((res) =>{
                 console.log(res);
                 this.recoveryList = res.data.results;
+                if(this.recoveryList.length == 0) {
+                    this.isEmpty = true;
+                }
 
                 for(let i = 0; i < this.recoveryList.length; i++) {
                     if(this.recoveryList[i].type == 0) {
@@ -114,6 +103,10 @@ export default {
 
                     if(this.recoveryList[i].type == 2) {
                         this.recoveryList[i].type = "设计原型";
+                    }
+
+                    if(this.recoveryList[i].type == 3) {
+                        this.recoveryList[i].type = "文件夹";
                     }
                 }
             })
@@ -248,20 +241,20 @@ export default {
     line-height: 12px;
 }
 .button1 {
-    padding: 0;
+    padding: 3px;
     margin-right: 10px;
     float: right;
-    color: red;
+    /* color: red; */
 }
 .button2 {
-    padding: 0;
+    padding: 3px;
     margin-right: 10px;
     float: right;
-    color: green;
+    /* color: green; */
 }
 .image {
     width: 100%;
-    height: 150px;
+    /* height: 200px; */
     display: block;
 }
 .clearfix:before,
@@ -274,5 +267,19 @@ export default {
 }
 .el-card:hover{
     transform: scale(1.05);
+}
+.noRecycle{
+    /* border: 1px solid black; */
+    text-align: center;
+    margin-top: 140px;
+}
+.noRecycleImg{
+    height: 20%;
+    width: 20%;
+    opacity: 0.8;
+}
+.noRecycle p{
+    margin-top: 10px;
+    color: rgba(128, 128, 128, 0.67);
 }
 </style>

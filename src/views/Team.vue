@@ -217,43 +217,6 @@
             </div>
           </el-col>
         </el-row>
-
-        <el-row v-if="activePage == 4">
-          <el-col :span="24">
-            <div class="membersRow">
-              <el-descriptions v-for="item in membersList" :key="item.id" border :column="5" class="description">
-                <el-descriptions-item label="昵称" :label-class-name="my-label" :contentStyle="contentStyle"
-                                      :labelStyle="labelStyle">{{ item.username }}
-                </el-descriptions-item>
-                <el-descriptions-item label="真实姓名" v-if="item.realname == ''" :contentStyle="contentStyle"
-                                      :labelStyle="labelStyle">{{ item.username }}
-                </el-descriptions-item>
-                <el-descriptions-item label="真实姓名" v-else :contentStyle="contentStyle" :labelStyle="labelStyle">
-                  {{ item.realname }}
-                </el-descriptions-item>
-                <el-descriptions-item label="邮箱" :contentStyle="contentStyle2" :labelStyle="labelStyle">
-                  {{ item.email }}
-                </el-descriptions-item>
-                <el-descriptions-item label="身份" :labelStyle="labelStyle">
-                  <el-tag size="small" type="warning" v-if="item.position == 'Main Admin'">主管理员</el-tag>
-                  <el-tag size="small" v-if="item.position == 'Admin'">管理员</el-tag>
-                  <el-tag size="small" type="info" v-if="item.position == 'Member'">成员</el-tag>
-                  <el-dropdown class="More">
-                    <i v-if="checkPosition4(item.id)" class="el-icon-more"></i>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item v-if="checkPosition(item.position)" @click="promoteMember(item.id)">升为管理员
-                      </el-dropdown-item>
-                      <el-dropdown-item v-if="checkPosition3(item.position)" @click="demoteMember(item.id)">降为成员
-                      </el-dropdown-item>
-                      <el-dropdown-item v-if="checkPosition2(item.position)" @click="kickMember(item.id)">移除
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </el-descriptions-item>
-              </el-descriptions>
-            </div>
-          </el-col>
-        </el-row>
       </div>
     </el-col>
   </el-row>

@@ -1,72 +1,84 @@
 <template>
   <el-row>
-    <el-col :span="1">
+    <el-col :span="2">
       <div class="Left">
         <Navi></Navi>
       </div>
     </el-col>
-    <el-col :span="23">
+    <el-col :span="22">
       <div class="Right">
-        <el-row>
-          <el-col :span="12">
-            <div class="Title">
-              <span>{{ form.name }}</span>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="Buttons">
-<!--              <el-button type="info" round icon="el-icon-edit" @click="dialogVisible = true">编辑项目</el-button>-->
-<!--              <el-dialog title="编辑项目" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">-->
-<!--                <el-form :model="form" label-width="auto">-->
-<!--                  <el-form-item label="项目名字">-->
-<!--                    <el-input v-model="form.nameTemp"></el-input>-->
-<!--                  </el-form-item>-->
-<!--                  <el-form-item label="项目简介">-->
-<!--                    <el-input type="textarea" :autosize="{ minRows: 2 }" v-model="form.descTemp" autocomplete="off"-->
-<!--                              resize="none"></el-input>-->
-<!--                  </el-form-item>-->
-<!--                </el-form>-->
-<!--                <span slot="footer" class="dialog-footer">-->
-<!--                                          <el-button @click="cancelChanges">取消</el-button>-->
-<!--                                          <el-button type="primary" @click="saveEdit">保存</el-button>-->
-<!--                                      </span>-->
-<!--              </el-dialog>-->
-<!--              <el-popconfirm-->
-<!--                  confirm-button-text='确定'-->
-<!--                  cancel-button-text='不了，谢谢'-->
-<!--                  icon="el-icon-info"-->
-<!--                  icon-color="red"-->
-<!--                  title="您确定要删除此项目？"-->
-<!--                  @confirm="confirmDelete">-->
-<!--                <el-button type="danger" round slot="reference">删除项目</el-button>-->
-<!--              </el-popconfirm>-->
-            </div>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="2.5">
-            <div class="Title2">
-              <span>项目简介&nbsp;:&nbsp;</span>
-            </div>
-          </el-col>
-          <el-col :span="20" v-if="hasChinese()">
-            <div class="Desc">
-              <span>{{ form.desc }}</span>
-            </div>
-          </el-col>
-          <el-col :span="20" v-else>
-            <div class="Desc2">
-              <span>{{ form.desc }}</span>
-            </div>
-          </el-col>
-        </el-row>
-        <el-row class="tab-row">
-          <div class="tab" id="tab1" @click="toDoc">文档</div>
-          <div class="tab" id="tab2" @click="toDesign">设计原型</div>
-          <div class="tab" id="tab3" @click="toDraw">UML绘制图</div>
-        </el-row>
-        <Doc v-if="activeTab == 1"></Doc>
-        <Design v-if="activeTab == 2"></Design>
+        <!--        <el-row>-->
+        <!--          <el-col :span="12">-->
+        <!--            <div class="Title">-->
+        <!--              <span>{{ form.name }}</span>-->
+        <!--            </div>-->
+        <!--          </el-col>-->
+        <!--          <el-col :span="12">-->
+        <!--            <div class="Buttons">-->
+        <!--              <el-button type="info" round icon="el-icon-edit" @click="dialogVisible = true">编辑项目</el-button>-->
+        <!--              <el-dialog title="编辑项目" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">-->
+        <!--                <el-form :model="form" label-width="auto">-->
+        <!--                  <el-form-item label="项目名称">-->
+        <!--                    <el-input v-model="form.nameTemp"></el-input>-->
+        <!--                  </el-form-item>-->
+        <!--                  <el-form-item label="项目描述">-->
+        <!--                    <el-input type="textarea" :autosize="{ minRows: 2 }" v-model="form.descTemp" autocomplete="off"-->
+        <!--                              resize="none"></el-input>-->
+        <!--                  </el-form-item>-->
+        <!--                </el-form>-->
+        <!--                <span slot="footer" class="dialog-footer">-->
+        <!--                                          <el-button @click="cancelChanges">取消</el-button>-->
+        <!--                                          <el-button type="primary" @click="saveEdit">保存</el-button>-->
+        <!--                                      </span>-->
+        <!--              </el-dialog>-->
+        <!--              <el-popconfirm-->
+        <!--                  confirm-button-text='确定'-->
+        <!--                  cancel-button-text='不了，谢谢'-->
+        <!--                  icon="el-icon-info"-->
+        <!--                  icon-color="red"-->
+        <!--                  title="您确定要删除此项目？"-->
+        <!--                  @confirm="confirmDelete">-->
+        <!--                <el-button type="danger" round slot="reference">删除项目</el-button>-->
+        <!--              </el-popconfirm>-->
+        <!--            </div>-->
+        <!--          </el-col>-->
+        <!--        </el-row>-->
+        <!--        <el-row>-->
+        <!--          <el-col :span="2.5">-->
+        <!--            <div class="Title2">-->
+        <!--              <span>项目描述&nbsp;:&nbsp;</span>-->
+        <!--            </div>-->
+        <!--          </el-col>-->
+        <!--          <el-col :span="20" v-if="hasChinese()">-->
+        <!--            <div class="Desc">-->
+        <!--              <span>{{ form.desc }}</span>-->
+        <!--            </div>-->
+        <!--          </el-col>-->
+        <!--          <el-col :span="20" v-else>-->
+        <!--            <div class="Desc2">-->
+        <!--              <span>{{ form.desc }}</span>-->
+        <!--            </div>-->
+        <!--          </el-col>-->
+        <!--        </el-row>-->
+
+        <!--        <el-row class="tab-row">-->
+        <!--          <div class="tab" id="tab1" @click="toDoc">文档</div>-->
+        <!--          <div class="tab" id="tab2" @click="toDesign">设计原型</div>-->
+        <!--          <div class="tab" id="tab3" @click="toDraw">UML绘制图</div>-->
+        <!--        </el-row>-->
+
+        <el-menu :default-active="activeIndex" class="el-menu-demo navibar" mode="horizontal" @select="handleSelect"
+                 background-color="#F4E3E0" active-text-color="#ff6699" text-color="black">
+          <el-menu-item index="1">文档</el-menu-item>
+          <el-menu-item index="2">设计原型</el-menu-item>
+          <el-menu-item index="3">UML绘制图</el-menu-item>
+        </el-menu>
+
+        <!--        <Doc v-if="activeTab == 1"></Doc>-->
+        <!--        <Design v-if="activeTab == 2"></Design>-->
+        <Doc v-if="activePage === '1'"></Doc>
+        <Design v-if="activePage === '2'"></Design>
+
       </div>
     </el-col>
   </el-row>
@@ -95,7 +107,9 @@ export default {
         nameTemp: '',
         descTemp: '',
         belongTo: '',
-      }
+      },
+      activeIndex: '1',
+      activePage: '1'
     }
   },
   mounted() {
@@ -103,28 +117,46 @@ export default {
     this.projectId = arr[0];
     this.getProjectInfo();
     if (arr.length > 1) {
-      if (arr[1] == "doc") {
-        this.activeTab = 1;
-        this.toDoc();
+      if (arr[1] === "doc") {
+        this.activePage = '1';
+        this.activeIndex = '1';
+        // this.toDoc();
       } else {
-        this.activeTab = 2;
-        this.toDesign();
+        this.activePage = '2';
+        this.activeIndex = '2';
+        // this.toDesign();
       }
       this.isOpenADoc = true;
       this.documentId = arr[2];
     } else this.toDoc();
   },
+
   methods: {
+    handleSelect(key, keypath) {
+      if (key === '1') {
+        this.activePage = '1';
+        this.toDoc();
+      } else if (key === '2') {
+        this.activePage = '2';
+        this.toDesign();
+      } else if (key === '3') {
+        this.activePage = '3';
+        this.toDraw();
+      }
+    },
+
     cancelChanges() {
       this.dialogVisible = false;
       this.form.nameTemp = this.form.name;
       this.form.descTemp = this.form.desc;
     },
+
     handleClose() {
       this.dialogVisible = false;
       this.form.nameTemp = this.form.name;
       this.form.descTemp = this.form.desc;
     },
+
     saveEdit() {
       const formData = new FormData();
       formData.append("title", this.form.nameTemp);
@@ -183,20 +215,20 @@ export default {
           });
     },
     toDoc() {
-      if (this.activeTab != 1) this.$router.replace("/project/" + this.projectId);
-      this.activeTab = 1;
-      document.getElementById("tab2").style.color = "black";
-      document.getElementById("tab2").style.borderBottom = "none";
-      document.getElementById("tab1").style.color = "darkolivegreen";
-      document.getElementById("tab1").style.borderBottom = "2px solid darkolivegreen";
+      this.$router.replace("/project/" + this.projectId);
+      this.activePage = '1';
+      // document.getElementById("tab2").style.color = "black";
+      // document.getElementById("tab2").style.borderBottom = "none";
+      // document.getElementById("tab1").style.color = "darkolivegreen";
+      // document.getElementById("tab1").style.borderBottom = "2px solid darkolivegreen";
     },
     toDesign() {
-      if (this.activeTab != 2) this.$router.replace("/project/" + this.projectId);
-      this.activeTab = 2;
-      document.getElementById("tab1").style.color = "black";
-      document.getElementById("tab1").style.borderBottom = "none";
-      document.getElementById("tab2").style.color = "darkolivegreen";
-      document.getElementById("tab2").style.borderBottom = "2px solid darkolivegreen";
+      this.$router.replace("/project/" + this.projectId);
+      this.activePage = '2';
+      // document.getElementById("tab1").style.color = "black";
+      // document.getElementById("tab1").style.borderBottom = "none";
+      // document.getElementById("tab2").style.color = "darkolivegreen";
+      // document.getElementById("tab2").style.borderBottom = "2px solid darkolivegreen";
     },
     toDraw() {
       window.open(
@@ -314,5 +346,9 @@ export default {
 .Left {
   position: relative;
   z-index: 99;
+}
+
+.navibar {
+  margin-bottom: 5px;
 }
 </style> 

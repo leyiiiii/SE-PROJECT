@@ -44,7 +44,7 @@
                 @mousedown="handleMouseDown"
                 @mouseup="deselectCurComponent"
             >
-              <Editor/>1
+              <Editor/>
             </div>
           </section>
           <!-- 右侧属性列表 -->
@@ -357,8 +357,8 @@ export default {
     .left {
       //margin-left: 130px;
       position: absolute;
-      height: 100%;
-      width: 200px;
+      height: 800px;
+      width: 220px;
       //left: 10px;
       top: 70px;
 
@@ -384,10 +384,11 @@ export default {
     }
 
     .center {
-      margin-left: 200px;
+      margin-left: 220px;
       margin-right: 288px;
       background: #f5f5f5;
-      height: 100%;
+      height: 800px;
+      //width: 500px;
       overflow: auto;
       padding: 20px;
 

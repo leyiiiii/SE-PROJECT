@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Header></Header>
+    <Header><a href="/about" class="nav">关于我们</a></Header>
     <div>
       <img id="bg" src="@/assets/HomepageBg.png" />
       <h1 class="slogan">

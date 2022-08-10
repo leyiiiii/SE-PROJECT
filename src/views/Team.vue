@@ -8,13 +8,14 @@
     <el-col :span="21">
       <div class="Right">
         <el-row>
-          <el-col :span="19">
+          <el-col :span="17">
             <div class="info">
               <span class="teamInfo1">{{ form.name }}</span>
             </div>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="7">
             <div class="inviteButton">
+              <el-button class="recycleButton" icon="el-icon-delete-solid" round @click="toRecycle">回收站</el-button>
               <el-button v-if="isMainAdmin || isAdmin" type="info" round @click="dialogVisible2 = true">邀请成员</el-button>
               <el-dialog title="邀请成员" :visible.sync="dialogVisible2" width="30%" :before-close="handleClose2">
                 <el-form label-width="auto">
@@ -37,10 +38,10 @@
           <el-menu-item index="1">详情</el-menu-item>
           <el-menu-item index="2">项目</el-menu-item>
           <el-menu-item index="3">文档中心</el-menu-item>
-          <el-menu-item index="4">成员列表</el-menu-item>
+          <el-menu-item index="4"><i class="el-icon-user-solid"></i>成员列表</el-menu-item>
         </el-menu>
 
-        <el-row v-if="activePage == 1">
+        <el-row v-if="activePage ==='1'">
           <div class="container">
             <div class="card">
               <div class="image">
@@ -76,7 +77,7 @@
           </div>
 
         </el-row>
-        <el-row v-if="activePage == 2">
+        <el-row v-if="activePage ==='2'">
           <el-col :span="24">
             <div class="projectTitle">
               <i class="el-icon-s-order"></i>
@@ -89,7 +90,7 @@
                   <el-form-item label="项目名称">
                     <el-input v-model="project.name"></el-input>
                   </el-form-item>
-                  <el-form-item label="项目简介">
+                  <el-form-item label="项目描述">
                     <el-input type="textarea" :autosize="{ minRows: 2 }" v-model="project.desc" autocomplete="off"
                               resize="none"></el-input>
                   </el-form-item>
@@ -99,15 +100,14 @@
                     <el-button type="primary" @click="createProject">确定</el-button>
                     </span>
               </el-dialog>
-              <el-button class="recycleButton" icon="el-icon-delete-solid" round @click="toRecycle">回收站</el-button>
               <el-table
-                  v-if="haveProject && activePage == 2"
+                  v-if="haveProject && activePage ==='2'"
                   :data="projectList.filter(data => !search || data.title.toLowerCase().includes(search.toLowerCase())|| data.creatorName.toLowerCase().includes(search.toLowerCase()))"
                   style="width: 100%"
                   @cell-click="toProject"
                   :cell-class-name="getCellIndex">
                 <el-table-column
-                    label="项目名字"
+                    label="项目名称"
                     prop="title"
                     sortable>
                 </el-table-column>
@@ -122,12 +122,12 @@
                 </el-table-column>
                 <el-table-column
                     align="right">
-                  <!-- <template slot="header" slot-scope="scope"> -->
-                  <template slot="header">
+                  <template slot="header" slot-scope="scope">
                     <el-input
                         v-model="search"
                         size="mini"
-                        placeholder="输入您的搜索"/>
+                        placeholder="输入您的搜索"
+                        @click="None(scope.$index)"/>
                   </template>
                   <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" content="编辑" placement="top">
@@ -142,20 +142,35 @@
                       <el-button size="mini" type="danger" icon="el-icon-delete" circle
                                  @click="deleteProject(scope.$index, scope.row)"></el-button>
                     </el-tooltip>
-                    <el-dialog title="编辑项目" :visible.sync="editDialogVisible" width="50%" :before-close="handleClose">
+                    <el-tooltip class="item" effect="dark" content="更多信息" placement="top">
+                      <el-button size="mini" type="info" icon="el-icon-info" circle
+                                 @click="getProjectInfo(scope.$index, scope.row)"></el-button>
+                    </el-tooltip>
+                    <el-dialog title="编辑项目" :visible.sync="editDialogVisible" width="50%"
+                               :before-close="handleEditDialogClose" append-to-body=true>
                       <el-form :model="form" label-width="auto">
-                        <el-form-item label="项目名字">
+                        <el-form-item label="项目名称">
                           <el-input v-model="form.nameTemp"></el-input>
                         </el-form-item>
-                        <el-form-item label="项目简介">
+                        <el-form-item label="项目描述">
                           <el-input type="textarea" :autosize="{ minRows: 2 }" v-model="form.descTemp"
                                     autocomplete="off" resize="none"></el-input>
                         </el-form-item>
                       </el-form>
                       <span slot="footer" class="dialog-footer">
                           <el-button @click="cancelEditProject">取消</el-button>
-                          <el-button type="primary" @click="editProject()">确定</el-button>
+                          <el-button type="primary" @click="editProject">确定</el-button>
                         </span>
+                    </el-dialog>
+                    <el-dialog title="项目信息" :visible.sync="getProjectInfoDialogVisible" width="30%" append-to-body=true>
+                      <h4>项目名称：{{ projectInfo.title }}</h4>
+                      <h4>项目描述：{{ projectInfo.description }}</h4>
+                      <h4>项目创建于：{{ projectInfo.createdAt | formatDate }}</h4>
+                      <h4>项目更新于：{{ projectInfo.updatedAt | formatDate }}</h4>
+                      <span slot="footer" class="dialog-footer">
+                        <el-button @click="getProjectInfoDialogVisible = false">取消</el-button>
+                        <el-button type="primary" @click="getProjectInfoDialogVisible = false">确定</el-button>
+                      </span>
                     </el-dialog>
                   </template>
                 </el-table-column>
@@ -163,23 +178,20 @@
             </div>
           </el-col>
         </el-row>
-        <el-row v-if="!haveProject && activePage == 2">
+        <el-row v-if="!haveProject && activePage == '2'">
           <el-col :span="24">
-            <div class="projects">
-              暂无项目！
+            <div class="noProjects">
+              <img src="@/assets/Project1.png" class="noProjectImg">
+              <p>- 暂无项目 -</p>
             </div>
           </el-col>
         </el-row>
 
-        <!-- <el-row v-if="haveProject && activePage == 2">
-            <el-button class="projectButton" v-for="item in projectList" :key="item.id" @click="enterProject(item.id)">{{ item.title }}</el-button>
-        </el-row> -->
-
-        <el-row v-if="activePage == 3">
+        <el-row v-if="activePage == '3'">
           <Doc></Doc>
         </el-row>
 
-        <el-row v-if="activePage == 4">
+        <el-row v-if="activePage ==='4'">
           <el-col :span="24">
             <div class="membersRow">
               <el-descriptions v-for="item in membersList" :key="item.id" border :column="5" class="description">
@@ -241,8 +253,8 @@ export default {
       isAdmin: false,
       isMember: false,
       userId: '',
-      activeIndex: '1',
-      activePage: 1,
+      activeIndex: '3',
+      activePage: '3',
       form: {
         name: '',
         desc: '',
@@ -284,14 +296,25 @@ export default {
       labelStyle2: {
         'width': '90px',
       },
-      editDialogVisible: false
+      editDialogVisible: false,
+      getProjectInfoDialogVisible: false,
+      projectInfo: {
+        title: "",
+        description: "",
+        createdAt: "",
+        updatedAt: "",
+        belongTo: ""
+      }
     }
   },
 
   created() {
     var arr = this.$route.params.id.split("&");
     this.teamId = arr[0];
-    if (arr.length > 1) this.activePage = 3;
+    if (arr.length > 1) {
+      this.activePage = '3'
+      this.activeIndex = '3';
+    }
     this.getTeamInfo();
     this.getProjectDetail();
     var userInfo;
@@ -395,10 +418,39 @@ export default {
           })
     },
 
+    getProjectInfo(index, row) {
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = {Authorization: "Bearer " + localStorage.getItem("token")};
+
+      this.$axios({
+        method: "get",
+        url: "/api/v1/project/" + row.id,
+        headers: header,
+      })
+          .then((res) => {
+            var projectInfo = res.data;
+            this.projectInfo.title = projectInfo.title;
+            this.projectInfo.description = projectInfo.description;
+            this.projectInfo.createdAt = projectInfo.createdAt;
+            this.projectInfo.updatedAt = projectInfo.updatedAt;
+            this.getProjectInfoDialogVisible = true;
+          })
+          .catch((err) => {
+            console.log(err);
+            this.$message.warning("获取项目信息失败！")
+          })
+    },
+
     cancelChanges() {
       this.dialogVisible = false;
       this.project.name = '';
       this.project.desc = '';
+    },
+    handleEditDialogClose() {
+      this.dialogVisible = false;
+      this.form.nameTemp = this.form.name;
+      this.form.descTemp = this.form.desc;
     },
     handleClose() {
       this.dialogVisible = false;
@@ -414,20 +466,20 @@ export default {
       this.inviteName = '';
     },
     handleSelect(key, keyPath) {
-      if (key == '1') {
-        this.activePage = 1;
+      if (key === '1') {
+        this.activePage = '1';
       }
 
-      if (key == '2') {
-        this.activePage = 2;
+      if (key === '2') {
+        this.activePage = '2';
       }
 
-      if (key == '3') {
-        this.activePage = 3;
+      if (key === '3') {
+        this.activePage = '3';
       }
 
-      if (key == '4') {
-        this.activePage = 4;
+      if (key === '4') {
+        this.activePage = '4';
       }
     },
     createProject() {
@@ -437,7 +489,7 @@ export default {
       }
 
       if (this.project.desc == "") {
-        this.$message.warning("项目简介不可为空！");
+        this.$message.warning("项目描述不可为空！");
         return;
       }
 
@@ -762,7 +814,8 @@ export default {
 }
 
 .inviteButton button {
-  margin-right: 10px;
+  margin-right: 5px;
+  margin-left: 0px;
 }
 
 .info {
@@ -792,8 +845,8 @@ export default {
 }
 
 .teamInfo1 {
-  font-size: 40px;
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 48px;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .teamInfo2 {
@@ -801,12 +854,14 @@ export default {
   font-family: cursive;
 }
 
-.projects {
-  margin-left: 30px;
-  margin-top: 200px;
+.noProjects {
+  margin-top: 130px;
   /* border: 1px solid black; */
   text-align: center;
-  font-size: 48px;
+}
+
+.noProjects p {
+  margin-top: 10px;
   color: rgba(128, 128, 128, 0.67);
 }
 
@@ -834,7 +889,8 @@ export default {
 
 .membersRow {
   /* border: 1px solid black; */
-  max-height: 550px;
+  margin-top: 10px;
+  max-height: 600px;
   overflow: hidden;
   overflow-y: scroll;
 }
@@ -844,7 +900,7 @@ export default {
   margin-top: 12px;
 }
 
-.addButton, .recycleButton {
+.addButton {
   margin-left: 10px;
 }
 
@@ -858,8 +914,12 @@ export default {
   margin: 10px;
 }
 
-.el-icon-user-solid, .el-icon-s-order {
+.el-icon-s-order {
   font-size: 22px;
+}
+
+.el-icon-user-solid {
+  color: black;
 }
 
 .Nav {
@@ -874,6 +934,12 @@ export default {
 .More {
   /* border: 1px solid black; */
   float: right;
+}
+
+.noProjectImg {
+  height: 20%;
+  width: 20%;
+  opacity: 0.8;
 }
 
 .container {

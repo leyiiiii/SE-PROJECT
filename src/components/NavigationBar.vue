@@ -70,10 +70,10 @@
             <i class="el-icon-postcard"></i>
             <span slot="title"> 查看邀请 </span>
           </el-menu-item>
-          <el-menu-item index="/about">
-            <i class="el-icon-collection"></i>
-            <span slot="title"> 关于墨书 </span>
-          </el-menu-item>
+<!--          <el-menu-item index="/about">-->
+<!--            <i class="el-icon-collection"></i>-->
+<!--            <span slot="title"> 关于墨书 </span>-->
+<!--          </el-menu-item>-->
         </el-menu>
       </el-aside>
       <el-main></el-main>
@@ -341,6 +341,7 @@ export default {
           });
     },
     toTeam(teamId) {
+      alert(teamId)
       this.$router.push("/team/" + teamId);
       setTimeout(() => {
         location.reload();

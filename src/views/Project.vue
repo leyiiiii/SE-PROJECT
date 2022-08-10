@@ -287,7 +287,7 @@ export default {
     margin-left: 3px;
     border-bottom: 2px lightgray solid;
 }
-.Nav {
+.Left {
     position: relative;
     z-index: 99;
 }

@@ -54,6 +54,29 @@ export default Vue.extend({
     onCreated(editor) {
       this.editor = Object.seal(editor); // 一定要用 Object.seal() ，否则会报错
     },
+    async saveDoc() {
+      let formData = new FormData();
+      formData.append("title", this.title);
+      formData.append("content", JSON.stringify(this.html));
+      formData.append("documentId", this.documentId);
+
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+      await this.$axios({
+        method: "put",
+        url: "/api/v1/document/" + this.teamId + "/" + this.documentId,
+        data: formData,
+        headers: header,
+      })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     async getDocDetail() {
       var header = {};
       if (localStorage.getItem("token"))
@@ -94,10 +117,6 @@ export default Vue.extend({
     this.projectId = arr[0]
     this.documentId = arr[2];
     this.getDocDetail();
-    if (arr[1] == "doc")
-      window.setInterval(() => {
-        // setTimeout(this.saveDoc(), 0);
-      }, 1000);
   },
   beforeRouteUpdate(to, from, next) {
     if (this.timer) {
@@ -109,7 +128,6 @@ export default Vue.extend({
     const editor = this.editor;
     if (editor == null) return;
     editor.destroy(); // 组件销毁时，及时销毁编辑器
-    clearInterval(this.timer);
   },
 });
 </script>

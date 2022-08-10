@@ -44,7 +44,7 @@
                 @mousedown="handleMouseDown"
                 @mouseup="deselectCurComponent"
             >
-              <Editor/>1
+              <Editor/>
             </div>
           </section>
           <!-- 右侧属性列表 -->

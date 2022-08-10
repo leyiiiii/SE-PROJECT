@@ -12,7 +12,7 @@
             @close="handleClose"
             :router="true"
             :unique-opened="true"
-            :collapse="isCollapse"
+            :collapse="false"
         >
           <el-submenu index="1">
             <template slot="title">

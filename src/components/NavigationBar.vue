@@ -415,10 +415,15 @@ span {
   /* background-color: #3d47773a; */
   background-color: #d3d5e0;
   overflow: hidden;
+  box-shadow: 20px 20px 20px #000000;
 }
 
 .el-menu {
   border-right: none;
   transition: all 40ms;
+  overflow: scroll;
+}
+::-webkit-scrollbar {
+  display: none;
 }
 </style>

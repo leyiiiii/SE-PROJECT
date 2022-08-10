@@ -1,5 +1,5 @@
 {
-  "name": "se-project",
+  "name": "MoShu",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@wangeditor/editor-for-vue": "^1.0.2",
+    "animejs": "^3.2.1",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "crypto-browserify": "^3.12.0",
@@ -32,6 +33,7 @@
     "chalk": "^4.1.1",
     "compression-webpack-plugin": "^6.1.1",
     "husky": "^4.2.3",
+    "jquery": "^3.6.0",
     "lint-staged": "^11.0.0",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",

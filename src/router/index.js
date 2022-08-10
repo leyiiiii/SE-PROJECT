@@ -12,6 +12,11 @@ const routes = [
     component: HomeView
   },
   {
+    path: '/teamhome',
+    name: 'team homepage',
+    component: () => import('../views/TeamHomepage.vue'),
+  },
+  {
     path: '/team/:id',
     name: 'team',
     component: () => import('../views/Team.vue'),
@@ -41,6 +46,21 @@ const routes = [
     name: 'invitation',
     component: () => import('../views/Invitation.vue'),
   },
+  {
+    path: '/recycle/:id',
+    name: 'recycle',
+    component: () => import('../views/Recycle.vue'),
+  },
+  {
+    path: '/about',
+    name: 'about',
+    component: () => import('../views/About.vue'),
+  },
+  {
+    path: '/preview/:id',
+    name: 'preview',
+    component: () => import('../components/Editor/Preview')
+  }
 ]
 
 const router = new VueRouter({

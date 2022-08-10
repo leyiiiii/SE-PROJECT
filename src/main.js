@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import axios from 'axios'
+import $ from 'jquery'
 import '@/custom-component' // 注册自定义组件
 
 import '@/assets/iconfont/iconfont.css'
@@ -16,7 +17,8 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(ElementUI);
 Vue.prototype.$axios = axios
-
+window.jQuery = $
+window.$ = $
 // axios.defaults.baseURL = 'http://127.0.0.1:8000'
 axios.defaults.baseURL = 'https://stagging-api-moshu.cheangfou.com'
 

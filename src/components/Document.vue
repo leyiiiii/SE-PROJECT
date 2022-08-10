@@ -2,22 +2,40 @@
   <el-row>
     <el-col :span="3">
       <div class="content">
-        <div class="content-title">
+        <div v-if="!isTeamDoc" class="content-title">
           <i class="el-icon-s-unfold"></i>
           文档
           <div class="add-icon" @click="add">+</div>
         </div>
-        <li v-for="item in documentList" :key="item.id">
-          <div class="list-box" @click="openDoc(item.id)">
-            <i class="el-icon-document"></i>
-            {{ item.title }}
-          </div>
-          <i class="el-icon-delete" @click="remove(item.id)"></i>
-        </li>
-      </div></el-col>
+        <div v-else class="content-title">
+          <i class="el-icon-s-unfold"></i>
+          文档中心
+          <div class="add-icon" @click="add">+</div>
+        </div>
+        <div v-if="!isTeamDoc">
+          <li v-for="item in documentList" :key="item.id">
+            <div class="list-box" @click="openDoc(item.id)">
+              <i class="el-icon-document"></i>
+              {{ item.title }}
+            </div>
+            <i class="el-icon-delete" @click="remove(item.id)"></i>
+          </li>
+        </div>
+        <div v-else></div>
+      </div>
+    </el-col>
     <el-col :span="18" :offset="1">
-      <div class="doc-title" v-if="status">{{ title }}
-        <i class="el-icon-edit" @click="changeTitle"></i>
+      <div class="doc-title" v-if="status">
+        {{ title }}
+        <el-tooltip class="item" effect="dark" content="修改文件名" placement="top">
+          <i class="el-icon-edit" @click="changeTitle"></i>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="保存" placement="top">
+          <i class="el-icon-upload" @click="saveDoc"></i>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="退出编辑" placement="top">
+          <i class="el-icon-check" @click="endEdit"></i>
+        </el-tooltip>
       </div>
       <Editor v-if="isOpenADoc"></Editor>
     </el-col>
@@ -29,16 +47,19 @@ import Editor from "@/components/Editor";
 export default {
   name: "test",
   components: {
-    Editor
-},
+    Editor,
+  },
   data() {
     return {
+      isTeamDoc: false,
       isOpenADoc: true,
-      status:false,
+      status1: false,
+      status: false,
       iconFormVisible: false,
       userInfo: {},
-      dialogTitle: '增加',
+      dialogTitle: "增加",
       rowIndex: null,
+      teamId: "",
       projectId: "",
       haveDocument: false,
       documentId: "",
@@ -49,54 +70,73 @@ export default {
       belongTo: "",
       updatedAt: "",
       documentList: [],
+      folderList: [[]],
     };
   },
   created() {
-    var arr = this.$route.params.id.split("&");
-    this.projectId = arr[0];
-    this.getDocument();
-    if(arr.length > 2) {
-      this.isOpenADoc = true;
-      this.documentId = arr[2];
-      this.getDocDetail();
+    if (this.$route.path.slice(0, 5) == "/team") {
+      this.isTeamDoc = true;
+      var arr = this.$route.params.id.split("&");
+      this.teamId = arr[0];
+      this.getTeamDoc();
+      if (arr.length > 2) {
+        this.isOpenADoc = true;
+        this.documentId = arr[2];
+        this.getDocDetail();
+      } else this.isOpenADoc = false;
+    } else {
+      var arr = this.$route.params.id.split("&");
+      this.projectId = arr[0];
+      this.getProjDoc();
+      if (arr.length > 2) {
+        this.isOpenADoc = true;
+        this.documentId = arr[2];
+        this.getDocDetail();
+      } else this.isOpenADoc = false;
     }
-    else this.isOpenADoc = false;
   },
   methods: {
+    endEdit() {
+
+    },
     changeTitle() {
-      this.$prompt('更改文档名字', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-        }).then(({value}) => {
+      this.$prompt("更改文档名字", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+      })
+        .then(({ value }) => {
           let formData = new FormData();
           formData.append("title", value);
           formData.append("documentId", this.documentId);
           var header = {};
           if (localStorage.getItem("token"))
-            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+            header = {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            };
 
           this.$axios({
             method: "put",
-            url: "/api/v1/document/" + this.documentId,
+            url: "/api/v1/document/" + this.teamId + "/" + this.documentId,
             data: formData,
             headers: header,
           })
-          .then((res) => {
-            console.log(res.data)
-          })
-          .catch((err) =>{
-            console.log(err);
-          });
+            .then((res) => {
+              console.log(res.data);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
           this.$message({
-            type: 'success',
-            message: '更改成功'
+            type: "success",
+            message: "更改成功",
           });
           window.location.reload();
-        }).catch(() => {
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '取消输入'
-          });       
+            type: "info",
+            message: "取消输入",
+          });
         });
     },
     openDoc(id) {
@@ -105,7 +145,6 @@ export default {
     },
     add() {
       let formData = new FormData();
-      formData.append("title", "Unknown Document");
       formData.append("content", JSON.stringify("<p>this is a document</p>"));
       formData.append("projectId", this.projectId);
 
@@ -119,79 +158,111 @@ export default {
         data: formData,
         headers: header,
       })
-      .then((res) => {
-        console.log(res.data);
-        this.openDoc(res.data.id);
-      })
-      .catch((err) =>{
-        console.log(err);
-      });
-
-
+        .then((res) => {
+          console.log(res.data);
+          this.openDoc(res.data.id);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
-    // 删除
+    saveDoc() {
+      let formData = new FormData();
+      formData.append("title", this.title);
+      formData.append("content", JSON.stringify(this.html));
+      formData.append("documentId", this.documentId);
+
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+      this.$axios({
+        method: "put",
+        url: "/api/v1/document/" + this.teamId + "/" + this.documentId,
+        data: formData,
+        headers: header,
+      })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     remove(id) {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
           var header = {};
           if (localStorage.getItem("token"))
-            header = { Authorization: "Bearer " + localStorage.getItem("token") };
+            header = {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            };
 
           this.$axios({
             method: "delete",
-            url: "/api/v1/document/" + id,
+            url: "/api/v1/document/" + this.teamId + "/" + id,
             headers: header,
           })
-          .then((res) => {
-            console.log(res.data)
-          })
-          .catch((err) =>{
-            console.log(err);
-          });
+            .then((res) => {
+              console.log(res.data);
+              this.$message({
+                type: "success",
+                message: "删除成功!",
+              });
 
+              window.location.reload();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch(() => {
           this.$message({
-            type: 'success',
-            message: '删除成功!'
+            type: "info",
+            message: "已取消删除",
           });
-
-          window.location.reload()
-
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
         });
     },
     async getDocDetail() {
       var header = {};
       if (localStorage.getItem("token"))
         header = { Authorization: "Bearer " + localStorage.getItem("token") };
-
       await this.$axios({
         method: "get",
-        url: "/api/v1/document/" + this.documentId,
+        url: "/api/v1/project/" + this.projectId,
         headers: header,
       })
-      .then((res) => {
-        console.log(res.data);
-        var r = res.data;
-        this.documentContent = r.content;
-        this.belongTo = r.belongTo;
-        this.createdAt = r.createdAt;
-        this.updatedAt = r.updatedAt;
-        this.createdBy = r.createdBy;
-        this.title = r.title;
-        this.status = true;
+        .then((res) => {
+          this.teamId = res.data.belongTo;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      this.$axios({
+        method: "get",
+        url: "/api/v1/document/" + this.teamId + "/" + this.documentId,
+        headers: header,
       })
-      .catch((err) =>{
-        console.log(err);
-      });
+        .then((res) => {
+          console.log(res.data);
+          var r = res.data;
+          this.documentContent = r.content;
+          this.belongTo = r.belongTo;
+          this.createdAt = r.createdAt;
+          this.updatedAt = r.updatedAt;
+          this.createdBy = r.createdBy;
+          this.title = r.title;
+          this.status = true;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
-    getDocument() {
+    async getProjDoc() {
       var header = {};
       if (localStorage.getItem("token"))
         header = { Authorization: "Bearer " + localStorage.getItem("token") };
@@ -201,20 +272,53 @@ export default {
         url: "/api/v1/document/list?belongTo=" + this.projectId,
         headers: header,
       })
-      .then((res) => {
-        console.log(res.data.results);
-        this.documentList = res.data.results;
-        if(this.documentList.length > 0) {
-                this.haveDocument = true;
-            }
+        .then((res) => {
+          console.log(res.data.results);
+          this.documentList = res.data.results;
+          if (this.documentList.length > 0) {
+            this.haveDocument = true;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    getTeamDoc() {
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+      this.$axios({
+        method: "get",
+        url: "/api/v1/folder/list?belongTo=" + this.teamId,
+        headers: header,
       })
-      .catch((err) =>{
-        console.log(err);
-      });
+        .then((res) => {
+          console.log(res.data.results);
+          if (res.data.results.length == 0) return;
+          var folderArr = [];
+          folderArr = res.data.results;
+          console.log("123456", folderArr);
+          for (let i = 0; i < folderArr.length; i++) {
+            this.$axios({
+              method: "get",
+              url: "/api/v1/document/list?belongFolder=" + folderArr[i].id,
+              headers: header,
+            })
+              .then((res) => {
+                console.log("!!!!", res.data);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };
-
 </script>
 
 <style scoped>
@@ -223,11 +327,14 @@ export default {
   font-weight: 600;
   margin-bottom: 5px;
 }
-.el-icon-edit:hover {
+.el-icon-edit:hover,
+.el-icon-upload:hover {
   color: gray;
   cursor: pointer;
 }
-.el-icon-edit {
+.el-icon-edit,
+.el-icon-upload {
+  margin: 0 10px 0 0;
   color: lightgray;
 }
 .el-icon-delete:hover {
@@ -240,7 +347,8 @@ export default {
   color: lightgray;
   /* outline: 1px black solid; */
 }
-.add-icon:hover, .content li:hover {
+.add-icon:hover,
+.content li:hover {
   cursor: pointer;
 }
 .add-icon {

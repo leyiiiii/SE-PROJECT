@@ -9,6 +9,8 @@ import layer from './layer'
 import snapshot from './snapshot'
 import lock from './lock'
 import user from './user'
+import {componentData_} from "@/store/template";
+import {canvasStyleData_} from "@/store/template";
 
 Vue.use(Vuex)
 
@@ -40,7 +42,10 @@ const data = {
     // 点击画布时是否点中组件，主要用于取消选中组件用。
     // 如果没点中组件，并且在画布空白处弹起鼠标，则取消当前组件的选中状态
     isClickComponent: false,
-    isJPG: false
+    isJPG: false,
+    _componentData_: componentData_,
+    _canvasStyleData_: canvasStyleData_,
+    _isLogin_: false
   },
   getters: {},
   mutations: {

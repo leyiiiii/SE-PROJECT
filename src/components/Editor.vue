@@ -81,6 +81,7 @@ export default Vue.extend({
       var header = {};
       if (localStorage.getItem("token"))
         header = { Authorization: "Bearer " + localStorage.getItem("token") };
+      if(this.$route.path.slice(0, 8) == "/project")
       await this.$axios({
         method: "get",
         url: "/api/v1/project/" + this.projectId,
@@ -114,7 +115,12 @@ export default Vue.extend({
   },
   mounted() {
     var arr = this.$route.params.id.split("&");
-    this.projectId = arr[0]
+    if(this.$route.path.slice(0, 8) == "/project"){
+      this.projectId = arr[0];
+    }
+    else {
+      this.teamId = arr[0]
+    }
     this.documentId = arr[2];
     this.getDocDetail();
   },

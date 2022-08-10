@@ -230,6 +230,9 @@ export default {
     }
   },
   created() {
+    var arr = this.$route.params.id.split("&");
+    this.teamId = arr[0];
+    if(arr.length > 1) this.activePage = 3;
     this.getTeamInfo();
     this.getProjectDetail();
     var userInfo;
@@ -344,7 +347,7 @@ export default {
 
         this.$axios({
             method:"post",
-            url:"/api/v1/project/create/" + this.$route.params.id,
+            url:"/api/v1/project/create/" + this.teamId,
             data: formData,
             headers: header,
         })
@@ -380,7 +383,7 @@ export default {
     inviteMember() {
         const formData = new FormData();
         formData.append("user", this.inviteName);
-        formData.append("teamId", this.$route.params.id);
+        formData.append("teamId", this.teamId);
 
         var header = {};
         if (localStorage.getItem("token"))
@@ -409,7 +412,7 @@ export default {
 
         this.$axios({
             method:"delete",
-            url:"/api/v1/team/leave/" + this.$route.params.id,
+            url:"/api/v1/team/leave/" + this.teamId,
             headers: header,
         })
           .then((res) => {
@@ -480,7 +483,7 @@ export default {
 
         return this.$axios({
         method: "get",
-        url: "/api/v1/team/member/list/" + this.$route.params.id,
+        url: "/api/v1/team/member/list/" + this.teamId,
         headers: header,
       });
     },
@@ -491,7 +494,7 @@ export default {
             
         return this.$axios({
         method: "get",
-        url: "/api/v1/team/" + this.$route.params.id,
+        url: "/api/v1/team/" + this.teamId,
         headers: header,
       });
     },
@@ -502,7 +505,7 @@ export default {
 
         this.$axios({
         method: "get",
-        url: "/api/v1/project/list?belongTo=" + this.$route.params.id,
+        url: "/api/v1/project/list?belongTo=" + this.teamId,
         headers: header,
         })
           .then((res) =>{
@@ -574,7 +577,7 @@ export default {
 
         this.$axios({
         method: "put",
-        url: "/api/v1/team/admin/set/" + this.$route.params.id + "/" + memberId,
+        url: "/api/v1/team/admin/set/" + this.teamId + "/" + memberId,
         headers: header,
         })
           .then((res) =>{
@@ -595,7 +598,7 @@ export default {
 
         this.$axios({
         method: "put",
-        url: "/api/v1/team/admin/remove/" + this.$route.params.id + "/" + memberId,
+        url: "/api/v1/team/admin/remove/" + this.teamId + "/" + memberId,
         headers: header,
         })
           .then((res) =>{
@@ -616,7 +619,7 @@ export default {
 
         this.$axios({
         method: "delete",
-        url: "/api/v1/team/member/remove/" + this.$route.params.id + "/" + memberId,
+        url: "/api/v1/team/member/remove/" + this.teamId + "/" + memberId,
         headers: header,
         })
           .then((res) =>{
@@ -631,7 +634,7 @@ export default {
           })
     },
     toRecycle() {
-        this.$router.push("/recycle/" + this.$route.params.id);
+        this.$router.push("/recycle/" + this.teamId);
     },
   }
 }

@@ -19,8 +19,8 @@ Vue.use(ElementUI);
 Vue.prototype.$axios = axios
 window.jQuery = $
 window.$ = $
-// axios.defaults.baseURL = 'http://127.0.0.1:8000'
-axios.defaults.baseURL = 'https://stagging-api-moshu.cheangfou.com'
+axios.defaults.baseURL = 'http://127.0.0.1:8000'
+// axios.defaults.baseURL = 'https://stagging-api-moshu.cheangfou.com'
 
 Vue.config.productionTip = false
 

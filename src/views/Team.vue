@@ -38,7 +38,7 @@
           <el-menu-item index="1">详情</el-menu-item>
           <el-menu-item index="2">项目</el-menu-item>
           <el-menu-item index="3">文档中心</el-menu-item>
-          <el-menu-item index="4" ><i class="el-icon-user-solid"></i>成员列表</el-menu-item>
+          <el-menu-item index="4"><i class="el-icon-user-solid"></i>成员列表</el-menu-item>
         </el-menu>
 
         <el-row v-if="activePage ==='1'">
@@ -179,10 +179,12 @@
           </el-col>
         </el-row>
         <el-row v-if="!haveProject && activePage == '2'">
-          <el-col :span="24"><div class="noProjects">
+          <el-col :span="24">
+            <div class="noProjects">
               <img src="@/assets/Project1.png" class="noProjectImg">
-                    <p>- 暂无项目 -</p>
-            </div></el-col>
+              <p>- 暂无项目 -</p>
+            </div>
+          </el-col>
         </el-row>
 
         <el-row v-if="activePage == '3'">
@@ -251,8 +253,8 @@ export default {
       isAdmin: false,
       isMember: false,
       userId: '',
-      activeIndex: '2',
-      activePage: '2',
+      activeIndex: '3',
+      activePage: '3',
       form: {
         name: '',
         desc: '',
@@ -815,6 +817,7 @@ export default {
   margin-right: 5px;
   margin-left: 0px;
 }
+
 .info {
   margin: 10px;
   /* border: 1px solid black; */
@@ -843,7 +846,7 @@ export default {
 
 .teamInfo1 {
   font-size: 48px;
-  font-family:'Times New Roman', Times, serif;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .teamInfo2 {
@@ -856,9 +859,10 @@ export default {
   /* border: 1px solid black; */
   text-align: center;
 }
-.noProjects p{
-    margin-top: 10px;
-    color: rgba(128, 128, 128, 0.67);
+
+.noProjects p {
+  margin-top: 10px;
+  color: rgba(128, 128, 128, 0.67);
 }
 
 .members, .projectTitle {
@@ -913,9 +917,11 @@ export default {
 .el-icon-s-order {
   font-size: 22px;
 }
-.el-icon-user-solid{
+
+.el-icon-user-solid {
   color: black;
 }
+
 .Nav {
   position: relative;
   z-index: 99;
@@ -929,7 +935,8 @@ export default {
   /* border: 1px solid black; */
   float: right;
 }
-.noProjectImg{
+
+.noProjectImg {
   height: 20%;
   width: 20%;
   opacity: 0.8;

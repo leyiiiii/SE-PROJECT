@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <el-col :span="2">
+    <el-col :span="3">
       <div class="content">
         <div v-if="!isTeamDoc" class="content-title">
           <i class="el-icon-s-unfold"></i>
@@ -155,7 +155,7 @@
       </div>
     </el-col>
 
-    <el-col :span="20" :offset="1">
+    <el-col :span="19" :offset="1">
       <div class="doc-title" v-if="status">
         {{ title }}
         <el-tooltip

@@ -5,11 +5,11 @@
         </div></el-col>
       <el-col :span="21"><div class="Right">
         <el-row>
-            <el-col :span="12">
+            <el-col :span="19">
                 <div class="info">
                     <span class="teamInfo1">{{ form.name }}</span>
             </div></el-col>
-            <el-col :span="8">
+            <el-col :span="5">
                 <div class="inviteButton">
                     <el-button v-if="isMainAdmin || isAdmin" type="info" round @click="dialogVisible2 = true">邀请成员</el-button>
                     <el-dialog title="邀请成员" :visible.sync="dialogVisible2" width="30%" :before-close="handleClose2">
@@ -75,7 +75,9 @@
             <el-col :span="24"><div class="projectTitle">
                 <i class="el-icon-s-order"></i>
                 <span class="membersTitle">项目</span>
+                <el-tooltip class="item" effect="dark" content="创建项目" placement="top-start">
                  <el-button class="addButton" icon="el-icon-plus" circle @click="dialogVisible = true"></el-button>
+                </el-tooltip>
                  <el-dialog title="创建项目" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
                  <el-form :model="project" label-width="auto">
                     <el-form-item label="项目名称">
@@ -113,12 +115,13 @@
                     </el-table-column>
                     <el-table-column
                     align="right">
-                    <!-- <template slot="header" slot-scope="scope"> -->
-                    <template slot="header">
+                    <template slot="header" slot-scope="scope">
+                    <!-- <template slot="header"> -->
                         <el-input
                         v-model="search"
                         size="mini"
-                        placeholder="输入您的搜索"/>
+                        placeholder="输入您的搜索"
+                         @click="None(scope.$index)"/>
                     </template>
                     <template slot-scope="scope">
                         <el-tooltip class="item" effect="dark" content="复制" placement="top">
@@ -134,13 +137,9 @@
         </el-row>
         <el-row v-if="!haveProject && activePage == 2">
             <el-col :span="24"><div class="projects">
-                暂无项目！
+                - 暂无项目 -
             </div></el-col>
         </el-row>
-        
-        <!-- <el-row v-if="haveProject && activePage == 2">
-            <el-button class="projectButton" v-for="item in projectList" :key="item.id" @click="enterProject(item.id)">{{ item.title }}</el-button>
-        </el-row> -->
 
         <el-row v-if="activePage == 3">
             <Doc></Doc>
@@ -157,19 +156,19 @@
             <el-col :span="24"><div class="membersRow">
         <el-descriptions  v-for="item in membersList" :key="item.id" border :column="5" class="description">
             <el-descriptions-item label="昵称" :label-class-name="my-label" :contentStyle="contentStyle" :labelStyle="labelStyle">{{item.username}}</el-descriptions-item>
-            <el-descriptions-item label="真实姓名" v-if="item.realname == ''" :contentStyle="contentStyle" :labelStyle="labelStyle">{{item.username}}</el-descriptions-item>
-            <el-descriptions-item label="真实姓名" v-else :contentStyle="contentStyle" :labelStyle="labelStyle">{{item.realname}}</el-descriptions-item>
+            <el-descriptions-item label="真实姓名" v-if="item.realname == ''" :contentStyle="contentStyle" :labelStyle="labelStyle2">{{item.username}}</el-descriptions-item>
+            <el-descriptions-item label="真实姓名" v-else :contentStyle="contentStyle" :labelStyle="labelStyle2">{{item.realname}}</el-descriptions-item>
             <el-descriptions-item label="邮箱" :contentStyle="contentStyle2" :labelStyle="labelStyle">{{item.email}}</el-descriptions-item>
             <el-descriptions-item label="身份" :labelStyle="labelStyle">
                 <el-tag size="small" type="warning" v-if="item.position == 'Main Admin'">主管理员</el-tag>
                 <el-tag size="small" v-if="item.position == 'Admin'">管理员</el-tag>
                 <el-tag size="small" type="info" v-if="item.position == 'Member'">成员</el-tag>
-                <el-dropdown class="More">
-                    <i v-if="checkPosition4(item.id)" class="el-icon-more"></i>
+                <el-dropdown class="More" trigger="click">
+                    <i v-if="checkPosition4(item.position, item.id)" class="el-icon-more"></i>
                      <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item v-if="checkPosition(item.position)" @click="promoteMember(item.id)">升为管理员</el-dropdown-item>
-                        <el-dropdown-item v-if="checkPosition3(item.position)" @click="demoteMember(item.id)">降为成员</el-dropdown-item>
-                        <el-dropdown-item v-if="checkPosition2(item.position)" @click="kickMember(item.id)">移除</el-dropdown-item>
+                        <el-dropdown-item v-if="checkPosition(item.position)" @click.native="promoteMember(item.id)">升为管理员</el-dropdown-item>
+                        <el-dropdown-item v-if="checkPosition3(item.position)" @click.native="demoteMember(item.id)">降为成员</el-dropdown-item>
+                        <el-dropdown-item v-if="checkPosition2(item.position)" @click.native="kickMember(item.id)">移除</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
             </el-descriptions-item>
@@ -219,13 +218,16 @@ export default {
         rowIndex: 0,
         cellIndex: 0,
         contentStyle: {
-            'width': '200px',
+            'width': '250px',
         },
         contentStyle2: {
-            'width': '300px',
+            'width': '400px',
         },
         labelStyle: {
-            'width': '100px',
+            'width': '55px',
+        },
+        labelStyle2: {
+            'width': '90px',
         }
     }
   },
@@ -415,7 +417,7 @@ export default {
           .then((res) => {
             console.log(res);
             this.$message.success("离开团队成功");
-            this.$router.push({path: '/team/&'});
+            this.$router.push({path: '/teamhome'});
           })
           .catch((err) => {
             console.log(err);
@@ -558,11 +560,14 @@ export default {
         }
         else return false;
     },
-    checkPosition4(userId) {
+    checkPosition4(userPos, userId) {
         if(userId == this.userId) {
             return false;
         }
-        if(this.isMainAdmin || this.isAdmin) {
+        if(this.isMainAdmin) {
+            return true;
+        }
+        if(this.isAdmin && userPos == 'Member') {
             return true;
         }
         else return false;
@@ -650,6 +655,7 @@ export default {
 }
 .inviteButton{
     /* border: 1px solid black; */
+    float: right;
     margin-top: 20px;
 }
 .inviteButton button{
@@ -687,8 +693,11 @@ export default {
 }
 .projects{
     margin-left: 30px;
-    margin-top: 5px;
+    margin-top: 200px;
     /* border: 1px solid black; */
+    text-align: center;
+    font-size: 48px;
+    color: rgba(128, 128, 128, 0.67);
 }
 .members, .projectTitle{
     /* border: 1px solid black; */

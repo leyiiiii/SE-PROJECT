@@ -72,7 +72,7 @@
           </el-menu-item>
           <el-menu-item index="/about">
             <i class="el-icon-collection"></i>
-            <span class="mainTitle"> 关于墨书 </span>
+            <span slot="title"> 关于墨书 </span>
           </el-menu-item>
         </el-menu>
       </el-aside>

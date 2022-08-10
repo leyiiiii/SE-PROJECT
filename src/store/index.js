@@ -45,7 +45,8 @@ const data = {
     isJPG: false,
     _componentData_: componentData_,
     _canvasStyleData_: canvasStyleData_,
-    _isLogin_: false
+    _isLogin_: false,
+    previewOpen: false
   },
   getters: {},
   mutations: {

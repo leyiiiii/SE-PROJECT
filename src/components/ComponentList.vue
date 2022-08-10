@@ -31,7 +31,7 @@ export default {
 
 <style lang="scss" scoped>
 .component-list {
-  height: 65%;
+  height: 30%;
   padding: 10px;
   display: grid;
   grid-gap: 10px 19px;

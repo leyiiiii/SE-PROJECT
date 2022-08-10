@@ -1,11 +1,11 @@
 <template>
   <el-row>
-    <el-col :span="3">
+    <el-col :span="2">
       <div class="design-content">
         <!--        <div class="project-name">{{ "还没制作好" }}</div>-->
         <div class="content-title">
           <i class="el-icon-s-unfold"></i>
-          设计原型
+          页面
           <div class="add-icon" @click="add">+</div>
         </div>
         <li
@@ -21,7 +21,7 @@
       </div
       >
     </el-col>
-    <el-col :span="21">
+    <el-col :span="22">
       <div v-if="isOpenAFile" class="design">
         <div class="doc-title">
           {{ title }}
@@ -44,7 +44,7 @@
                 @mousedown="handleMouseDown"
                 @mouseup="deselectCurComponent"
             >
-              <Editor/>
+              <Editor/>1
             </div>
           </section>
           <!-- 右侧属性列表 -->
@@ -124,12 +124,38 @@ export default {
       this.isOpenAFile = true;
       this.designId = arr[2];
       this.getDesignDetail();
-    } else this.isOpenAFile = false;
 
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = {Authorization: "Bearer " + localStorage.getItem("token")};
+      var url_ = "/api/v1/diagram/preview/list?belongTo=" + arr[0];
+
+      this.$axios({
+        method: "get",
+        url: url_,
+        headers: header,
+      })
+          .then((res) => {
+            var previewEnableList = res.data.results;
+            var temp = false;
+            for (let i = 0; i < previewEnableList.length; i++) {
+              if (previewEnableList[i].id === arr[2]) {
+                temp = true;
+                break;
+              }
+            }
+            this.$store.state.previewOpen = temp;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
+    } else this.isOpenAFile = false;
     // this.restore();
     // 全局监听按键事件
     listenGlobalKeyDown();
   },
+
   methods: {
     changeTitle() {
       this.$prompt("更改文件名字", "提示", {
@@ -287,6 +313,7 @@ export default {
           .then((res) => {
             // console.log("123456", res.data);
             var r = res.data;
+            console.log(res.data)
             this.title = r.title;
             // console.log("canvasStyle", JSON.parse(r.canvasStyleData))
             this.$store.commit("setCanvasStyle", JSON.parse(r.canvasStyleData));
@@ -296,6 +323,7 @@ export default {
             console.log(err);
           });
     },
+
     getDesign() {
       var header = {};
       if (localStorage.getItem("token"))
@@ -331,7 +359,7 @@ export default {
       position: absolute;
       height: 100%;
       width: 200px;
-      left: 10px;
+      //left: 10px;
       top: 70px;
 
       & > div {
@@ -356,7 +384,7 @@ export default {
     }
 
     .center {
-      margin-left: 330px;
+      margin-left: 200px;
       margin-right: 288px;
       background: #f5f5f5;
       height: 100%;
@@ -385,6 +413,7 @@ export default {
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 5px;
+  margin-left: 10px;
 }
 
 .el-icon-edit:hover {
@@ -430,7 +459,7 @@ export default {
 }
 
 .content-title {
-  margin: 10px 0;
+  margin-bottom: 10px;
 }
 
 .design-content {

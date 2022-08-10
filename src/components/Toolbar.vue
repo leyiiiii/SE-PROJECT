@@ -15,8 +15,8 @@
       <label for="input" class="insert">插入图片</label>
       <input id="input" type="file" hidden @change="handleFileChange"/>
       <el-button style="margin-left: 10px" @click="preview(false)">预览</el-button>
-      <el-button @click="openPreview">开启预览</el-button>
-      <el-button @click="closePreview">关闭预览</el-button>
+      <el-button @click="openPreview" :disabled=$store.state.previewOpen>开启预览</el-button>
+      <el-button @click="closePreview" :disabled=!$store.state.previewOpen>关闭预览</el-button>
       <el-button @click="save">保存</el-button>
       <el-button @click="clearCanvas">清空</el-button>
       <el-button :disabled="!areaData.components.length" @click="compose">组合</el-button>
@@ -79,13 +79,13 @@ export default {
       timer: null,
       isScreenshot: false,
       options: [{
-        value: '线上商城设计模板',
-        label: '线上商城设计模板'
+        value: '线上商城（电脑端）设计模板',
+        label: '线上商城（电脑端）设计模板'
       }, {
-        value: '学术成果分享平台模板',
-        label: '学术成果分享平台模板'
+        value: '线上商城（手机端）设计模板',
+        label: '线上商城（手机端）设计模板'
       }],
-      value: ''
+      value: '',
     };
   },
   computed: mapState([
@@ -105,6 +105,7 @@ export default {
     var arr = this.$route.params.id.split("&");
     this.diagramId = arr[2];
   },
+
   methods: {
     getFontSize(scale) {
       if (scale >= 90) {
@@ -304,6 +305,8 @@ export default {
           .catch((err) => {
             console.log(err);
           });
+
+      this.$store.state.previewOpen = true;
     },
 
     closePreview() {
@@ -330,6 +333,8 @@ export default {
           .catch((err) => {
             console.log(err);
           });
+
+      this.$store.state.previewOpen = false;
     },
 
     downloadAsJPG() {
@@ -409,9 +414,9 @@ export default {
       let canvasStyleData = this.$store.state._canvasStyleData_;
 
       let x = 0;
-      if (this.value === "线上商城设计模板") {
+      if (this.value === "线上商城（电脑端）设计模板") {
         x = 1;
-      } else if (this.value === "学术成果分享平台模板") {
+      } else if (this.value === "线上商城（手机端）设计模板") {
         x = 2;
       } else {
         return;

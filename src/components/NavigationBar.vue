@@ -7,12 +7,12 @@
           @mouseleave.native="collapseClose"
       >
         <el-menu
-          class="nav-menu"
-          @open="handleOpen"
-          @close="handleClose"
-          :router="true"
-          :unique-opened="true"
-          :collapse="isCollapse"
+            class="nav-menu"
+            @open="handleOpen"
+            @close="handleClose"
+            :router="true"
+            :unique-opened="true"
+            :collapse="isCollapse"
         >
           <el-submenu index="1">
             <template slot="title">
@@ -22,9 +22,9 @@
             <el-menu-item-group>
               <el-menu-item index="" style="cursor: default">
                 <el-avatar
-                  v-if="profilePic"
-                  :size="25"
-                  :src="profilePic"
+                    v-if="profilePic"
+                    :size="25"
+                    :src="profilePic"
                 ></el-avatar>
                 <el-avatar v-else :size="25" icon="el-icon-user"></el-avatar>
                 <span> {{ username }} </span>
@@ -32,7 +32,8 @@
               <el-menu-item index="">
                 <i class="el-icon-camera"></i>
                 <span slot="title"> 更改头像 </span>
-                <input id="imgUpload" type="file" accept="image/png,image/gif,image/jpeg" @change="uploadAvatar($event)"/>
+                <input id="imgUpload" type="file" accept="image/png,image/gif,image/jpeg"
+                       @change="uploadAvatar($event)"/>
               </el-menu-item>
               <el-menu-item index="" @click="dialogFormVisible1=true">
                 <i class="el-icon-edit"></i>
@@ -78,7 +79,7 @@
       <el-main></el-main>
     </el-container>
 
-    <el-dialog title="编辑个人信息" :visible.sync="dialogFormVisible1" :modal-append-to-body="false">
+    <el-dialog title="编辑个人信息" :visible.sync="dialogFormVisible1" append-to-body=true>
       <el-form :model="form">
         <el-form-item label="昵称" :label-width="formLabelWidth">
           <el-input v-model="form.username" autocomplete="off"></el-input>
@@ -101,7 +102,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="创建团队" :visible.sync="dialogFormVisible2">
+    <el-dialog title="创建团队" :visible.sync="dialogFormVisible2" append-to-body=true>
       <el-form :model="team">
         <el-form-item label="团队名称" :label-width="formLabelWidth">
           <el-input v-model="team.name" autocomplete="off"></el-input>
@@ -182,7 +183,7 @@ export default {
 
       var header = {};
       if (localStorage.getItem("token"))
-        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+        header = {Authorization: "Bearer " + localStorage.getItem("token")};
 
       this.$axios({
         method: "post",
@@ -190,16 +191,16 @@ export default {
         data: formData,
         headers: header,
       })
-        .then((res) => {
-          console.log(res);
-          this.$message.success("创建成功");
-          this.dialogFormVisible2 = false;
-          this.team.name = "";
-          this.team.desc = "";
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+          .then((res) => {
+            console.log(res);
+            this.$message.success("创建成功");
+            this.dialogFormVisible2 = false;
+            this.team.name = "";
+            this.team.desc = "";
+          })
+          .catch((err) => {
+            console.log(err);
+          });
     },
     getImg(event) {
       this.form.profilePic = event.target.files[0];
@@ -215,25 +216,25 @@ export default {
       formData.append("profile", this.form.profilePic);
       var header = {};
       if (localStorage.getItem("token"))
-        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+        header = {Authorization: "Bearer " + localStorage.getItem("token")};
       await this.$axios({
         method: "put",
         url: "/api/v1/auth/detail/" + this.userId,
         data: formData,
         headers: header,
       })
-        .then((res) => {
-          console.log(res);
-          this.getUser();
-          setTimeout(function () {
-            location.reload(true);
-          }, 500);
-          this.$message.success("恭喜！修改成功");
-        })
-        .catch((err) => {
-          console.log(err);
-          this.$message.warning("抱歉！上传失败");
-        });
+          .then((res) => {
+            console.log(res);
+            this.getUser();
+            setTimeout(function () {
+              location.reload(true);
+            }, 500);
+            this.$message.success("恭喜！修改成功");
+          })
+          .catch((err) => {
+            console.log(err);
+            this.$message.warning("抱歉！上传失败");
+          });
     },
     async editProfile() {
       const formData = new FormData();
@@ -244,26 +245,26 @@ export default {
       formData.append("realname", this.form.realname);
       var header = {};
       if (localStorage.getItem("token"))
-        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+        header = {Authorization: "Bearer " + localStorage.getItem("token")};
       await this.$axios({
         method: "put",
         url: "/api/v1/auth/detail/" + this.userId,
         data: formData,
         headers: header,
       })
-        .then((res) => {
-          console.log(res);
-          this.getUser();
-          this.dialogFormVisible1 = false;
-          setTimeout(function () {
-            location.reload(true);
-          }, 500);
-          this.$message.success("恭喜！修改成功");
-        })
-        .catch((err) => {
-          console.log(err);
-          this.$message.warning("抱歉！昵称已被使用");
-        });
+          .then((res) => {
+            console.log(res);
+            this.getUser();
+            this.dialogFormVisible1 = false;
+            setTimeout(function () {
+              location.reload(true);
+            }, 500);
+            this.$message.success("恭喜！修改成功");
+          })
+          .catch((err) => {
+            console.log(err);
+            this.$message.warning("抱歉！昵称已被使用");
+          });
     },
     cancelEdit2() {
       this.dialogFormVisible2 = false;
@@ -303,23 +304,23 @@ export default {
     async getUser() {
       var header = {};
       if (localStorage.getItem("token"))
-        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+        header = {Authorization: "Bearer " + localStorage.getItem("token")};
 
       await this.$axios({
         method: "get",
         url: "/api/v1/auth/detail/" + this.userId,
         headers: header,
       })
-        .then((res) => {
-          console.log(res);
-          this.form.realname = res.data.realname;
-          this.form.email = res.data.email;
-          this.profilePic = res.data.thumbnail;
-          this.form.profilePic = res.data.thumbnail;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+          .then((res) => {
+            console.log(res);
+            this.form.realname = res.data.realname;
+            this.form.email = res.data.email;
+            this.profilePic = res.data.thumbnail;
+            this.form.profilePic = res.data.thumbnail;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
     },
     async getJoinedTeam() {
       var header = {};
@@ -382,9 +383,11 @@ export default {
   font-size: 20px;
   opacity: 0;
 }
+
 .el-avatar {
   margin-right: 5px;
 }
+
 i,
 span {
   color: #3d4777;
@@ -423,6 +426,7 @@ span {
   transition: all 40ms;
   overflow: scroll;
 }
+
 ::-webkit-scrollbar {
   display: none;
 }

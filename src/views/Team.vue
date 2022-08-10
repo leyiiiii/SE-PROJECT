@@ -8,13 +8,14 @@
     <el-col :span="21">
       <div class="Right">
         <el-row>
-          <el-col :span="19">
+          <el-col :span="17">
             <div class="info">
               <span class="teamInfo1">{{ form.name }}</span>
             </div>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="7">
             <div class="inviteButton">
+              <el-button class="recycleButton" icon="el-icon-delete-solid" round @click="toRecycle">回收站</el-button>
               <el-button v-if="isMainAdmin || isAdmin" type="info" round @click="dialogVisible2 = true">邀请成员</el-button>
               <el-dialog title="邀请成员" :visible.sync="dialogVisible2" width="30%" :before-close="handleClose2">
                 <el-form label-width="auto">
@@ -37,7 +38,7 @@
           <el-menu-item index="1">详情</el-menu-item>
           <el-menu-item index="2">项目</el-menu-item>
           <el-menu-item index="3">文档中心</el-menu-item>
-          <el-menu-item index="4">成员列表</el-menu-item>
+          <el-menu-item index="4" ><i class="el-icon-user-solid"></i>成员列表</el-menu-item>
         </el-menu>
 
         <el-row v-if="activePage == 1">
@@ -99,7 +100,6 @@
                     <el-button type="primary" @click="createProject">确定</el-button>
                     </span>
               </el-dialog>
-              <el-button class="recycleButton" icon="el-icon-delete-solid" round @click="toRecycle">回收站</el-button>
               <el-table
                   v-if="haveProject && activePage == 2"
                   :data="projectList.filter(data => !search || data.title.toLowerCase().includes(search.toLowerCase())|| data.creatorName.toLowerCase().includes(search.toLowerCase()))"
@@ -122,12 +122,12 @@
                 </el-table-column>
                 <el-table-column
                     align="right">
-                  <!-- <template slot="header" slot-scope="scope"> -->
-                  <template slot="header">
+                  <template slot="header" slot-scope="scope">
                     <el-input
                         v-model="search"
                         size="mini"
-                        placeholder="输入您的搜索"/>
+                        placeholder="输入您的搜索"
+                        @click="None(scope.$index)"/>
                   </template>
                   <template slot-scope="scope">
                     <el-tooltip class="item" effect="dark" content="编辑" placement="top">
@@ -164,16 +164,12 @@
           </el-col>
         </el-row>
         <el-row v-if="!haveProject && activePage == 2">
-          <el-col :span="24">
-            <div class="projects">
-              暂无项目！
+          <el-col :span="24"><div class="noProjects">
+              <img src="@/assets/Project1.png" class="noProjectImg">
+              <p>暂无项目</p>
             </div>
           </el-col>
         </el-row>
-
-        <!-- <el-row v-if="haveProject && activePage == 2">
-            <el-button class="projectButton" v-for="item in projectList" :key="item.id" @click="enterProject(item.id)">{{ item.title }}</el-button>
-        </el-row> -->
 
         <el-row v-if="activePage == 3">
           <Doc></Doc>
@@ -762,9 +758,9 @@ export default {
 }
 
 .inviteButton button {
-  margin-right: 10px;
+  margin-right: 5px;
+  margin-left: 0px;
 }
-
 .info {
   margin: 10px;
   /* border: 1px solid black; */
@@ -792,8 +788,8 @@ export default {
 }
 
 .teamInfo1 {
-  font-size: 40px;
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 48px;
+  font-family:'Times New Roman', Times, serif;
 }
 
 .teamInfo2 {
@@ -801,13 +797,14 @@ export default {
   font-family: cursive;
 }
 
-.projects {
-  margin-left: 30px;
-  margin-top: 200px;
+.noProjects {
+  margin-top: 130px;
   /* border: 1px solid black; */
   text-align: center;
-  font-size: 48px;
-  color: rgba(128, 128, 128, 0.67);
+}
+.noProjects p{
+    margin-top: 10px;
+    color: rgba(128, 128, 128, 0.67);
 }
 
 .members, .projectTitle {
@@ -834,7 +831,8 @@ export default {
 
 .membersRow {
   /* border: 1px solid black; */
-  max-height: 550px;
+  margin-top: 10px;
+  max-height: 600px;
   overflow: hidden;
   overflow-y: scroll;
 }
@@ -844,7 +842,7 @@ export default {
   margin-top: 12px;
 }
 
-.addButton, .recycleButton {
+.addButton {
   margin-left: 10px;
 }
 
@@ -858,10 +856,12 @@ export default {
   margin: 10px;
 }
 
-.el-icon-user-solid, .el-icon-s-order {
+.el-icon-s-order {
   font-size: 22px;
 }
-
+.el-icon-user-solid{
+  color: black;
+}
 .Nav {
   position: relative;
   z-index: 99;
@@ -874,6 +874,11 @@ export default {
 .More {
   /* border: 1px solid black; */
   float: right;
+}
+.noProjectImg{
+  height: 20%;
+  width: 20%;
+  opacity: 0.8;
 }
 
 .container {

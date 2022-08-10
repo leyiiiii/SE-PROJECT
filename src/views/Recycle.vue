@@ -32,7 +32,7 @@
                     <p>此时回收站为空，您删除的东西都会出现在这里哟~</p>
                 </div></el-col>
             </el-row>
-            <el-row class="cardsRow" v else>
+            <el-row class="cardsRow" v-else>
                 <el-col :span="7" v-for="item in recoveryList" :key="item.id">
                     <div class="recoveryCard">
                     <el-card :body-style="{ padding: '0px' }" shadow="hover">
@@ -44,8 +44,8 @@
                         <span>{{ item.title }}</span>
                         <div class="bottom clearfix">
                         <time class="type">{{ item.type }}</time>
-                        <el-button type="danger" class="button1" @click="Delete(item.id)">永久删除</el-button>
-                        <el-button type="success" class="button2" @click="Recover(item.id)">还原</el-button>
+                        <el-button type="danger" plain class="button1" @click="Delete(item.id)">永久删除</el-button>
+                        <el-button type="success" plain class="button2" @click="Recover(item.id)">还原</el-button>
                         </div>
                     </div>
                     </el-card>

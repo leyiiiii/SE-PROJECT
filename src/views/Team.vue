@@ -8,20 +8,21 @@
     <el-col :span="21">
       <div class="Right">
         <el-row>
-            <el-col :span="19">
-                <div class="info">
-                    <span class="teamInfo1">{{ form.name }}</span>
-            </div></el-col>
-            <el-col :span="5">
-                <div class="inviteButton">
-                    <el-button v-if="isMainAdmin || isAdmin" type="info" round @click="dialogVisible2 = true">邀请成员</el-button>
-                    <el-dialog title="邀请成员" :visible.sync="dialogVisible2" width="30%" :before-close="handleClose2">
-                        <el-form label-width="auto">
-                            <el-form-item label="用户名字">
-                                <el-input v-model="inviteName"></el-input>
-                            </el-form-item>
-                    </el-form>
-                    <span slot="footer" class="dialog-footer">
+          <el-col :span="19">
+            <div class="info">
+              <span class="teamInfo1">{{ form.name }}</span>
+            </div>
+          </el-col>
+          <el-col :span="5">
+            <div class="inviteButton">
+              <el-button v-if="isMainAdmin || isAdmin" type="info" round @click="dialogVisible2 = true">邀请成员</el-button>
+              <el-dialog title="邀请成员" :visible.sync="dialogVisible2" width="30%" :before-close="handleClose2">
+                <el-form label-width="auto">
+                  <el-form-item label="用户名字">
+                    <el-input v-model="inviteName"></el-input>
+                  </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
                         <el-button @click="cancelChanges2">取消</el-button>
                         <el-button type="primary" @click="inviteMember">发送邀请</el-button>
                     </span>
@@ -75,23 +76,25 @@
           </div>
 
         </el-row>
-        <el-row  v-if="activePage == 2">
-            <el-col :span="24"><div class="projectTitle">
-                <i class="el-icon-s-order"></i>
-                <span class="membersTitle">项目</span>
-                <el-tooltip class="item" effect="dark" content="创建项目" placement="top-start">
-                 <el-button class="addButton" icon="el-icon-plus" circle @click="dialogVisible = true"></el-button>
-                </el-tooltip>
-                 <el-dialog title="创建项目" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
-                 <el-form :model="project" label-width="auto">
-                    <el-form-item label="项目名称">
-                        <el-input v-model="project.name"></el-input>
-                    </el-form-item>
-                    <el-form-item label="项目简介">
-                      <el-input type="textarea" :autosize="{ minRows: 2 }" v-model="project.desc" autocomplete="off" resize="none"></el-input>
-                    </el-form-item>
-                 </el-form>
-                 <span slot="footer" class="dialog-footer">
+        <el-row v-if="activePage == 2">
+          <el-col :span="24">
+            <div class="projectTitle">
+              <i class="el-icon-s-order"></i>
+              <span class="membersTitle">项目</span>
+              <el-tooltip class="item" effect="dark" content="创建项目" placement="top-start">
+                <el-button class="addButton" icon="el-icon-plus" circle @click="dialogVisible = true"></el-button>
+              </el-tooltip>
+              <el-dialog title="创建项目" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
+                <el-form :model="project" label-width="auto">
+                  <el-form-item label="项目名称">
+                    <el-input v-model="project.name"></el-input>
+                  </el-form-item>
+                  <el-form-item label="项目简介">
+                    <el-input type="textarea" :autosize="{ minRows: 2 }" v-model="project.desc" autocomplete="off"
+                              resize="none"></el-input>
+                  </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
                     <el-button @click="cancelChanges">取消</el-button>
                     <el-button type="primary" @click="createProject">确定</el-button>
                     </span>
@@ -177,27 +180,42 @@
         </el-row>
 
         <el-row v-if="activePage == 4">
-            <el-col :span="24"><div class="membersRow">
-        <el-descriptions  v-for="item in membersList" :key="item.id" border :column="5" class="description">
-            <el-descriptions-item label="昵称" :label-class-name="my-label" :contentStyle="contentStyle" :labelStyle="labelStyle">{{item.username}}</el-descriptions-item>
-            <el-descriptions-item label="真实姓名" v-if="item.realname == ''" :contentStyle="contentStyle" :labelStyle="labelStyle2">{{item.username}}</el-descriptions-item>
-            <el-descriptions-item label="真实姓名" v-else :contentStyle="contentStyle" :labelStyle="labelStyle2">{{item.realname}}</el-descriptions-item>
-            <el-descriptions-item label="邮箱" :contentStyle="contentStyle2" :labelStyle="labelStyle">{{item.email}}</el-descriptions-item>
-            <el-descriptions-item label="身份" :labelStyle="labelStyle">
-                <el-tag size="small" type="warning" v-if="item.position == 'Main Admin'">主管理员</el-tag>
-                <el-tag size="small" v-if="item.position == 'Admin'">管理员</el-tag>
-                <el-tag size="small" type="info" v-if="item.position == 'Member'">成员</el-tag>
-                <el-dropdown class="More" trigger="click">
+          <el-col :span="24">
+            <div class="membersRow">
+              <el-descriptions v-for="item in membersList" :key="item.id" border :column="5" class="description">
+                <el-descriptions-item label="昵称" :label-class-name="my-label" :contentStyle="contentStyle"
+                                      :labelStyle="labelStyle">{{ item.username }}
+                </el-descriptions-item>
+                <el-descriptions-item label="真实姓名" v-if="item.realname == ''" :contentStyle="contentStyle"
+                                      :labelStyle="labelStyle2">{{ item.username }}
+                </el-descriptions-item>
+                <el-descriptions-item label="真实姓名" v-else :contentStyle="contentStyle" :labelStyle="labelStyle2">
+                  {{ item.realname }}
+                </el-descriptions-item>
+                <el-descriptions-item label="邮箱" :contentStyle="contentStyle2" :labelStyle="labelStyle">
+                  {{ item.email }}
+                </el-descriptions-item>
+                <el-descriptions-item label="身份" :labelStyle="labelStyle">
+                  <el-tag size="small" type="warning" v-if="item.position == 'Main Admin'">主管理员</el-tag>
+                  <el-tag size="small" v-if="item.position == 'Admin'">管理员</el-tag>
+                  <el-tag size="small" type="info" v-if="item.position == 'Member'">成员</el-tag>
+                  <el-dropdown class="More" trigger="click">
                     <i v-if="checkPosition4(item.position, item.id)" class="el-icon-more"></i>
-                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item v-if="checkPosition(item.position)" @click.native="promoteMember(item.id)">升为管理员</el-dropdown-item>
-                        <el-dropdown-item v-if="checkPosition3(item.position)" @click.native="demoteMember(item.id)">降为成员</el-dropdown-item>
-                        <el-dropdown-item v-if="checkPosition2(item.position)" @click.native="kickMember(item.id)">移除</el-dropdown-item>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item v-if="checkPosition(item.position)" @click.native="promoteMember(item.id)">
+                        升为管理员
+                      </el-dropdown-item>
+                      <el-dropdown-item v-if="checkPosition3(item.position)" @click.native="demoteMember(item.id)">
+                        降为成员
+                      </el-dropdown-item>
+                      <el-dropdown-item v-if="checkPosition2(item.position)" @click.native="kickMember(item.id)">移除
+                      </el-dropdown-item>
                     </el-dropdown-menu>
-                </el-dropdown>
-            </el-descriptions-item>
-        </el-descriptions>
-                </div></el-col>
+                  </el-dropdown>
+                </el-descriptions-item>
+              </el-descriptions>
+            </div>
+          </el-col>
         </el-row>
 
         <el-row v-if="activePage == 4">
@@ -298,11 +316,11 @@ export default {
         'width': '400px',
       },
       labelStyle: {
-            'width': '55px',
-        },
-        labelStyle2: {
-            'width': '90px',
-        }
+        'width': '55px',
+      },
+      labelStyle2: {
+        'width': '90px',
+      },
       editDialogVisible: false
     }
   },
@@ -310,7 +328,7 @@ export default {
   created() {
     var arr = this.$route.params.id.split("&");
     this.teamId = arr[0];
-    if(arr.length > 1) this.activePage = 3;
+    if (arr.length > 1) this.activePage = 3;
     this.getTeamInfo();
     this.getProjectDetail();
     var userInfo;
@@ -469,12 +487,12 @@ export default {
         header = {Authorization: "Bearer " + localStorage.getItem("token")};
 
 
-        this.$axios({
-            method:"post",
-            url:"/api/v1/project/create/" + this.teamId,
-            data: formData,
-            headers: header,
-        })
+      this.$axios({
+        method: "post",
+        url: "/api/v1/project/create/" + this.teamId,
+        data: formData,
+        headers: header,
+      })
           .then((res) => {
             console.log(res);
             this.$message.success("创建项目成功");
@@ -505,9 +523,9 @@ export default {
       }
     },
     inviteMember() {
-        const formData = new FormData();
-        formData.append("user", this.inviteName);
-        formData.append("teamId", this.teamId);
+      const formData = new FormData();
+      formData.append("user", this.inviteName);
+      formData.append("teamId", this.teamId);
 
       var header = {};
       if (localStorage.getItem("token"))
@@ -534,11 +552,11 @@ export default {
       if (localStorage.getItem("token"))
         header = {Authorization: "Bearer " + localStorage.getItem("token")};
 
-        this.$axios({
-            method:"delete",
-            url:"/api/v1/team/leave/" + this.teamId,
-            headers: header,
-        })
+      this.$axios({
+        method: "delete",
+        url: "/api/v1/team/leave/" + this.teamId,
+        headers: header,
+      })
           .then((res) => {
             console.log(res);
             this.$message.success("离开团队成功");
@@ -682,16 +700,15 @@ export default {
       } else return false;
     },
     checkPosition4(userPos, userId) {
-        if(userId == this.userId) {
-            return false;
-        }
-        if(this.isMainAdmin) {
-            return true;
-        }
-        if(this.isAdmin && userPos == 'Member') {
-            return true;
-        }
-        else return false;
+      if (userId == this.userId) {
+        return false;
+      }
+      if (this.isMainAdmin) {
+        return true;
+      }
+      if (this.isAdmin && userPos == 'Member') {
+        return true;
+      } else return false;
     },
     promoteMember(memberId) {
       var header = {};
@@ -757,7 +774,7 @@ export default {
           })
     },
     toRecycle() {
-        this.$router.push("/recycle/" + this.teamId);
+      this.$router.push("/recycle/" + this.teamId);
     },
   }
 }
@@ -774,10 +791,11 @@ export default {
   cursor: pointer;
   color: #3D4777;
 }
-.inviteButton{
-    /* border: 1px solid black; */
-    float: right;
-    margin-top: 20px;
+
+.inviteButton {
+  /* border: 1px solid black; */
+  float: right;
+  margin-top: 20px;
 }
 
 .inviteButton button {
@@ -819,13 +837,14 @@ export default {
   font-size: 20px;
   font-family: cursive;
 }
-.projects{
-    margin-left: 30px;
-    margin-top: 200px;
-    /* border: 1px solid black; */
-    text-align: center;
-    font-size: 48px;
-    color: rgba(128, 128, 128, 0.67);
+
+.projects {
+  margin-left: 30px;
+  margin-top: 200px;
+  /* border: 1px solid black; */
+  text-align: center;
+  font-size: 48px;
+  color: rgba(128, 128, 128, 0.67);
 }
 
 .members, .projectTitle {

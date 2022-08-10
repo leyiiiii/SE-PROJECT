@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <el-col :span="3">
+    <el-col :span="2">
       <div class="content">
         <div v-if="!isTeamDoc" class="content-title">
           <i class="el-icon-s-unfold"></i>
@@ -925,12 +925,12 @@ export default {
   font-size: 16px;
 }
 .content-title {
-  margin: 10px 0;
+  margin-bottom: 10px;
 }
 .content {
-  padding: 10px 5px;
+  padding: 10px 20px;
   border-right: 2px lightgray solid;
-  height: 600px;
-  overflow: scroll;
+  height: 100vh;
+  /*overflow: scroll;*/
 }
 </style>

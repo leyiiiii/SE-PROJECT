@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkMoShu"]=self["webpackChunkMoShu"]||[]).push([[631],{4631:function(u,n,t){t.r(n),t.d(n,{default:function(){return l}});var e=function(){var u=this,n=u._self._c;return n("div",[u._v("about moshu")])},o=[],r={name:"About"},s=r,a=t(1001),f=(0,a.Z)(s,e,o,!1,null,"07f85a32",null),l=f.exports}}]);
-//# sourceMappingURL=631.214d8787.js.map

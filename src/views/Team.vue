@@ -314,7 +314,10 @@ export default {
   created() {
     var arr = this.$route.params.id.split("&");
     this.teamId = arr[0];
-    if (arr.length > 1) this.activePage = 3;
+    if (arr.length > 1) {
+      this.activePage = '3'
+      this.activeIndex = '3';
+    }
     this.getTeamInfo();
     this.getProjectDetail();
     var userInfo;

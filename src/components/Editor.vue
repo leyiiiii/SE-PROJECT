@@ -25,6 +25,8 @@ export default Vue.extend({
   data() {
     return {
       documentId: "",
+      teamId: "",
+      projectId: "",
       title: "",
       description: "",
       documentContent: "",
@@ -52,7 +54,7 @@ export default Vue.extend({
     onCreated(editor) {
       this.editor = Object.seal(editor); // 一定要用 Object.seal() ，否则会报错
     },
-    saveDoc() {
+    async saveDoc() {
       let formData = new FormData();
       formData.append("title", this.title);
       formData.append("content", JSON.stringify(this.html));
@@ -62,9 +64,9 @@ export default Vue.extend({
       if (localStorage.getItem("token"))
         header = { Authorization: "Bearer " + localStorage.getItem("token") };
 
-      this.$axios({
+      await this.$axios({
         method: "put",
-        url: "/api/v1/document/" + this.documentId,
+        url: "/api/v1/document/" + this.teamId + "/" + this.documentId,
         data: formData,
         headers: header,
       })
@@ -75,17 +77,27 @@ export default Vue.extend({
           console.log(err);
         });
     },
-    getDocDetail() {
+    async getDocDetail() {
       var header = {};
       if (localStorage.getItem("token"))
         header = { Authorization: "Bearer " + localStorage.getItem("token") };
-      this.$axios({
+      await this.$axios({
         method: "get",
-        url: "/api/v1/document/" + this.documentId,
+        url: "/api/v1/project/" + this.projectId,
         headers: header,
       })
         .then((res) => {
-          console.log("aaa", res.data);
+          this.teamId = res.data.belongTo;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      this.$axios({
+        method: "get",
+        url: "/api/v1/document/" + this.teamId + "/" + this.documentId,
+        headers: header,
+      })
+        .then((res) => {
           var r = res.data;
           this.html = r.content;
           this.belongTo = r.belongTo;
@@ -102,12 +114,9 @@ export default Vue.extend({
   },
   mounted() {
     var arr = this.$route.params.id.split("&");
+    this.projectId = arr[0]
     this.documentId = arr[2];
     this.getDocDetail();
-    if (arr[1] == "doc")
-      window.setInterval(() => {
-        setTimeout(this.saveDoc(), 0);
-      }, 1000);
   },
   beforeRouteUpdate(to, from, next) {
     if (this.timer) {
@@ -119,7 +128,6 @@ export default Vue.extend({
     const editor = this.editor;
     if (editor == null) return;
     editor.destroy(); // 组件销毁时，及时销毁编辑器
-    clearInterval(this.timer);
   },
 });
 </script>

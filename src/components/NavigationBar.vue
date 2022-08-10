@@ -34,7 +34,7 @@
                 <span slot="title"> 更改头像 </span>
                 <input id="imgUpload" type="file" accept="image/png,image/gif,image/jpeg" @change="uploadAvatar($event)"/>
               </el-menu-item>
-              <el-menu-item index="" @click="dialogFormVisible=true">
+              <el-menu-item index="" @click="dialogFormVisible1=true">
                 <i class="el-icon-edit"></i>
                 <span slot="title"> 编辑资料 </span>
               </el-menu-item>
@@ -51,6 +51,10 @@
               <span> 团队 </span>
             </template>
             <el-menu-item-group>
+              <el-menu-item index="" @click="dialogFormVisible2=true" style="font-size:16px; color:darkslateblue;">
+                创建团队
+                <i class="el-icon-plus" style="font-size:16px; color:darkslateblue;"></i>
+              </el-menu-item>
               <el-menu-item
                   v-for="item in joinedTeam"
                   :key="item.index"
@@ -74,7 +78,7 @@
       <el-main></el-main>
     </el-container>
 
-    <el-dialog title="编辑个人信息" :visible.sync="dialogFormVisible">
+    <el-dialog title="编辑个人信息" :visible.sync="dialogFormVisible1" :modal-append-to-body="false">
       <el-form :model="form">
         <el-form-item label="昵称" :label-width="formLabelWidth">
           <el-input v-model="form.username" autocomplete="off"></el-input>
@@ -91,9 +95,26 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelEdit">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="editProfile">
+          确 定
+        </el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="创建团队" :visible.sync="dialogFormVisible2">
+      <el-form :model="team">
+        <el-form-item label="团队名称" :label-width="formLabelWidth">
+          <el-input v-model="team.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="简介" :label-width="formLabelWidth">
+          <el-input v-model="team.desc" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelEdit2">取 消</el-button>
+        <el-button type="primary" @click="createTeam">
+          确 定
+        </el-button>
       </div>
     </el-dialog>
   </el-row>
@@ -119,7 +140,12 @@ export default {
         email: "",
         about: "",
       },
-      dialogFormVisible: false,
+      team: {
+        name: "",
+        desc: "",
+      },
+      dialogFormVisible1: false,
+      dialogFormVisible2: false,
       formLabelWidth: "120px",
     };
   },
@@ -139,6 +165,42 @@ export default {
     this.getJoinedTeam();
   },
   methods: {
+    createTeam() {
+      if (this.team.name == "") {
+        this.$message.warning("团队名不可为空");
+        return;
+      }
+
+      if (this.team.desc == "") {
+        this.$message.warning("团队简介不可为空");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("teamName", this.team.name);
+      formData.append("description", this.team.desc);
+
+      var header = {};
+      if (localStorage.getItem("token"))
+        header = { Authorization: "Bearer " + localStorage.getItem("token") };
+
+      this.$axios({
+        method: "post",
+        url: "/api/v1/team/create",
+        data: formData,
+        headers: header,
+      })
+        .then((res) => {
+          console.log(res);
+          this.$message.success("创建成功");
+          this.dialogFormVisible2 = false;
+          this.team.name = "";
+          this.team.desc = "";
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     getImg(event) {
       this.form.profilePic = event.target.files[0];
     },
@@ -192,7 +254,7 @@ export default {
         .then((res) => {
           console.log(res);
           this.getUser();
-          this.dialogFormVisible = false;
+          this.dialogFormVisible1 = false;
           setTimeout(function () {
             location.reload(true);
           }, 500);
@@ -203,8 +265,12 @@ export default {
           this.$message.warning("抱歉！昵称已被使用");
         });
     },
+    cancelEdit2() {
+      this.dialogFormVisible2 = false;
+      this.getUser();
+    },
     cancelEdit() {
-      this.dialogFormVisible = false;
+      this.dialogFormVisible1 = false;
       this.getUser();
     },
     collapseStatus() {
@@ -349,10 +415,15 @@ span {
   /* background-color: #3d47773a; */
   background-color: #d3d5e0;
   overflow: hidden;
+  box-shadow: 20px 20px 20px #000000;
 }
 
 .el-menu {
   border-right: none;
   transition: all 40ms;
+  overflow: scroll;
+}
+::-webkit-scrollbar {
+  display: none;
 }
 </style>

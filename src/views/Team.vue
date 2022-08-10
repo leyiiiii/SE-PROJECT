@@ -1,12 +1,9 @@
 <template>
     <el-row>
-        <img v-if="!haveTeam" id="bg" src="@/assets/TeamBg.png" alt="">
-        <h1 v-if="!haveTeam" class="slogan">您并未加入任何团队</h1>
-        <h3 v-if="!haveTeam" class="createTeam">创建团队<i class="el-icon-right"></i></h3>
-        <el-col :span="2">
+        <el-col :span="2"><div class="Nav">
             <Navi></Navi>
-        </el-col>
-      <el-col v-if="haveTeam" :span="21"><div class="Right">
+        </div></el-col>
+      <el-col :span="21"><div class="Right">
         <el-row>
             <el-col :span="12">
                 <div class="info">
@@ -34,7 +31,8 @@
         background-color="#F4E3E0" active-text-color="#ff6699" text-color="black">
             <el-menu-item index="1">详情</el-menu-item>
             <el-menu-item index="2">项目</el-menu-item>
-            <el-menu-item index="3">成员列表</el-menu-item>
+            <el-menu-item index="3">文档中心</el-menu-item>
+            <el-menu-item index="4">成员列表</el-menu-item>
         </el-menu>
 
         <el-row v-if="activePage == 1">
@@ -139,50 +137,23 @@
                 暂无项目！
             </div></el-col>
         </el-row>
-        <el-row  v-if="activePage == 3">
+        
+        <!-- <el-row v-if="haveProject && activePage == 2">
+            <el-button class="projectButton" v-for="item in projectList" :key="item.id" @click="enterProject(item.id)">{{ item.title }}</el-button>
+        </el-row> -->
+
+        <el-row v-if="activePage == 3">
+            <Doc></Doc>
+        </el-row>
+
+        <el-row  v-if="activePage == 4">
             <el-col :span="24"><div class="members">
                 <i class="el-icon-user-solid"></i>
                 <span class="membersTitle">成员列表</span>
                 </div></el-col>
         </el-row>
 
-        <!-- <el-row class="membersRow"  v-if="activePage == 3">
-        <el-row v-for="item in membersList" :key="item.id" justify="center" type="flex">
-            <el-col :span="23"><div class="membersList">
-            <el-row>
-                <el-col :span="10">
-                    <div class="membersInfo">
-                        <span>昵称:&nbsp;</span>
-                        <span>{{ item.username }}</span>
-                </div></el-col>
-                <el-col :span="10">
-                    <div class="membersInfo">
-                        <span>真实姓名:&nbsp;</span>
-                        <span>{{ item.realname }}</span>
-                </div></el-col>
-                <el-col :span="4"><div class="buttonArea">
-                <el-button class="promoteButton" type="success" round v-if="checkPosition(item.position)" @click="promoteMember(item.id)">升为管理员</el-button>
-                <el-button class="promoteButton" type="danger" round v-if="checkPosition3(item.position)" @click="demoteMember(item.id)">降为成员</el-button>
-                <el-button class="kickButton" type="danger" round v-if="checkPosition2(item.position)" @click="kickMember(item.id)">移除</el-button>
-                </div></el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="10">
-                    <div class="membersInfo">
-                        <span>邮箱:&nbsp;</span>
-                        <span>{{ item.email }}</span>
-                </div></el-col>
-                <el-col :span="10">
-                    <div class="membersInfo">
-                        <span>身份:&nbsp;</span>
-                        <span>{{ item.position }}</span>
-                </div></el-col>
-            </el-row>
-            </div></el-col>
-        </el-row>
-        </el-row> -->
-
-        <el-row v-if="activePage == 3">
+        <el-row v-if="activePage == 4">
             <el-col :span="24"><div class="membersRow">
         <el-descriptions  v-for="item in membersList" :key="item.id" border :column="5" class="description">
             <el-descriptions-item label="昵称" :label-class-name="my-label" :contentStyle="contentStyle" :labelStyle="labelStyle">{{item.username}}</el-descriptions-item>
@@ -210,13 +181,14 @@
 </template>
 <script>
 import Navi from '@/components/NavigationBar.vue'
+import Doc from '@/components/Document.vue'
 import user from "@/store/user";
-import anime from "animejs/lib/anime.js";
 
 export default {
   name: 'Team',
   components: {
     Navi,
+    Doc,
   },
   data() {
     return {
@@ -258,34 +230,13 @@ export default {
     }
   },
   created() {
-    if(this.$route.params.id == '&'){
-        this.goTeam();
+    this.getTeamInfo();
+    this.getProjectDetail();
+    var userInfo;
+    userInfo = user.getters.getUser(user.state());
+    if(userInfo) {
+        this.userId = userInfo.user.id;
     }
-    else{
-        this.haveTeam = true;
-        this.getTeamInfo();
-        this.getProjectDetail();
-        var userInfo;
-        userInfo = user.getters.getUser(user.state());
-        if(userInfo) {
-            this.userId = userInfo.user.id;
-        }
-    }
-  },
-  mounted() {
-    var textWrapper = document.querySelector('.slogan');
-    textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
-
-    anime.timeline({loop: false})
-    .add({
-        targets: '.slogan .letter',
-        translateX: [40,0],
-        translateZ: 0,
-        opacity: [0,1],
-        easing: "easeOutExpo",
-        duration: 5000,
-        delay: (el, i) => 500 + 30 * i
-    });
   },
   methods: {
     duplicateProject(index, row) {
@@ -365,6 +316,10 @@ export default {
 
         if(key == '3') {
             this.activePage = 3;
+        }
+
+        if(key == '4') {
+            this.activePage = 4;
         }
     },
     createProject() {
@@ -466,24 +421,6 @@ export default {
             console.log(err);
             this.$message.warning("您是主管理员，无法离开！")
           });
-    },
-    async goTeam() {
-        var header = {};
-        if (localStorage.getItem("token"))
-            header = { Authorization: "Bearer " + localStorage.getItem("token") };
-
-        await this.$axios({
-            method: "get",
-            url: "/api/v1/team/list",
-            headers: header,
-        }).then((res) => {
-            if(res.data.results.length != 0) {
-                this.$router.push("/team/" + res.data.results[0].id);
-                window.location.reload();
-            }
-        }).catch((err) => {
-            console.log(err);
-        });
     },
     async getTeamInfo() {
         await this.$axios.all([
@@ -711,28 +648,6 @@ export default {
     cursor: pointer;
     color: #3D4777;
 }
-.createTeam {
-    position: absolute;
-    top: 120px;
-    left: 730px;
-    font-weight: 200;
-    font-size: 1.5em;
-    text-transform: uppercase;
-    letter-spacing: 0.4em;
-}
-.slogan {
-    position: absolute;
-    top: 50px;
-    left: 600px;
-    font-weight: 200;
-    font-size: 2em;
-    text-transform: uppercase;
-    letter-spacing: 0.5em;
-}
-.slogan .letter {
-    display: inline-block;
-    line-height: 1em;
-}
 .inviteButton{
     /* border: 1px solid black; */
     margin-top: 20px;
@@ -817,17 +732,16 @@ export default {
 .el-icon-user-solid, .el-icon-s-order{
     font-size: 22px;
 }
+.Nav {
+    position: relative;
+    z-index: 99;
+}
 .el-icon-more{
     transform: rotate(90deg);
 }
 .More{
     /* border: 1px solid black; */
     float: right;
-}
-#bg {
-    position: absolute;
-    width: 100%;
-    z-index: -1;
 }
 
 .container {

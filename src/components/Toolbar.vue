@@ -373,8 +373,9 @@ export default {
       // console.log("canvas style:", this.canvasStyleData);
       //console.log(JSON.stringify(this.canvasStyleData));
 
-      // console.log(this.componentData)
-      // console.log(this.diagramId)
+      console.log(this.componentData)
+      console.log(this.canvasStyleData)
+      console.log(this.diagramId)
 
       let formData = new FormData();
       formData.append("title", this.title);

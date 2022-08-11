@@ -57,8 +57,20 @@
                   <el-dropdown-item @click.native="addFolderInFolder(item.id)"
                     >添加文件夹
                   </el-dropdown-item>
-                  <el-dropdown-item @click.native="addDocInFolder(item.id)"
-                    >添加文档
+                  <el-dropdown-item @click.native="handleCommand3('a', item.id)"
+                    >添加空白文档
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="handleCommand3('b', item.id)"
+                    >添加会议记录
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="handleCommand3('c', item.id)"
+                    >添加需求规格说明书
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="handleCommand3('d', item.id)"
+                    >添加软件开发计划书
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="handleCommand3('e', item.id)"
+                    >添加软件测试报告
                   </el-dropdown-item>
                   <el-dropdown-item @click.native="deleteFolder(item.id)"
                     >删除文件夹
@@ -79,9 +91,21 @@
                     <el-dropdown-item @click.native="editFolderName(child.id)"
                       >重命名
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="addDocInFolder(child.id)"
-                      >添加文档
-                    </el-dropdown-item>
+                  <el-dropdown-item @click.native="handleCommand3('a', child.id)"
+                    >添加空白文档
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="handleCommand3('b', child.id)"
+                    >添加会议记录
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="handleCommand3('c', child.id)"
+                    >添加需求规格说明书
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="handleCommand3('d', child.id)"
+                    >添加软件开发计划书
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="handleCommand3('e', child.id)"
+                    >添加软件测试报告
+                  </el-dropdown-item>
                     <el-dropdown-item @click.native="deleteFolder(child.id)"
                       >删除文件夹
                     </el-dropdown-item>
@@ -119,7 +143,7 @@
                   <i class="el-icon-document"></i>
                   {{ child.title }}
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="remove(childs.id)"
+                    <el-dropdown-item @click.native="remove(child.id)"
                       >删除文档
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -133,8 +157,17 @@
             :key="item.id"
             @click="openDocInTeam(item.id)"
           >
-            <i class="el-icon-document"></i>
+          <el-dropdown size="mini">
+                  <div class="list-box">
+                    <i class="el-icon-document"></i>
             {{ item.title }}
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="remove(item.id)"
+                        >删除文档
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </div>
+                </el-dropdown>
           </div>
           <div class="first">
             <i class="el-icon-folder"></i>项目文档区
@@ -152,7 +185,7 @@
                     <i class="el-icon-document"></i>
                     {{ child.title }}
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="remove(childs.id)"
+                      <el-dropdown-item @click.native="remove(child.id)"
                         >删除文档
                       </el-dropdown-item>
                     </el-dropdown-menu>
@@ -317,6 +350,39 @@ export default {
         }
       }
     },
+    handleCommand3(command, id) {
+      switch (command) {
+        case "a": {
+          this.addDocInFolder(id, "<p></p>");
+          break;
+        }
+        case "b": {
+          this.addDocInFolder(id,
+            '"<h1>会议记录</h1><hr/><p><strong>日期：</strong></p><p><strong>时间：</strong></p><p><strong>地点：</strong></p><p><strong>会议组织者：&nbsp;&nbsp;</strong></p><p><strong>会议类型：&nbsp;</strong></p><p><strong>主持人：&nbsp;&nbsp;</strong></p><p><strong>记录员：&nbsp;</strong></p><p><strong>计时员：&nbsp;</strong></p><p><strong>与会者：</strong>&nbsp;</p><p><br></p><p><strong>阅读内容：&nbsp;</strong></p><p><strong>携带内容：&nbsp;</strong></p><p><strong>议程项目：&nbsp;</strong></p><p><strong>演示者：&nbsp;</strong></p><p><strong>讨论：</strong></p><p><strong>结论：</strong></p><p><br></p><p><strong>拟办事项：</strong></p><p><strong>责任人：</strong></p><p><strong>截止日期：&nbsp;</strong></p><p><strong>议程项目：&nbsp;</strong></p><p><strong>演示者：&nbsp;</strong></p><p><strong>讨论：</strong></p><p><strong>结论：</strong></p>"'
+          );
+          break;
+        }
+        case "c": {
+          this.addDocInFolder(id,
+            '"<h2 style=\\"text-indent: 0px; text-align: start; line-height: 26px;\\"><strong>一、&nbsp;引言</strong></h2><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>1.1&nbsp;定位与目标</strong></h3><p style=\\"text-indent: 0px; text-align: start;\\"><br></p><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>1.2&nbsp;对象</strong></h3><li></li><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>1.3&nbsp;软件需求分析理论</strong></h3><p style=\\"text-indent: 0px; text-align: start;\\"><br></p><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>1.4&nbsp;软件需求分析目标</strong></h3><p><br></p><h2 style=\\"text-indent: 0px; text-align: start; line-height: 26px;\\"><strong>二、&nbsp;需求概述</strong></h2><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>2.1&nbsp;项目背景</strong></h3><p style=\\"text-indent: 0px; text-align: start;\\"><br></p><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>2.2&nbsp;需求概述</strong></h3><p><br></p><h2 style=\\"text-indent: 0px; text-align: start; line-height: 26px;\\"><strong>三、&nbsp;系统功能需求</strong></h2><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>3.1&nbsp;功能总览</strong></h3><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"></h3><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>3.2&nbsp;业务流程图</strong></h3><p><br></p><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>3.3&nbsp;数据流分析</strong></h3><p><br></p><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>3.4&nbsp;数据字典</strong></h3><p><br></p><h2 style=\\"text-indent: 0px; text-align: start; line-height: 26px;\\"><strong>四、&nbsp;软硬件及外部系统接口需求</strong></h2><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>4.1&nbsp;用户界面</strong></h3><p style=\\"text-indent: 0px; text-align: start;\\"><br></p><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>4.2&nbsp;硬件需求</strong></h3><p style=\\"text-indent: 0px; text-align: start;\\"><br></p><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>4.3&nbsp;运行环境</strong></h3><ul style=\\"text-indent: 0px; text-align: start;\\"><li><strong>Web&nbsp;浏览器：</strong></li><li><strong>标准分辨率：</strong></li><li></li></ul><h2 style=\\"text-indent: 0px; text-align: start; line-height: 26px;\\"><strong>五、&nbsp;可靠性与可用性需求</strong></h2><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>5.1&nbsp;性能需求</strong></h3><ul style=\\"text-indent: 0px; text-align: start;\\"><li><strong>处理能力</strong></li></ul><p style=\\"text-indent: 0px; text-align: start;\\"><br></p><ul style=\\"text-indent: 0px; text-align: start;\\"><li><strong>响应时间</strong></li></ul><p style=\\"text-indent: 0px; text-align: start;\\"><br></p><p style=\\"text-indent: 0px; text-align: start;\\"><br></p><h3 style=\\"text-indent: 0px; text-align: start; line-height: 24px;\\"><strong>5.2&nbsp;安全性需求</strong></h3><p style=\\"text-indent: 0px; text-align: start;\\"><br></p><h2 style=\\"text-indent: 0px; text-align: start; line-height: 26px;\\"><strong>六、&nbsp;参考文献</strong></h2>"'
+          );
+          break;
+        }
+        case "d": {
+          this.addDocInFolder(id,
+            '"<h3 style=\\"text-align: start;\\"><span style=\\"font-size: 24px;\\">1引言</span><span style=\\"font-size: 16px;\\"><br></span><span style=\\"font-size: 22px;\\">1.1编写目的<br><br>1.2背景</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">1.3定义</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">1.4参考资料</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">1.5&nbsp;系统动机(暂时保密)</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">1.6标准、条件和约定</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">1.7编写文档的WBS</span><span style=\\"font-size: 16px;\\"><br></span></h3><h2 style=\\"text-align: start;\\"><span style=\\"font-size: 24px;\\">2项目概述</span></h2><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">2.1工作内容</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">2.2主要参加人员</span></h3><h4 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">2.3产品及成果<br></span><span style=\\"font-size: 16px;\\">2.3.1程序<br><br>2.3.3服务</span></h4><h4 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">2.4验收标准</span></h4><h4 style=\\"text-align: start;\\"><span style=\\"font-size: 16px;\\">2.4.1代码的验收</span></h4><h4 style=\\"text-align: start;\\"><span style=\\"font-size: 16px;\\">2.4.2&nbsp;文档验收</span></h4><h4 style=\\"text-align: start;\\"><span style=\\"font-size: 16px;\\">2.4.3&nbsp;服务验收</span></h4><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">2.5完成项目的最迟期限</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">2.6本计划的日期</span><span style=\\"font-size: 16px;\\"><br></span></h3><h2 style=\\"text-align: start;\\"><span style=\\"font-size: 24px;\\">3实施总计划</span><span style=\\"font-size: 22px;\\"><br>3.1开发过程<br></span><span style=\\"font-size: 16px;\\">3.1.1&nbsp;需求分析<br><br>3.1.2&nbsp;系统设计<br><br>3.1.3&nbsp;编码及测试阶段<br><br>3.1.4&nbsp;文档、产品部署</span></h2><h4 style=\\"text-align: start;\\"><span style=\\"font-size: 16px;\\">3.1.5&nbsp;项目总结</span></h4><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">3.2工作任务的分解</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">3.3接口人员<br><br>3.4进度</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">3.5预算</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">3.6关键问题<br></span></h3><h2 style=\\"text-align: start;\\"><span style=\\"font-size: 24px;\\">4支持条件</span><span style=\\"font-size: 22px;\\"><br>4.1计算机系统支持<br><br>4.2需要用户承担的工作<br><br>4.3需由外单位提供的条件<br></span></h2><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 24px;\\">5专题计划要点</span><span style=\\"font-size: 22px;\\"><br>5.1开发人员培训计划</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">5.2&nbsp;测试计划</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">5.3&nbsp;质量保证计划</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">5.4&nbsp;人员配置计划</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">5.5&nbsp;客户培训计划</span></h3><h3 style=\\"text-align: start;\\"><span style=\\"font-size: 22px;\\">5.6&nbsp;安全保密计划</span><span style=\\"font-size: 16px;\\"><br></span></h3>"'
+          );
+          break;
+        }
+        case "e": {
+          this.addDocInFolder(id,
+
+            '"<h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">1.&nbsp;介绍</h2><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">1.1&nbsp;编写目的</h2><p style=\\"text-indent: 0px; text-align: start;\\"><br></p><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">2.&nbsp;测试概要</h2><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">2.1&nbsp;测试方法和测试工具</h2><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">2.1.1&nbsp;账号安全管理</h2><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">2.1.2&nbsp;权限管理</h2><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">2.1.3&nbsp;安全日志</h2><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">2.1.4&nbsp;访问控制安全</h2><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">2.1.5&nbsp;输入安全</h2><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">2.1.6&nbsp;缓冲区溢出</h2><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">2.1.7&nbsp;SQL注入</h2><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">2.1.8&nbsp;跨站点脚本攻击</h2><p style=\\"text-indent: 0px; text-align: start;\\"><br></p><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">3.&nbsp;测试组织</h2><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">3.1&nbsp;测试人员</h2><table style=\\"width: 100%;\\"><tbody><tr><th colSpan=\\"1\\" rowSpan=\\"1\\"></th><th colSpan=\\"1\\" rowSpan=\\"1\\"></th><th colSpan=\\"1\\" rowSpan=\\"1\\"></th><th colSpan=\\"1\\" rowSpan=\\"1\\"></th><th colSpan=\\"1\\" rowSpan=\\"1\\"></th></tr><tr><td colSpan=\\"1\\" rowSpan=\\"1\\"></td><td colSpan=\\"1\\" rowSpan=\\"1\\"></td><td colSpan=\\"1\\" rowSpan=\\"1\\"></td><td colSpan=\\"1\\" rowSpan=\\"1\\"></td><td colSpan=\\"1\\" rowSpan=\\"1\\"></td></tr></tbody></table><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">4.&nbsp;测试结果及缺陷分析</h2><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">4.1&nbsp;遗留缺陷列表</h2><td colspan=\\"1\\" rowspan=\\"1\\" style=\\"line-height: 24px;\\"></td><table style=\\"width: 100%;\\"><tbody><tr><th colSpan=\\"1\\" rowSpan=\\"1\\"></th><th colSpan=\\"1\\" rowSpan=\\"1\\"></th><th colSpan=\\"1\\" rowSpan=\\"1\\"></th><th colSpan=\\"1\\" rowSpan=\\"1\\"></th><th colSpan=\\"1\\" rowSpan=\\"1\\"></th></tr><tr><td colSpan=\\"1\\" rowSpan=\\"1\\"></td><td colSpan=\\"1\\" rowSpan=\\"1\\"></td><td colSpan=\\"1\\" rowSpan=\\"1\\"></td><td colSpan=\\"1\\" rowSpan=\\"1\\"></td><td colSpan=\\"1\\" rowSpan=\\"1\\"></td></tr><tr><td colSpan=\\"1\\" rowSpan=\\"1\\"></td><td colSpan=\\"1\\" rowSpan=\\"1\\"></td><td colSpan=\\"1\\" rowSpan=\\"1\\"></td><td colSpan=\\"1\\" rowSpan=\\"1\\"></td><td colSpan=\\"1\\" rowSpan=\\"1\\"></td></tr></tbody></table><p style=\\"text-indent: 0px; text-align: start;\\"><br></p><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">5.&nbsp;测试结论</h2><p style=\\"text-indent: 0px; text-align: start;\\"><br></p><h2 style=\\"text-indent: 0px; text-align: start; line-height: 1.5;\\">6.&nbsp;测试建议</h2><p style=\\"text-indent: 0px; text-align: start;\\"><br></p>"'
+          );
+          break;
+        }
+      }
+    },
     deleteFolder(id) {
       this.$confirm("此操作将永久删除该文件夹, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -411,9 +477,9 @@ export default {
           console.log(err);
         });
     },
-    addDocInFolder(id) {
+    addDocInFolder(id, str) {
       let formData = new FormData();
-      formData.append("content", JSON.stringify("<p>this is a document</p>"));
+      formData.append("content", JSON.stringify(str));
       formData.append("teamId", this.teamId);
 
       var header = {};
@@ -428,7 +494,7 @@ export default {
       })
         .then((res) => {
           console.log(res.data);
-          this.openDoc(res.data.id);
+          this.openDocInTeam(res.data.id);
         })
         .catch((err) => {
           console.log(err);

@@ -147,7 +147,7 @@ export default {
       headers: header,
     })
         .then((res) => {
-          // console.log("123456", res.data);
+          console.log("123456", res.data);
           var r = res.data;
           this.title = r.title;
           // console.log("canvasStyle", JSON.parse(r.canvasStyleData))

@@ -341,7 +341,6 @@ export default {
           });
     },
     toTeam(teamId) {
-      alert(teamId)
       this.$router.push("/team/" + teamId);
       setTimeout(() => {
         location.reload();
